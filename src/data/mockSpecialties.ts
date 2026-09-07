@@ -1,0 +1,26 @@
+export const SPECIALTIES = [
+  'Cardiology',
+  'Dermatology',
+  'General Medicine',
+  'Orthopedics',
+  'Pediatrics',
+  'ENT',
+  'Neurology',
+  'Gynecology',
+  'Ophthalmology',
+  'Pulmonology',
+  'Gastroenterology',
+  'Endocrinology',
+];
+
+export const LOCATIONS = [
+  'Dubai - Downtown',
+  'Dubai - Jumeirah',
+  'Dubai - Healthcare City',
+  'Dubai - Marina',
+  'Abu Dhabi - Al Maryah Island',
+  'Abu Dhabi - Corniche',
+  'Sharjah - Al Majaz',
+  'Sharjah - University City',
+  'Ajman - City Center',
+];
