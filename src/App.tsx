@@ -6,6 +6,7 @@ import { Header } from './components/layouts/Header';
 import { Footer } from './components/layouts/Footer';
 import { ProtectedRoute } from './components/layouts/ProtectedRoute';
 import { DashboardLayout } from './components/layouts/DashboardLayout';
+import { PatientLayout } from './components/layouts/PatientLayout';
 
 // Public Pages
 import { Home } from './pages/public/Home';
@@ -127,14 +128,14 @@ export default function App() {
               path="/patient"
               element={
                 <ProtectedRoute allowedRoles={['patient']}>
-                  <DashboardLayout portalType="patient" />
+                  <PatientLayout />
                 </ProtectedRoute>
               }
             >
               <Route index element={<Navigate to="/patient/dashboard" replace />} />
               <Route path="dashboard" element={<PatientDashboard />} />
-              <Route path="bookings" element={<PatientBookings />} />
               <Route path="profile" element={<PatientProfile />} />
+              <Route path="bookings" element={<PatientBookings />} />
             </Route>
 
             {/* DOCTOR PORTAL */}

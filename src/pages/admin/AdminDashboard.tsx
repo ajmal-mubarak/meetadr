@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Users,
   Stethoscope,
@@ -11,7 +11,10 @@ import {
   TrendingUp,
   FileBarChart,
   ShieldCheck,
+  LogOut,
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import { reportService } from '../../services/reportService';
 import { bookingService } from '../../services/bookingService';
 import { providerService } from '../../services/providerService';
@@ -20,6 +23,9 @@ import { Appointment, ProviderRequest } from '../../types';
 import { StatusBadge } from '../../components/common/StatusBadge';
 
 export const AdminDashboard: React.FC = () => {
+  const { logout } = useAuth();
+  const { showToast } = useToast();
+  const navigate = useNavigate();
   const [stats, setStats] = useState<any>(null);
   const [recentBookings, setRecentBookings] = useState<Appointment[]>([]);
   const [pendingRequests, setPendingRequests] = useState<ProviderRequest[]>([]);
@@ -61,14 +67,26 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <Link
             to="/admin/reports"
-            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5"
+            className="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5"
           >
             <FileBarChart className="w-4 h-4" />
             <span>Operational Reports</span>
           </Link>
+          <button
+            type="button"
+            onClick={async () => {
+              await logout();
+              showToast('Signed out successfully.', 'info');
+              navigate('/login');
+            }}
+            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Sign Out</span>
+          </button>
         </div>
       </div>
 

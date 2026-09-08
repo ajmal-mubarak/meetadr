@@ -1,30 +1,142 @@
-import { HealthCondition } from '../types';
+export interface HealthCondition {
+  letter: string;
+  name: string;
+  specialist: string;
+  specialtyQuery: string;
+  description: string;
+}
 
 export const HEALTH_CONDITIONS: HealthCondition[] = [
-  { id: 'c1', name: 'Allergies & Asthma', letter: 'A', specialty: 'Pulmonology', description: 'Chronic respiratory inflammation, pollen sensitivity, and wheezing.' },
-  { id: 'c2', name: 'Anxiety & Stress', letter: 'A', specialty: 'Neurology', description: 'Excessive worry, sleep disturbances, and physical tension.' },
-  { id: 'c3', name: 'Arthritis & Joint Pain', letter: 'A', specialty: 'Orthopedics', description: 'Stiffness, swelling, and reduced mobility in knee, hip, or wrist joints.' },
-  { id: 'c4', name: 'Back Pain & Sciatica', letter: 'B', specialty: 'Orthopedics', description: 'Lumbar strain, disc herniation, and nerve pinch symptoms.' },
-  { id: 'c5', name: 'Bronchitis', letter: 'B', specialty: 'Pulmonology', description: 'Inflammation of the bronchial tubes causing persistent cough and chest congestion.' },
-  { id: 'c6', name: 'Cardiac Arrhythmia', letter: 'C', specialty: 'Cardiology', description: 'Irregular heartbeat, palpitations, and sudden dizziness.' },
-  { id: 'c7', name: 'Chronic Fatigue', letter: 'C', specialty: 'General Medicine', description: 'Unexplained persistent exhaustion and generalized muscle weakness.' },
-  { id: 'c8', name: 'Dermatitis & Eczema', letter: 'D', specialty: 'Dermatology', description: 'Pruritic, dry, inflamed patches of skin needing topical intervention.' },
-  { id: 'c9', name: 'Diabetes Type 2', letter: 'D', specialty: 'Endocrinology', description: 'Blood sugar regulation, insulin resistance, and dietary stabilization.' },
-  { id: 'c10', name: 'Ear Infection & Tinnitus', letter: 'E', specialty: 'ENT', description: 'Middle ear effusion, earache, discharge, or ringing sensation.' },
-  { id: 'c11', name: 'Eye Strain & Dry Eyes', letter: 'E', specialty: 'Ophthalmology', description: 'Visual fatigue, stinging, and ocular surface hydration issues.' },
-  { id: 'c12', name: 'Flu & Viral Infections', letter: 'F', specialty: 'General Medicine', description: 'Acute fever, chills, body aches, and seasonal viral syndromes.' },
-  { id: 'c13', name: 'Gastritis & Acid Reflux', letter: 'G', specialty: 'Gastroenterology', description: 'Heartburn, epigastric discomfort, indigestion, and GERD.' },
-  { id: 'c14', name: 'Glaucoma Management', letter: 'G', specialty: 'Ophthalmology', description: 'Intraocular pressure monitoring and optic nerve preservation.' },
-  { id: 'c15', name: 'Hypertension', letter: 'H', specialty: 'Cardiology', description: 'Elevated blood pressure, cardiovascular screening, and vascular health.' },
-  { id: 'c16', name: 'Headache & Migraine', letter: 'H', specialty: 'Neurology', description: 'Throbbing cranial pain, photophobia, and aura symptoms.' },
-  { id: 'c17', name: 'Insomnia & Sleep Apnea', letter: 'I', specialty: 'Neurology', description: 'Difficulty initiating sleep, daytime somnolence, and snoring.' },
-  { id: 'c18', name: 'Irritable Bowel Syndrome', letter: 'I', specialty: 'Gastroenterology', description: 'Cramping, bloating, and irregular bowel motility.' },
-  { id: 'c19', name: 'Kidney Stones', letter: 'K', specialty: 'General Medicine', description: 'Flank pain, hematuria, and renal calculus assessment.' },
-  { id: 'c20', name: 'Neck Pain & Cervical Spondylosis', letter: 'N', specialty: 'Orthopedics', description: 'Cervical stiffness, radiating shoulder discomfort, and postural strain.' },
-  { id: 'c21', name: 'Osteoporosis', letter: 'O', specialty: 'Orthopedics', description: 'Bone mineral density loss and proactive fracture prevention.' },
-  { id: 'c22', name: 'Pediatric Fever & Cough', letter: 'P', specialty: 'Pediatrics', description: 'Childhood acute respiratory illnesses and developmental evaluations.' },
-  { id: 'c23', name: 'Psoriasis', letter: 'P', specialty: 'Dermatology', description: 'Autoimmune skin condition causing silvery scaled plaques.' },
-  { id: 'c24', name: 'Sinusitis & Nasal Polyps', letter: 'S', specialty: 'ENT', description: 'Facial pressure, congestion, nasal obstruction, and post-nasal drip.' },
-  { id: 'c25', name: 'Thyroid Disorders', letter: 'T', specialty: 'Endocrinology', description: 'Hypothyroidism, hyperthyroidism, and metabolic fluctuations.' },
-  { id: 'c26', name: 'Vertigo & Balance Disorders', letter: 'V', specialty: 'ENT', description: 'Vestibular disturbance, spinning sensation, and equilibrium loss.' },
+  // A
+  {
+    letter: 'A',
+    name: 'Allergies & Asthma',
+    specialist: 'Allergist / Immunologist',
+    specialtyQuery: 'Allergy',
+    description: 'Seasonal allergies, allergic rhinitis, asthma & breathing issues',
+  },
+  {
+    letter: 'A',
+    name: 'Anxiety & Depression',
+    specialist: 'Psychiatrist / Psychologist',
+    specialtyQuery: 'Psychiatry',
+    description: 'Stress management, mood disorders, panic & generalized anxiety',
+  },
+  {
+    letter: 'A',
+    name: 'Arthritis & Joint Inflammation',
+    specialist: 'Rheumatologist',
+    specialtyQuery: 'Rheumatology',
+    description: 'Osteoarthritis, rheumatoid arthritis, gout & chronic joint stiffness',
+  },
+  // B
+  {
+    letter: 'B',
+    name: 'Back Pain & Spine',
+    specialist: 'Orthopedic Surgeon / Physio',
+    specialtyQuery: 'Orthopedics',
+    description: 'Lower back stiffness, herniated discs, sciatica & spine strain',
+  },
+  {
+    letter: 'B',
+    name: 'Bronchitis & Cough',
+    specialist: 'Pulmonologist / GP',
+    specialtyQuery: 'General Practice',
+    description: 'Persistent chest cough, wheezing, respiratory infections',
+  },
+  // C
+  {
+    letter: 'C',
+    name: 'Chest Pain & Hypertension',
+    specialist: 'Cardiologist',
+    specialtyQuery: 'Cardiology',
+    description: 'High blood pressure, palpitations, angina & preventive cardiology',
+  },
+  {
+    letter: 'C',
+    name: 'Chronic Migraine',
+    specialist: 'Neurologist',
+    specialtyQuery: 'Neurology',
+    description: 'Severe headaches, aura, light sensitivity & nerve pain',
+  },
+  // D
+  {
+    letter: 'D',
+    name: 'Diabetes & Thyroid',
+    specialist: 'Endocrinologist',
+    specialtyQuery: 'Endocrinology',
+    description: 'Blood sugar regulation, HbA1c screening, thyroid nodules & fatigue',
+  },
+  {
+    letter: 'D',
+    name: 'Dermatitis & Eczema',
+    specialist: 'Dermatologist',
+    specialtyQuery: 'Dermatology',
+    description: 'Dry itchy patches, psoriasis, acne, hives & fungal rashes',
+  },
+  // E
+  {
+    letter: 'E',
+    name: 'Ear Infection & Hearing',
+    specialist: 'ENT Specialist',
+    specialtyQuery: 'ENT',
+    description: 'Earache, tinnitus, sinus congestion & tonsillitis',
+  },
+  {
+    letter: 'E',
+    name: 'Eye Strain & Vision',
+    specialist: 'Ophthalmologist',
+    specialtyQuery: 'Ophthalmology',
+    description: 'Blurry vision, dry eyes, glaucoma checkups & cornea health',
+  },
+  // G
+  {
+    letter: 'G',
+    name: 'GERD & Acid Reflux',
+    specialist: 'Gastroenterologist',
+    specialtyQuery: 'Gastroenterology',
+    description: 'Heartburn, digestive discomfort, IBS, gastritis & ulcer management',
+  },
+  // H
+  {
+    letter: 'H',
+    name: 'Hair Loss & Alopecia',
+    specialist: 'Dermatologist / Trichologist',
+    specialtyQuery: 'Dermatology',
+    description: 'Scalp irritation, thinning hair, alopecia areata & platelet therapy',
+  },
+  // N
+  {
+    letter: 'N',
+    name: 'Neck & Shoulder Stiffness',
+    specialist: 'Orthopedic / Physio',
+    specialtyQuery: 'Orthopedics',
+    description: 'Postural cervical strain, pinched nerve & rotator cuff issues',
+  },
+  // P
+  {
+    letter: 'P',
+    name: 'Pediatric Fever & Checkups',
+    specialist: 'Pediatrician',
+    specialtyQuery: 'Pediatrics',
+    description: 'Childhood vaccinations, high fever, developmental checks & cough',
+  },
+  // S
+  {
+    letter: 'S',
+    name: 'Sleep Apnea & Insomnia',
+    specialist: 'Pulmonologist / Neurologist',
+    specialtyQuery: 'Neurology',
+    description: 'Snoring, daytime exhaustion, sleep tracking & CPAP evaluation',
+  },
+  // W
+  {
+    letter: 'W',
+    name: 'Women Health & Obstetrics',
+    specialist: 'Gynecologist / Obstetrician',
+    specialtyQuery: 'Obstetrics & Gynecology',
+    description: 'Annual pelvic screening, pregnancy care, PCOS & hormonal health',
+  },
 ];
+
+export const CONDITION_LETTERS = ['All', 'A', 'B', 'C', 'D', 'E', 'G', 'H', 'N', 'P', 'S', 'W'];

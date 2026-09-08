@@ -1,6 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Calendar, Clock, MapPin, User, Search, Filter, Plus } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Search,
+  Plus,
+  Star,
+  RefreshCw,
+  CheckCircle2,
+  X,
+  FileText,
+  ExternalLink,
+  Building2,
+  AlertCircle,
+  CalendarCheck2,
+  CalendarX2,
+  Filter,
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { bookingService } from '../../services/bookingService';
@@ -8,15 +25,120 @@ import { Appointment } from '../../types';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { CancelModal } from '../../components/common/CancelModal';
 
+// ─── Inline Review Modal ─────────────────────────────────────────────────────
+interface ReviewModalProps {
+  appointment: Appointment;
+  onClose: () => void;
+  onSubmit: (rating: number, comment: string) => void;
+}
+
+const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmit }) => {
+  const [rating, setRating] = useState(0);
+  const [hovered, setHovered] = useState(0);
+  const [comment, setComment] = useState('');
+  const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 border border-slate-200 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200/60">
+              <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900">Rate Your Clinical Visit</h3>
+              <p className="text-[11px] text-slate-500">Post-visit verification feedback</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="bg-slate-50 rounded-2xl p-3.5 flex items-center gap-3 border border-slate-200">
+          <img
+            src={appointment.doctorPhoto || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150'}
+            alt={appointment.doctorName}
+            className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0"
+            referrerPolicy="no-referrer"
+          />
+          <div className="truncate">
+            <p className="text-sm font-bold text-slate-900 truncate">{appointment.doctorName}</p>
+            <p className="text-xs text-teal-700 font-semibold">{appointment.specialty}</p>
+            <p className="text-[11px] text-slate-500 truncate">{appointment.facilityName || appointment.hospitalName}</p>
+          </div>
+        </div>
+
+        <div className="text-center space-y-2">
+          <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">How was your doctor consultation?</p>
+          <div className="flex items-center justify-center gap-2">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHovered(star)}
+                onMouseLeave={() => setHovered(0)}
+                className="transition-transform hover:scale-110 cursor-pointer p-1"
+              >
+                <Star className={`w-8 h-8 transition-colors ${star <= (hovered || rating) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
+              </button>
+            ))}
+          </div>
+          {(hovered || rating) > 0 && (
+            <p className="text-sm font-bold text-amber-500">{labels[hovered || rating]}</p>
+          )}
+        </div>
+
+        <textarea
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Share your experience — consultation quality, wait time, facility cleanliness..."
+          rows={3}
+          className="w-full text-xs border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 resize-none text-slate-700 placeholder:text-slate-400 transition-all"
+        />
+
+        <div className="flex gap-2.5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+          >
+            Skip
+          </button>
+          <button
+            type="button"
+            disabled={rating === 0}
+            onClick={() => onSubmit(rating, comment)}
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
+              rating === 0
+                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                : 'bg-teal-600 hover:bg-teal-700 text-white shadow-sm'
+            }`}
+          >
+            <Star className="w-3.5 h-3.5" />
+            Submit Review
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Main PatientBookings Component ─────────────────────────────────────────
 export const PatientBookings: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'confirmed' | 'completed' | 'cancelled'>('all');
   const [search, setSearch] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [cancellingAppt, setCancellingAppt] = useState<Appointment | null>(null);
+  const [reviewingAppt, setReviewingAppt] = useState<Appointment | null>(null);
+  const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set());
 
   const loadData = async () => {
     setIsLoading(true);
@@ -28,19 +150,12 @@ export const PatientBookings: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    loadData();
-  }, [user]);
+  useEffect(() => { loadData(); }, [user]);
 
   const handleCancelConfirm = async (reason: string) => {
     if (!cancellingAppt) return;
     try {
-      await bookingService.cancelAppointment(
-        cancellingAppt.id,
-        reason,
-        'patient',
-        user?.name || 'Patient'
-      );
+      await bookingService.cancelAppointment(cancellingAppt.id, reason, 'patient', user?.name || 'Patient');
       showToast('Appointment successfully cancelled.', 'info');
       setCancellingAppt(null);
       loadData();
@@ -48,6 +163,23 @@ export const PatientBookings: React.FC = () => {
       showToast(err.message || 'Failed to cancel appointment', 'error');
     }
   };
+
+  const handleReviewSubmit = (rating: number, comment: string) => {
+    if (!reviewingAppt) return;
+    setReviewedIds((prev) => new Set([...prev, reviewingAppt.id]));
+    setReviewingAppt(null);
+    showToast(`${rating}★ review submitted for ${reviewingAppt.doctorName}. Thank you!`, 'success');
+  };
+
+  // Counts
+  const counts = useMemo(() => {
+    return {
+      all: appointments.length,
+      confirmed: appointments.filter((a) => a.status === 'confirmed').length,
+      completed: appointments.filter((a) => a.status === 'completed').length,
+      cancelled: appointments.filter((a) => a.status === 'cancelled').length,
+    };
+  }, [appointments]);
 
   const filtered = appointments.filter((a) => {
     if (filterStatus !== 'all' && a.status !== filterStatus) return false;
@@ -65,137 +197,319 @@ export const PatientBookings: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">My Appointments</h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Complete history of scheduled, completed, and cancelled clinical visits.
+      {/* ── 1. PAGE TITLE & HEADER ── */}
+      <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-5">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200/80 text-xs font-bold text-teal-800">
+            <Calendar className="w-3.5 h-3.5 text-teal-600" />
+            <span>Consultation Registry</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            My Appointments & Visits
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500">
+            Manage your hospital appointments, access digital prescriptions, and schedule follow-ups.
           </p>
         </div>
+
         <Link
-          to="/search"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors shrink-0"
+          to="/doctors"
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl text-xs font-bold shadow-xs transition-all shrink-0 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>New Appointment</span>
+          <span>Book New Appointment</span>
         </Link>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col sm:flex-row gap-3 items-center justify-between">
-        <div className="flex rounded-xl bg-slate-100 p-1 w-full sm:w-auto text-xs font-semibold">
-          {['all', 'confirmed', 'completed', 'cancelled'].map((st) => (
+      {/* ── 2. METRICS OVERVIEW ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <button
+          type="button"
+          onClick={() => setFilterStatus('all')}
+          className={`p-4 rounded-2xl border transition-all text-left cursor-pointer ${
+            filterStatus === 'all'
+              ? 'bg-white border-teal-500 ring-2 ring-teal-500/20 shadow-xs'
+              : 'bg-white border-slate-200 hover:border-slate-300'
+          }`}
+        >
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Bookings</p>
+          <p className="text-2xl font-black text-slate-900 mt-1">{counts.all}</p>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setFilterStatus('confirmed')}
+          className={`p-4 rounded-2xl border transition-all text-left cursor-pointer ${
+            filterStatus === 'confirmed'
+              ? 'bg-white border-teal-500 ring-2 ring-teal-500/20 shadow-xs'
+              : 'bg-white border-slate-200 hover:border-slate-300'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Upcoming Visits</p>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          </div>
+          <p className="text-2xl font-black text-emerald-700 mt-1">{counts.confirmed}</p>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setFilterStatus('completed')}
+          className={`p-4 rounded-2xl border transition-all text-left cursor-pointer ${
+            filterStatus === 'completed'
+              ? 'bg-white border-teal-500 ring-2 ring-teal-500/20 shadow-xs'
+              : 'bg-white border-slate-200 hover:border-slate-300'
+          }`}
+        >
+          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Completed</p>
+          <p className="text-2xl font-black text-slate-700 mt-1">{counts.completed}</p>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setFilterStatus('cancelled')}
+          className={`p-4 rounded-2xl border transition-all text-left cursor-pointer ${
+            filterStatus === 'cancelled'
+              ? 'bg-white border-teal-500 ring-2 ring-teal-500/20 shadow-xs'
+              : 'bg-white border-slate-200 hover:border-slate-300'
+          }`}
+        >
+          <p className="text-[11px] font-bold text-rose-500 uppercase tracking-wider">Cancelled</p>
+          <p className="text-2xl font-black text-rose-600 mt-1">{counts.cancelled}</p>
+        </button>
+      </div>
+
+      {/* ── 3. FILTER TABS & SEARCH BAR ── */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs flex flex-col sm:flex-row gap-3.5 items-center justify-between">
+        {/* Status Filter Tabs */}
+        <div className="flex rounded-xl bg-slate-100 p-1 w-full sm:w-auto text-xs font-semibold gap-1">
+          {([
+            { id: 'all', label: 'All', count: counts.all },
+            { id: 'confirmed', label: 'Confirmed', count: counts.confirmed },
+            { id: 'completed', label: 'Completed', count: counts.completed },
+            { id: 'cancelled', label: 'Cancelled', count: counts.cancelled },
+          ] as const).map((tab) => (
             <button
-              key={st}
-              onClick={() => setFilterStatus(st)}
-              className={`px-3 py-1.5 rounded-lg capitalize transition-all ${
-                filterStatus === st
-                  ? 'bg-white text-blue-700 shadow-xs font-bold'
+              key={tab.id}
+              onClick={() => setFilterStatus(tab.id)}
+              className={`px-3 py-1.5 rounded-lg capitalize transition-all cursor-pointer text-xs ${
+                filterStatus === tab.id
+                  ? 'bg-white text-teal-700 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              {st}
+              {tab.label} <span className="opacity-70 text-[10px]">({tab.count})</span>
             </button>
           ))}
         </div>
 
-        <div className="relative w-full sm:w-64">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+        {/* Search Box */}
+        <div className="relative w-full sm:w-72">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by doctor or clinic..."
-            className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-xl focus:border-blue-600 focus:outline-none"
+            placeholder="Search doctor, hospital, specialty..."
+            className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all font-medium"
           />
         </div>
       </div>
 
-      {/* Appointments List Cards */}
+      {/* ── 4. APPOINTMENTS LIST ── */}
       {isLoading ? (
-        <div className="py-16 text-center">
-          <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-          <p className="text-xs text-slate-500">Loading appointments...</p>
+        <div className="bg-white rounded-3xl border border-slate-200 p-16 text-center shadow-xs">
+          <div className="w-10 h-10 border-3 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-xs font-bold text-slate-500">Loading your consultation schedule...</p>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
-          <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+        <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-xs space-y-3">
+          <div className="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+            <Calendar className="w-7 h-7" />
+          </div>
           <h3 className="text-base font-bold text-slate-900">No appointments found</h3>
-          <p className="text-xs text-slate-500 mt-1 mb-4">
-            No bookings match the selected filter or search term.
+          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            {search.trim()
+              ? `No bookings match your search query "${search}".`
+              : 'You do not have any appointments in this status category.'}
           </p>
           <Link
-            to="/search"
-            className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-semibold inline-block"
+            to="/doctors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
           >
-            Find a Doctor
+            <Plus className="w-4 h-4" />
+            <span>Find & Book a Doctor</span>
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {filtered.map((appt) => (
-            <div
-              key={appt.id}
-              className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:border-blue-200 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-            >
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-slate-400">#{appt.id}</span>
-                  <StatusBadge status={appt.status} />
-                </div>
-                <h3 className="text-base font-bold text-slate-900">{appt.doctorName}</h3>
-                <p className="text-xs text-slate-500">
-                  {appt.specialty} • {appt.facilityName}
-                </p>
-                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-700 font-medium pt-1">
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-blue-600" />
-                    {appt.date}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-blue-600" />
-                    {appt.timeSlot}
-                  </span>
-                  {appt.patientPhone && (
-                    <span className="text-slate-400 font-normal">Contact: {appt.patientPhone}</span>
-                  )}
-                </div>
-                {appt.cancelReason && (
-                  <p className="text-xs text-rose-600 bg-rose-50 p-2 rounded-lg mt-2 inline-block">
-                    Cancellation note: {appt.cancelReason} (by {appt.cancelledBy})
-                  </p>
-                )}
-              </div>
+        <div className="space-y-4">
+          {filtered.map((appt) => {
+            const isReviewed = reviewedIds.has(appt.id);
+            const isConfirmed = appt.status === 'confirmed';
+            const isCancelled = appt.status === 'cancelled';
+            const isCompleted = appt.status === 'completed';
 
-              <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                {appt.status === 'confirmed' && (
-                  <button
-                    onClick={() => setCancellingAppt(appt)}
-                    className="px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl border border-rose-200 transition-colors"
-                  >
-                    Cancel Appointment
-                  </button>
-                )}
-                {appt.status === 'cancelled' && (
-                  <Link
-                    to={`/book/doctor/${appt.doctorId}`}
-                    className="px-3.5 py-2 text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl transition-colors"
-                  >
-                    Rebook Slot
-                  </Link>
-                )}
+            return (
+              <div
+                key={appt.id}
+                className="bg-white rounded-3xl border border-slate-200/90 hover:border-teal-300 p-5 sm:p-6 shadow-xs hover:shadow-sm transition-all"
+              >
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                  {/* Left Column: Date ticket stub + Doctor info */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 flex-1">
+                    {/* Ticket Date Badge */}
+                    <div className="flex sm:flex-col items-center justify-center bg-teal-50/80 border border-teal-200/60 rounded-2xl px-4 py-3 sm:w-28 text-center shrink-0">
+                      <Calendar className="w-4 h-4 text-teal-600 mb-0.5 hidden sm:block mx-auto" />
+                      <span className="text-xs sm:text-sm font-black text-teal-800 tracking-tight">
+                        {appt.date}
+                      </span>
+                      <span className="text-xs font-mono font-bold text-teal-600 sm:mt-1 ml-2 sm:ml-0 bg-white sm:bg-transparent px-2 py-0.5 sm:p-0 rounded-md">
+                        {appt.timeSlot}
+                      </span>
+                    </div>
+
+                    {/* Doctor Details */}
+                    <div className="flex items-start gap-3.5">
+                      <img
+                        src={appt.doctorPhoto || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150'}
+                        alt={appt.doctorName}
+                        className="w-14 h-14 rounded-2xl object-cover border border-slate-200 shrink-0 shadow-xs"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                            #{appt.id.slice(-6).toUpperCase()}
+                          </span>
+                          <StatusBadge status={appt.status} />
+                          {isConfirmed && (
+                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                              In-Person Visit
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 className="text-base font-black text-slate-900 leading-snug">
+                          {appt.doctorName}
+                        </h3>
+
+                        <p className="text-xs font-bold text-teal-700">
+                          {appt.specialty}
+                        </p>
+
+                        <p className="text-xs text-slate-500 flex items-center gap-1">
+                          <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                          <span>{appt.facilityName || appt.hospitalName || 'CMC Hospital Dubai'}</span>
+                        </p>
+
+                        {isCancelled && appt.cancelReason && (
+                          <div className="flex items-center gap-1.5 text-xs text-rose-600 bg-rose-50 border border-rose-200/60 px-3 py-1 rounded-xl mt-1.5">
+                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                            <span>Cancelled reason: {appt.cancelReason}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Actions */}
+                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-100 shrink-0">
+                    {/* Google Maps Directions */}
+                    <a
+                      href={`https://maps.google.com/maps?q=${encodeURIComponent(appt.facilityName || 'CMC Hospital Dubai')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <MapPin className="w-3.5 h-3.5 text-teal-600" />
+                      <span>Directions</span>
+                    </a>
+
+                    {/* Prescription download */}
+                    {isConfirmed && (
+                      <button
+                        type="button"
+                        onClick={() => showToast('Prescription is ready for pickup at clinic pharmacy.', 'info')}
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-teal-200 bg-teal-50/50 text-xs font-bold text-teal-800 hover:bg-teal-100 transition-colors cursor-pointer"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-teal-600" />
+                        <span>Prescription</span>
+                      </button>
+                    )}
+
+                    {/* Rate & Review Visit */}
+                    {(isCompleted || isConfirmed) && !isReviewed && (
+                      <button
+                        type="button"
+                        onClick={() => setReviewingAppt(appt)}
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-xs font-bold text-amber-800 hover:bg-amber-100 transition-colors cursor-pointer"
+                      >
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <span>Rate Visit</span>
+                      </button>
+                    )}
+
+                    {isReviewed && (
+                      <span className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 border border-teal-200 text-xs font-bold text-teal-700">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Reviewed</span>
+                      </span>
+                    )}
+
+                    {/* Rebook on Cancelled */}
+                    {isCancelled && (
+                      <Link
+                        to={`/book/doctor/${appt.doctorId}`}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-xs font-bold text-white transition-colors cursor-pointer"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        <span>Rebook Visit</span>
+                      </Link>
+                    )}
+
+                    {/* Reschedule */}
+                    {isConfirmed && (
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/book/doctor/${appt.doctorId}`)}
+                        className="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                      >
+                        Reschedule
+                      </button>
+                    )}
+
+                    {/* Cancel button */}
+                    {isConfirmed && (
+                      <button
+                        type="button"
+                        onClick={() => setCancellingAppt(appt)}
+                        className="px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      {/* Cancel Modal */}
+      {/* ── 5. MODALS ── */}
       {cancellingAppt && (
         <CancelModal
           appointment={cancellingAppt}
           onClose={() => setCancellingAppt(null)}
           onConfirm={handleCancelConfirm}
+        />
+      )}
+
+      {reviewingAppt && (
+        <ReviewModal
+          appointment={reviewingAppt}
+          onClose={() => setReviewingAppt(null)}
+          onSubmit={handleReviewSubmit}
         />
       )}
     </div>
