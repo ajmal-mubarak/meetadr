@@ -4,9 +4,11 @@ import { motion } from 'motion/react';
 import { Building2, MapPin, Star, Phone, Clock, Search, Sparkles, ArrowRight } from 'lucide-react';
 import { clinicService } from '../../services/clinicService';
 import { Clinic } from '../../types';
-import { LOCATIONS, SPECIALTIES } from '../../data/mockSpecialties';
+import { SPECIALTIES } from '../../data/mockSpecialties';
+import { useTranslation } from '../../i18n';
 
 export const ClinicList: React.FC = () => {
+  const { t, translateSpecialty, translateLocation } = useTranslation();
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -49,26 +51,26 @@ export const ClinicList: React.FC = () => {
         <div className="mb-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-[#2563EB] text-xs font-bold rounded-full mb-2 border border-blue-100">
             <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
-            <span>Specialized Clinical Practices</span>
+            <span>{t('clinics.specializedBadge')}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E293B] tracking-tight">
-            Clinics & Outpatient Centers
+            {t('clinics.pageTitle')}
           </h1>
           <p className="text-sm text-[#64748B] mt-1.5 max-w-2xl">
-            Discover focused medical clinics for dermatology, dental care, pediatrics, physiotherapy, and specialty consultations.
+            {t('clinics.pageDesc')}
           </p>
         </div>
 
         {/* Filters */}
         <div className="bg-white p-3 sm:p-4 rounded-2xl border border-[#E2E8F0] shadow-sm mb-8 grid grid-cols-1 sm:grid-cols-12 gap-3">
           <div className="sm:col-span-8 relative">
-            <Search className="w-4 h-4 text-[#94A3B8] absolute left-3.5 top-3" />
+            <Search className="w-4 h-4 text-[#94A3B8] absolute left-3.5 rtl:left-auto rtl:right-3.5 top-3" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search clinic name or specialty..."
-              className="w-full pl-10 pr-3 py-2 text-sm border border-[#E2E8F0] rounded-xl text-[#1E293B] focus:border-[#2563EB] focus:outline-none bg-[#FAF9F6] focus:bg-white transition-colors"
+              placeholder={t('clinics.searchPlaceholder')}
+              className="w-full pl-10 rtl:pl-3 rtl:pr-10 pr-3 py-2 text-sm border border-[#E2E8F0] rounded-xl text-[#1E293B] focus:border-[#2563EB] focus:outline-none bg-[#FAF9F6] focus:bg-white transition-colors"
             />
           </div>
 
@@ -78,10 +80,10 @@ export const ClinicList: React.FC = () => {
               onChange={(e) => setSpecialty(e.target.value)}
               className="w-full py-2 px-3 text-sm border border-[#E2E8F0] rounded-xl text-[#1E293B] focus:border-[#2563EB] focus:outline-none bg-[#FAF9F6] focus:bg-white transition-colors cursor-pointer"
             >
-              <option value="All">All Specialties</option>
+              <option value="All">{t('clinics.allSpecialties')}</option>
               {SPECIALTIES.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {translateSpecialty(s)}
                 </option>
               ))}
             </select>
@@ -91,13 +93,13 @@ export const ClinicList: React.FC = () => {
         {isLoading ? (
           <div className="py-20 text-center">
             <div className="w-9 h-9 border-3 border-[#2563EB] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-sm font-medium text-[#64748B]">Loading clinics...</p>
+            <p className="text-sm font-medium text-[#64748B]">{t('clinics.loadingClinics')}</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="bg-white p-12 rounded-2xl border border-[#E2E8F0] text-center max-w-md mx-auto shadow-xs">
             <Building2 className="w-10 h-10 text-[#94A3B8] mx-auto mb-3" />
-            <h3 className="text-base font-bold text-[#1E293B] mb-1">No clinics match your search</h3>
-            <p className="text-xs text-[#64748B] mb-4">Try clearing your filters or search terms.</p>
+            <h3 className="text-base font-bold text-[#1E293B] mb-1">{t('clinics.noClinicsFound')}</h3>
+            <p className="text-xs text-[#64748B] mb-4">{t('clinics.noClinicsDesc')}</p>
             <button
               onClick={() => {
                 setSpecialty('All');
@@ -105,7 +107,7 @@ export const ClinicList: React.FC = () => {
               }}
               className="px-4 py-2 bg-[#2563EB] text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
             >
-              Reset Filters
+              {t('clinics.resetFilters')}
             </button>
           </div>
         ) : (
@@ -122,7 +124,7 @@ export const ClinicList: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between mb-2.5">
                     <span className="text-xs font-bold px-2.5 py-0.5 bg-blue-50 text-[#2563EB] rounded-md border border-blue-100">
-                      {clinic.specialty}
+                      {translateSpecialty(clinic.specialty)}
                     </span>
                     <div className="flex items-center gap-1 text-xs font-bold text-[#1E293B] bg-[#FAF9F6] px-2 py-0.5 rounded-md border border-[#E2E8F0]">
                       <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
@@ -133,7 +135,7 @@ export const ClinicList: React.FC = () => {
                   <h3 className="text-lg font-bold text-[#1E293B] mb-1 leading-snug">{clinic.name}</h3>
                   <div className="flex items-center gap-1.5 text-xs text-[#64748B] mb-3">
                     <MapPin className="w-3.5 h-3.5 text-[#94A3B8] shrink-0" />
-                    <span>{clinic.location}</span>
+                    <span>{translateLocation(clinic.location)}</span>
                   </div>
 
                   <p className="text-xs text-[#64748B] line-clamp-2 leading-relaxed mb-4">
@@ -143,7 +145,7 @@ export const ClinicList: React.FC = () => {
                   <div className="text-xs text-[#64748B] space-y-1.5 bg-[#FAF9F6] p-3 rounded-xl border border-[#E2E8F0]">
                     <div className="flex items-center gap-2">
                       <Phone className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
-                      <span className="truncate">{clinic.phone}</span>
+                      <span className="truncate" dir="ltr">{clinic.phone}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
@@ -153,13 +155,13 @@ export const ClinicList: React.FC = () => {
                 </div>
 
                 <div className="mt-5 pt-3 border-t border-[#E5E7EB] flex items-center justify-between text-xs">
-                  <span className="text-[#64748B] font-semibold">{clinic.doctorCount} Doctors</span>
+                  <span className="text-[#64748B] font-semibold">{t('clinics.doctorsCount', { count: clinic.doctorCount })}</span>
                   <Link
                     to={`/clinics/${clinic.id}`}
-                    className="px-4 py-2 font-bold bg-[#2563EB] hover:bg-blue-700 text-white rounded-xl shadow-sm transition-colors flex items-center gap-1"
+                    className="px-4 py-2 font-bold bg-[#2563EB] hover:bg-blue-700 text-white rounded-xl shadow-sm transition-colors flex items-center gap-1 cursor-pointer"
                   >
-                    <span>View Clinic</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <span>{t('clinics.viewClinic')}</span>
+                    <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
                   </Link>
                 </div>
               </motion.div>

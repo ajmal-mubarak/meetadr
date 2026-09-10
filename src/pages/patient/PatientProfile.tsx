@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User, Mail, Phone, Heart, Save, Plus, Trash2, Users, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
 
 interface Dependent {
   id: string;
@@ -14,6 +15,7 @@ interface Dependent {
 export const PatientProfile: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { t, isRTL, isArabic } = useTranslation();
 
   // Personal info
   const [name, setName] = useState(user?.name || 'Sarah Jenkins');
@@ -33,26 +35,34 @@ export const PatientProfile: React.FC = () => {
   const [showAddDependent, setShowAddDependent] = useState(false);
   const [newDep, setNewDep] = useState<Omit<Dependent, 'id'>>({ name: '', relation: 'Spouse', dob: '', bloodGroup: 'O+' });
 
+  const relationLabels: Record<string, string> = {
+    Spouse: isArabic ? 'الزوج / الزوجة' : 'Spouse',
+    Child: isArabic ? 'الابن / الابنة' : 'Child',
+    Parent: isArabic ? 'الأب / الأم' : 'Parent',
+    Sibling: isArabic ? 'الأخ / الأخت' : 'Sibling',
+    Other: isArabic ? 'آخر' : 'Other',
+  };
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    showToast('Patient health profile updated successfully.', 'success');
+    showToast(isArabic ? 'تم تحديث الملف الصحي بنجاح.' : 'Patient health profile updated successfully.', 'success');
   };
 
   const handleAddDependent = () => {
     if (!newDep.name.trim() || !newDep.dob) {
-      showToast('Please enter dependent name and date of birth.', 'error');
+      showToast(isArabic ? 'يرجى إدخال اسم التابع وتاريخ الميلاد.' : 'Please enter dependent name and date of birth.', 'error');
       return;
     }
     setDependents((prev) => [...prev, { ...newDep, id: `d${Date.now()}` }]);
     setNewDep({ name: '', relation: 'Spouse', dob: '', bloodGroup: 'O+' });
     setShowAddDependent(false);
-    showToast(`${newDep.name} added as a dependent.`, 'success');
+    showToast(isArabic ? `تمت إضافة ${newDep.name} بنجاح.` : `${newDep.name} added as a dependent.`, 'success');
   };
 
   const handleRemoveDependent = (id: string) => {
     const dep = dependents.find((d) => d.id === id);
     setDependents((prev) => prev.filter((d) => d.id !== id));
-    showToast(`${dep?.name} removed from dependents.`, 'info');
+    showToast(isArabic ? `تم حذف ${dep?.name} من التابعين.` : `${dep?.name} removed from dependents.`, 'info');
   };
 
   return (
@@ -60,57 +70,57 @@ export const PatientProfile: React.FC = () => {
 
       {/* Page Header */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
-        <h1 className="text-2xl font-bold text-slate-900">Patient Profile</h1>
+        <h1 className="text-2xl font-bold text-slate-900">{t('patientProfile.title')}</h1>
         <p className="text-xs text-slate-500 mt-1">
-          Manage your personal details, insurance information, dependents, and emergency medical summary.
+          {t('patientProfile.subtitle')}
         </p>
       </div>
 
       {/* ── PERSONAL & CONTACT ── */}
       <form onSubmit={handleSave} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
         <div>
-          <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider mb-4">Personal & Contact Information</h3>
+          <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider mb-4">{t('patientProfile.personalSection')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Full Name</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.fullName')}</label>
               <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <User className="w-4 h-4 text-slate-400 absolute left-3 rtl:left-auto rtl:right-3 top-3" />
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                  className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Email Address</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.email')}</label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3 rtl:left-auto rtl:right-3 top-3" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                  className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
                 />
               </div>
             </div>
 
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Contact Mobile <span className="text-slate-400 font-normal">(used for hospital SMS & confirmation)</span>
+                {t('patientProfile.phone')} <span className="text-slate-400 font-normal">{t('patientProfile.phoneHint')}</span>
               </label>
               <div className="relative">
-                <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <Phone className="w-4 h-4 text-slate-400 absolute left-3 rtl:left-auto rtl:right-3 top-3" />
                 <input
                   type="tel"
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                  className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
                 />
               </div>
             </div>
@@ -119,10 +129,10 @@ export const PatientProfile: React.FC = () => {
 
         {/* ── INSURANCE ── */}
         <div className="pt-4 border-t border-slate-100">
-          <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider mb-4">Insurance Details</h3>
+          <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider mb-4">{t('patientProfile.insuranceSection')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Insurance Provider</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.insuranceProvider')}</label>
               <input
                 type="text"
                 value={insuranceProvider}
@@ -131,7 +141,7 @@ export const PatientProfile: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Policy / Card Number</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.insuranceNumber')}</label>
               <input
                 type="text"
                 value={insuranceNumber}
@@ -144,10 +154,10 @@ export const PatientProfile: React.FC = () => {
 
         {/* ── EMERGENCY HEALTH SUMMARY ── */}
         <div className="pt-4 border-t border-slate-100">
-          <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider mb-4">Emergency Health Summary</h3>
+          <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider mb-4">{t('patientProfile.emergencySection')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Blood Group</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.bloodGroup')}</label>
               <select
                 value={bloodGroup}
                 onChange={(e) => setBloodGroup(e.target.value)}
@@ -160,7 +170,7 @@ export const PatientProfile: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Emergency Contact</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.emergencyContact')}</label>
               <input
                 type="text"
                 value={emergencyContact}
@@ -170,7 +180,7 @@ export const PatientProfile: React.FC = () => {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Known Allergies / Medical Notes</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.allergies')}</label>
               <input
                 type="text"
                 value={allergies}
@@ -187,7 +197,7 @@ export const PatientProfile: React.FC = () => {
             className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
           >
             <Save className="w-4 h-4" />
-            Save Profile
+            {t('patientProfile.saveProfile')}
           </button>
         </div>
       </form>
@@ -198,10 +208,10 @@ export const PatientProfile: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 mb-0.5">
               <Users className="w-4 h-4 text-teal-600" />
-              <h3 className="text-sm font-bold text-slate-900">Dependents & Family Members</h3>
+              <h3 className="text-sm font-bold text-slate-900">{t('patientProfile.dependentsSection')}</h3>
             </div>
             <p className="text-[11px] text-slate-500">
-              Book appointments for your family members using your account.
+              {t('patientProfile.dependentsDesc')}
             </p>
           </div>
           <button
@@ -210,39 +220,39 @@ export const PatientProfile: React.FC = () => {
             className="flex items-center gap-1.5 px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            Add Dependent
+            {t('patientProfile.addDependent')}
           </button>
         </div>
 
         {/* Add Dependent Form */}
         {showAddDependent && (
           <div className="bg-teal-50/50 border border-teal-200 rounded-2xl p-4 space-y-3">
-            <p className="text-xs font-bold text-teal-700">New Dependent Details</p>
+            <p className="text-xs font-bold text-teal-700">{t('patientProfile.newDependentTitle')}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">Full Name *</label>
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('patientProfile.fullName')} *</label>
                 <input
                   type="text"
                   value={newDep.name}
                   onChange={(e) => setNewDep((p) => ({ ...p, name: e.target.value }))}
-                  placeholder="e.g. Ahmed Al-Mansoor"
+                  placeholder={isArabic ? 'مثال: أحمد المنصور' : 'e.g. Ahmed Al-Mansoor'}
                   className="w-full py-2 px-3 border border-slate-200 rounded-xl text-xs focus:border-teal-500 focus:outline-none transition-all"
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">Relationship</label>
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('patientProfile.relation')}</label>
                 <select
                   value={newDep.relation}
                   onChange={(e) => setNewDep((p) => ({ ...p, relation: e.target.value }))}
                   className="w-full py-2 px-3 border border-slate-200 rounded-xl text-xs focus:border-teal-500 focus:outline-none transition-all"
                 >
                   {['Spouse', 'Child', 'Parent', 'Sibling', 'Other'].map((r) => (
-                    <option key={r} value={r}>{r}</option>
+                    <option key={r} value={r}>{relationLabels[r] || r}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">Date of Birth *</label>
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('patientProfile.dob')} *</label>
                 <input
                   type="date"
                   value={newDep.dob}
@@ -251,7 +261,7 @@ export const PatientProfile: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">Blood Group</label>
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('patientProfile.bloodGroup')}</label>
                 <select
                   value={newDep.bloodGroup}
                   onChange={(e) => setNewDep((p) => ({ ...p, bloodGroup: e.target.value }))}
@@ -269,14 +279,14 @@ export const PatientProfile: React.FC = () => {
                 onClick={() => setShowAddDependent(false)}
                 className="flex-1 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
               >
-                Cancel
+                {t('patientProfile.cancel')}
               </button>
               <button
                 type="button"
                 onClick={handleAddDependent}
                 className="flex-1 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-colors cursor-pointer"
               >
-                Add Member
+                {t('patientProfile.addMember')}
               </button>
             </div>
           </div>
@@ -286,7 +296,7 @@ export const PatientProfile: React.FC = () => {
         {dependents.length === 0 ? (
           <div className="text-center py-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
             <Users className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-            <p className="text-xs text-slate-500">No dependents added yet. Add family members to book on their behalf.</p>
+            <p className="text-xs text-slate-500">{t('patientProfile.noDependents')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -302,17 +312,17 @@ export const PatientProfile: React.FC = () => {
                   <div>
                     <p className="text-sm font-bold text-slate-900">{dep.name}</p>
                     <p className="text-[11px] text-slate-500">
-                      {dep.relation} · DOB: {dep.dob} · Blood: {dep.bloodGroup}
+                      {relationLabels[dep.relation] || dep.relation} · {t('patientProfile.dob')}: {dep.dob} · {t('patientProfile.bloodGroup')}: {dep.bloodGroup}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => showToast('Select a doctor and choose this dependent at booking.', 'info')}
+                    onClick={() => showToast(isArabic ? 'اختر طبيباً ثم حدد هذا التابع أثناء الحجز.' : 'Select a doctor and choose this dependent at booking.', 'info')}
                     className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 transition-colors cursor-pointer"
                   >
-                    Book for them
+                    {t('patientProfile.bookForThem')}
                   </button>
                   <button
                     type="button"
@@ -329,7 +339,7 @@ export const PatientProfile: React.FC = () => {
 
         <div className="flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-xl p-3 text-[11px] text-amber-800">
           <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-          <span>Dependent booking management will be fully functional once the backend is connected. Currently displayed for client demonstration.</span>
+          <span>{t('patientProfile.demoNotice')}</span>
         </div>
       </div>
     </div>

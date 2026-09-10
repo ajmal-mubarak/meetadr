@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Building2, Stethoscope, CheckCircle2, Phone, Mail, MapPin, Globe, ShieldCheck, ArrowRight, Check } from 'lucide-react';
+import { Building2, CheckCircle2, Phone, Mail, ShieldCheck, ArrowRight } from 'lucide-react';
 import { providerService } from '../../services/providerService';
 import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
 
 export const JoinProviderPage: React.FC = () => {
+  const { t } = useTranslation();
   const { showToast } = useToast();
 
   // Multi-type selection from Page 7 (Hospital, Clinic, Doctor)
@@ -26,7 +28,7 @@ export const JoinProviderPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!applicantName || !contactNumber || !email) {
-      showToast('Please complete all required fields.', 'error');
+      showToast(t('forms.fillRequiredFields'), 'error');
       return;
     }
 
@@ -52,7 +54,7 @@ export const JoinProviderPage: React.FC = () => {
       });
 
       setIsSuccess(true);
-      showToast('Application sent successfully. Our team member will connect with you soon.', 'success');
+      showToast(t('joinProvider.appReceived'), 'success');
     } catch (err: any) {
       showToast(err.message || 'Failed to submit application.', 'error');
     } finally {
@@ -87,13 +89,13 @@ export const JoinProviderPage: React.FC = () => {
         <div className="text-center max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-xs font-bold text-teal-800 mb-2">
             <Building2 className="w-3.5 h-3.5 text-teal-600" />
-            <span>Healthcare Partner Network</span>
+            <span>{t('joinProvider.badge')}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            Join with us, it&apos;s free
+            {t('joinProvider.title')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 mt-2">
-            Connect your facility with patients seeking in-person consultations across UAE.
+            {t('joinProvider.subtitle')}
           </p>
         </div>
 
@@ -105,10 +107,10 @@ export const JoinProviderPage: React.FC = () => {
           {/* ========================================================================= */}
           <div className="lg:col-span-6 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs">
             <h2 className="text-xl font-extrabold text-slate-900 mb-1">
-              Join with us, it&apos;s free
+              {t('joinProvider.title')}
             </h2>
             <p className="text-xs text-slate-500 mb-6">
-              Fill in your details below and our team member will connect you soon.
+              {t('joinProvider.formSubtitle')}
             </p>
 
             {isSuccess ? (
@@ -116,15 +118,15 @@ export const JoinProviderPage: React.FC = () => {
                 <div className="w-12 h-12 bg-teal-600 text-white rounded-full flex items-center justify-center mx-auto shadow-xs">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900">Application Received</h3>
+                <h3 className="text-lg font-bold text-slate-900">{t('joinProvider.appReceived')}</h3>
                 <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
-                  Thank you, <strong>{applicantName}</strong>. Our team member will connect with you soon regarding <strong>{entityName || 'your facility'}</strong>.
+                  {t('joinProvider.appReceivedDesc', { name: applicantName, facility: entityName || 'your facility' })}
                 </p>
                 <button
                   onClick={() => setIsSuccess(false)}
                   className="mt-4 px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl cursor-pointer"
                 >
-                  Submit Another Application
+                  {t('joinProvider.submitAnother')}
                 </button>
               </div>
             ) : (
@@ -133,7 +135,7 @@ export const JoinProviderPage: React.FC = () => {
                 {/* Checkboxes: Hospital | Clinic | Doctor */}
                 <div>
                   <label className="block text-xs font-bold text-slate-900 mb-2">
-                    Select Classification
+                    {t('joinProvider.classification')}
                   </label>
                   <div className="flex items-center gap-6">
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800 cursor-pointer">
@@ -143,7 +145,7 @@ export const JoinProviderPage: React.FC = () => {
                         onChange={(e) => setIsHospital(e.target.checked)}
                         className="rounded-sm border-slate-300 text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer"
                       />
-                      <span>Hospital</span>
+                      <span>{t('joinProvider.hospital')}</span>
                     </label>
 
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800 cursor-pointer">
@@ -153,7 +155,7 @@ export const JoinProviderPage: React.FC = () => {
                         onChange={(e) => setIsClinic(e.target.checked)}
                         className="rounded-sm border-slate-300 text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer"
                       />
-                      <span>Clinic</span>
+                      <span>{t('joinProvider.clinic')}</span>
                     </label>
 
                     <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800 cursor-pointer">
@@ -163,7 +165,7 @@ export const JoinProviderPage: React.FC = () => {
                         onChange={(e) => setIsDoctor(e.target.checked)}
                         className="rounded-sm border-slate-300 text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer"
                       />
-                      <span>Doctor</span>
+                      <span>{t('joinProvider.doctor')}</span>
                     </label>
                   </div>
                 </div>
@@ -171,12 +173,12 @@ export const JoinProviderPage: React.FC = () => {
                 {/* Name */}
                 <div>
                   <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                    Name
+                    {t('joinProvider.nameLabel')}
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Contact person / Doctor name"
+                    placeholder={t('joinProvider.namePlaceholder')}
                     value={applicantName}
                     onChange={(e) => setApplicantName(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-teal-500 font-medium"
@@ -186,12 +188,11 @@ export const JoinProviderPage: React.FC = () => {
                 {/* Name (Hospital / Clinic / Dr.) */}
                 <div>
                   <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                    Name (Hospital / Clinic / Dr.)
+                    {t('joinProvider.facilityNameLabel')}
                   </label>
                   <input
                     type="text"
-                    required
-                    placeholder="Facility name or Practice name"
+                    placeholder={t('joinProvider.facilityNamePlaceholder')}
                     value={entityName}
                     onChange={(e) => setEntityName(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-teal-500 font-medium"
@@ -201,7 +202,7 @@ export const JoinProviderPage: React.FC = () => {
                 {/* Contact Number with Country Code Dropdown */}
                 <div>
                   <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                    Contact Number
+                    {t('joinProvider.contactNumberLabel')}
                   </label>
                   <div className="flex gap-2">
                     <select
@@ -217,7 +218,7 @@ export const JoinProviderPage: React.FC = () => {
                     </select>
 
                     <div className="flex-1 bg-slate-50 rounded-xl border border-slate-200 px-4 py-3 flex items-center">
-                      <Phone className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
+                      <Phone className="w-4 h-4 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
                       <input
                         type="tel"
                         required
@@ -233,14 +234,14 @@ export const JoinProviderPage: React.FC = () => {
                 {/* Email */}
                 <div>
                   <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                    Email
+                    {t('joinProvider.emailLabel')}
                   </label>
                   <div className="bg-slate-50 rounded-xl border border-slate-200 px-4 py-3 flex items-center">
-                    <Mail className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
+                    <Mail className="w-4 h-4 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
                     <input
                       type="email"
                       required
-                      placeholder="info@facility.com"
+                      placeholder={t('joinProvider.emailPlaceholder')}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full bg-transparent text-xs text-slate-900 focus:outline-hidden font-medium"
@@ -252,12 +253,12 @@ export const JoinProviderPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                      Country
+                      {t('joinProvider.countryLabel')}
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="Country"
+                      placeholder={t('joinProvider.countryLabel')}
                       value={country}
                       onChange={(e) => setCountry(e.target.value)}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-hidden font-medium"
@@ -266,7 +267,7 @@ export const JoinProviderPage: React.FC = () => {
 
                   <div>
                     <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                      Location
+                      {t('joinProvider.cityLabel')}
                     </label>
                     <input
                       type="text"
@@ -285,12 +286,12 @@ export const JoinProviderPage: React.FC = () => {
                   disabled={isSubmitting}
                   className="w-full py-3.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  <span>{isSubmitting ? 'Sending details...' : 'Send'}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>{isSubmitting ? t('joinProvider.submitting') : t('joinProvider.submitBtn')}</span>
+                  <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                 </button>
 
                 <p className="text-center text-xs text-slate-500 font-medium">
-                  Our team member will connect you soon
+                  {t('joinProvider.formSubtitle')}
                 </p>
               </form>
             )}
@@ -302,10 +303,10 @@ export const JoinProviderPage: React.FC = () => {
           <div className="lg:col-span-6 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
             <div>
               <h2 className="text-xl font-extrabold text-slate-900">
-                Our Partners .......
+                {t('joinProvider.partnerNetworkTitle')}
               </h2>
               <p className="text-xs text-slate-500 mt-1">
-                Accredited medical centers and hospital networks on MeetAdr
+                {t('joinProvider.partnerNetworkSubtitle')}
               </p>
             </div>
 
@@ -337,7 +338,7 @@ export const JoinProviderPage: React.FC = () => {
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-3">
                 15+ Leading Hospital Affiliates:
               </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-96 overflow-y-auto pr-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-96 overflow-y-auto pr-1 rtl:pr-0 rtl:pl-1">
                 {partnerHospitalsList.map((partner) => (
                   <div
                     key={partner.id}

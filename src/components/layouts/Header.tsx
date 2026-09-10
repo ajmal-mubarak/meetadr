@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
+import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 interface PatientNotification {
   id: string;
@@ -33,6 +35,7 @@ interface PatientNotification {
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { showToast } = useToast();
+  const { t, isRTL } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -112,23 +115,23 @@ export const Header: React.FC = () => {
 
   // Core discovery nav links (client flow: Search & Discover)
   const discoveryLinks = [
-    { name: 'Home', path: '/', icon: HomeIcon },
-    { name: 'Find Doctors', path: '/doctors', icon: Stethoscope },
-    { name: 'Hospitals', path: '/hospitals', icon: Hospital },
-    { name: 'Clinics', path: '/clinics', icon: Building2 },
+    { name: t('navigation.home'), path: '/', icon: HomeIcon },
+    { name: t('navigation.findDoctor'), path: '/doctors', icon: Stethoscope },
+    { name: t('navigation.hospitals'), path: '/hospitals', icon: Hospital },
+    { name: t('navigation.clinics'), path: '/clinics', icon: Building2 },
   ];
 
   // Company dropdown links
   const companyLinks = [
-    { name: 'About Us', path: '/about' },
-    { name: 'Services', path: '/services' },
-    { name: 'Partners', path: '/partners' },
+    { name: t('navigation.aboutUs'), path: '/about' },
+    { name: t('navigation.services'), path: '/services' },
+    { name: t('navigation.ourPartners'), path: '/partners' },
   ];
 
   // All info links for mobile drawer
   const infoLinks = [
     ...companyLinks,
-    { name: 'Contact Us', path: '/contact' },
+    { name: t('navigation.contactUs'), path: '/contact' },
   ];
 
   return (
@@ -157,7 +160,7 @@ export const Header: React.FC = () => {
                 meet<span className="text-teal-600">Adr</span>
               </span>
               <span className="text-[9px] font-bold tracking-wider uppercase text-slate-500 mt-0.5">
-                Hospital Network
+                {t('common.hospitalNetwork')}
               </span>
             </div>
           </Link>
@@ -196,7 +199,7 @@ export const Header: React.FC = () => {
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
-                <span>About</span>
+                <span>{t('navigation.company')}</span>
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform duration-150 ${
                     aboutOpen ? 'rotate-180 text-teal-600' : 'text-slate-400'
@@ -211,7 +214,7 @@ export const Header: React.FC = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.96 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute left-0 mt-2 w-44 bg-white rounded-xl shadow-lg border border-slate-200 p-1.5 z-50"
+                    className="absolute left-0 rtl:left-auto rtl:right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border border-slate-200 p-1.5 z-50"
                   >
                     {companyLinks.map((link) => {
                       const active = location.pathname === link.path;
@@ -244,12 +247,15 @@ export const Header: React.FC = () => {
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
-              Contact Us
+              {t('navigation.contactUs')}
             </Link>
           </nav>
 
           {/* ===== RIGHT SIDE ACTIONS (Desktop) ===== */}
           <div className="hidden md:flex items-center gap-2.5">
+            {/* Language Switcher */}
+            <LanguageSwitcher variant="header" />
+
             {isAuthenticated && user ? (
               <>
                 {/* Notification Bell */}
@@ -262,11 +268,11 @@ export const Header: React.FC = () => {
                       setProfileOpen(false);
                     }}
                     className="relative p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer border border-transparent hover:border-slate-200"
-                    aria-label="Notifications"
+                    aria-label={t('navigation.notifications')}
                   >
                     <Bell className="w-4 h-4" />
                     {unreadCount > 0 && (
-                      <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-white animate-pulse" />
+                      <span className="absolute top-1 right-1 rtl:right-auto rtl:left-1 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-white animate-pulse" />
                     )}
                   </button>
 
@@ -277,14 +283,14 @@ export const Header: React.FC = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 6, scale: 0.96 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200 p-4 z-50"
+                        className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200 p-4 z-50"
                       >
                         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-slate-900">Notifications</span>
+                            <span className="text-sm font-bold text-slate-900">{t('navigation.notifications')}</span>
                             {unreadCount > 0 && (
                               <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-rose-50 text-rose-600 border border-rose-200">
-                                {unreadCount} new
+                                {t('navigation.newNotifications', { count: unreadCount })}
                               </span>
                             )}
                           </div>
@@ -294,7 +300,7 @@ export const Header: React.FC = () => {
                               onClick={markAllNotificationsRead}
                               className="text-xs font-semibold text-sky-600 hover:text-sky-700 transition-colors cursor-pointer"
                             >
-                              Mark all read
+                              {t('navigation.markAllRead')}
                             </button>
                           )}
                         </div>
@@ -322,8 +328,8 @@ export const Header: React.FC = () => {
                             onClick={() => setNotificationsOpen(false)}
                             className="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1 cursor-pointer"
                           >
-                            <span>View in Patient Portal</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
+                            <span>{t('navigation.viewInPatientPortal')}</span>
+                            <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
                           </Link>
                         </div>
                       </motion.div>
@@ -340,12 +346,12 @@ export const Header: React.FC = () => {
                       setProfileOpen((prev) => !prev);
                       setNotificationsOpen(false);
                     }}
-                    className="flex items-center gap-2 p-1.5 pr-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer"
+                    className="flex items-center gap-2 p-1.5 pr-2.5 rtl:pr-1.5 rtl:pl-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer"
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-teal-700 text-white flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-white">
                       {user.name.charAt(0)}
                     </div>
-                    <div className="hidden sm:block text-left">
+                    <div className="hidden sm:block text-left rtl:text-right">
                       <span className="text-xs font-bold text-slate-900 block leading-tight">
                         {user.name.split(' ')[0]}
                       </span>
@@ -361,13 +367,13 @@ export const Header: React.FC = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 6, scale: 0.96 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50"
+                        className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50"
                       >
                         <div className="px-3 py-2 border-b border-slate-100">
                           <span className="text-xs font-bold text-slate-900 block truncate">{user.name}</span>
                           <span className="text-[11px] text-slate-500 block truncate">{user.email}</span>
                           <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200 capitalize">
-                            {user.role} Portal
+                            {user.role}
                           </span>
                         </div>
 
@@ -377,18 +383,18 @@ export const Header: React.FC = () => {
                               <Link
                                 to="/patient/profile"
                                 onClick={() => setProfileOpen(false)}
-                                className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
+                                className="w-full text-left rtl:text-right px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
                               >
                                 <User className="w-3.5 h-3.5 text-teal-600" />
-                                <span>My Profile & Insurance</span>
+                                <span>{t('navigation.myProfile')}</span>
                               </Link>
                               <Link
                                 to="/patient/bookings"
                                 onClick={() => setProfileOpen(false)}
-                                className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
+                                className="w-full text-left rtl:text-right px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
                               >
                                 <Calendar className="w-3.5 h-3.5 text-teal-600" />
-                                <span>My Bookings</span>
+                                <span>{t('navigation.myBookings')}</span>
                               </Link>
                             </>
                           )}
@@ -396,30 +402,30 @@ export const Header: React.FC = () => {
                             <Link
                               to="/doctor/dashboard"
                               onClick={() => setProfileOpen(false)}
-                              className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
+                              className="w-full text-left rtl:text-right px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
                             >
                               <Stethoscope className="w-3.5 h-3.5 text-teal-600" />
-                              <span>Doctor Dashboard</span>
+                              <span>{t('navigation.doctorDashboard')}</span>
                             </Link>
                           )}
                           {user.role === 'hospital' && (
                             <Link
                               to="/hospital/dashboard"
                               onClick={() => setProfileOpen(false)}
-                              className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
+                              className="w-full text-left rtl:text-right px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
                             >
                               <Building2 className="w-3.5 h-3.5 text-teal-600" />
-                              <span>Hospital Dashboard</span>
+                              <span>{t('navigation.hospitalDashboard')}</span>
                             </Link>
                           )}
                           {user.role === 'admin' && (
                             <Link
                               to="/admin/dashboard"
                               onClick={() => setProfileOpen(false)}
-                              className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
+                              className="w-full text-left rtl:text-right px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
                             >
                               <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
-                              <span>Admin Dashboard</span>
+                              <span>{t('navigation.adminDashboard')}</span>
                             </Link>
                           )}
                         </div>
@@ -428,10 +434,10 @@ export const Header: React.FC = () => {
                           <button
                             type="button"
                             onClick={handleLogout}
-                            className="w-full text-left px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
+                            className="w-full text-left rtl:text-right px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
                           >
                             <LogOut className="w-3.5 h-3.5 text-rose-600" />
-                            <span>Sign Out</span>
+                            <span>{t('navigation.signOut')}</span>
                           </button>
                         </div>
                       </motion.div>
@@ -440,34 +446,22 @@ export const Header: React.FC = () => {
                 </div>
               </>
             ) : (
-              /* Guest user — show Sign In + Book a Doctor CTA */
-              <>
-                <Link
-                  to="/login"
-                  className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-teal-700 hover:bg-slate-100 transition-all cursor-pointer"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/doctors"
-                  className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs shadow-teal-600/20 cursor-pointer"
-                >
-                  <span>Book Appointment</span>
-                </Link>
-              </>
+              /* Guest user — show Sign In */
+              <Link
+                to="/login"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200/80 transition-all cursor-pointer shadow-2xs"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>{t('navigation.signIn')}</span>
+              </Link>
             )}
           </div>
 
           {/* ===== MOBILE TOGGLE ===== */}
           <div className="flex md:hidden items-center gap-2">
-            {!isAuthenticated && (
-              <Link
-                to="/doctors"
-                className="px-3 py-1.5 bg-teal-600 text-white text-xs font-bold rounded-lg"
-              >
-                Book Now
-              </Link>
-            )}
+            {/* Mobile compact language switcher */}
+            <LanguageSwitcher variant="compact" />
+
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
@@ -490,7 +484,9 @@ export const Header: React.FC = () => {
           >
             {/* Discovery Links */}
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Find Care</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                {t('navigation.findDoctor')}
+              </p>
               <div className="flex flex-col gap-1">
                 {discoveryLinks.map((link) => (
                   <Link
@@ -508,7 +504,9 @@ export const Header: React.FC = () => {
 
             {/* Info Links */}
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Company</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                {t('navigation.company')}
+              </p>
               <div className="flex flex-col gap-1">
                 {infoLinks.map((link) => (
                   <Link
@@ -533,7 +531,7 @@ export const Header: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-xs font-bold text-slate-900 block">{user.name}</span>
-                      <span className="text-[11px] text-slate-500 capitalize">{user.role} Portal</span>
+                      <span className="text-[11px] text-slate-500 capitalize">{user.role}</span>
                     </div>
                   </div>
                   {user.role === 'patient' && (
@@ -543,16 +541,16 @@ export const Header: React.FC = () => {
                       className="flex items-center gap-2 px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-xl"
                     >
                       <Calendar className="w-4 h-4 text-teal-600" />
-                      My Bookings
+                      {t('navigation.myBookings')}
                     </Link>
                   )}
                   <button
                     type="button"
                     onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
-                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
                   >
                     <LogOut className="w-4 h-4" />
-                    Sign Out
+                    {t('navigation.signOut')}
                   </button>
                 </div>
               ) : (
@@ -560,18 +558,10 @@ export const Header: React.FC = () => {
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all"
+                    className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-sm font-bold text-white transition-all shadow-xs shadow-teal-600/20"
                   >
-                    <LogIn className="w-4 h-4 text-teal-600" />
-                    Sign In
-                  </Link>
-                  <Link
-                    to="/doctors"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-sm font-bold text-white transition-all"
-                  >
-                    <Search className="w-4 h-4" />
-                    Book a Doctor
+                    <LogIn className="w-4 h-4" />
+                    {t('navigation.signIn')}
                   </Link>
                 </div>
               )}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { LanguageProvider } from './i18n';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { Header } from './components/layouts/Header';
@@ -79,9 +80,10 @@ const PublicLayout: React.FC = () => {
 
 export default function App() {
   return (
-    <ToastProvider>
-      <AuthProvider>
-        <BrowserRouter>
+    <LanguageProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <BrowserRouter>
           <Routes>
             {/* PUBLIC & MARKETING ROUTES */}
             <Route element={<PublicLayout />}>
@@ -194,5 +196,6 @@ export default function App() {
         </BrowserRouter>
       </AuthProvider>
     </ToastProvider>
+    </LanguageProvider>
   );
 }

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
 import { reportService } from '../../services/reportService';
 import { bookingService } from '../../services/bookingService';
 import { providerService } from '../../services/providerService';
@@ -26,6 +27,8 @@ export const AdminDashboard: React.FC = () => {
   const { logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const { t, isRTL, isArabic } = useTranslation();
+
   const [stats, setStats] = useState<any>(null);
   const [recentBookings, setRecentBookings] = useState<Appointment[]>([]);
   const [pendingRequests, setPendingRequests] = useState<ProviderRequest[]>([]);
@@ -59,11 +62,11 @@ export const AdminDashboard: React.FC = () => {
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
-            System Administration
+            {t('adminPortal.systemAdmin')}
           </span>
-          <h1 className="text-2xl font-bold text-slate-900 mt-0.5">MeetAdr Control Console</h1>
+          <h1 className="text-2xl font-bold text-slate-900 mt-0.5">{t('adminPortal.controlConsole')}</h1>
           <p className="text-xs text-slate-500 mt-1">
-            Global healthcare ecosystem oversight, provider onboarding, and appointment registries.
+            {t('adminPortal.consoleSubtitle')}
           </p>
         </div>
 
@@ -73,19 +76,19 @@ export const AdminDashboard: React.FC = () => {
             className="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5"
           >
             <FileBarChart className="w-4 h-4" />
-            <span>Operational Reports</span>
+            <span>{t('adminPortal.operationalReports')}</span>
           </Link>
           <button
             type="button"
             onClick={async () => {
               await logout();
-              showToast('Signed out successfully.', 'info');
+              showToast(isArabic ? 'تم تسجيل الخروج بنجاح.' : 'Signed out successfully.', 'info');
               navigate('/login');
             }}
             className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-all cursor-pointer shadow-2xs"
           >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
+            <LogOut className="w-3.5 h-3.5 rtl:rotate-180" />
+            <span>{t('common.logout')}</span>
           </button>
         </div>
       </div>
@@ -93,49 +96,49 @@ export const AdminDashboard: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase">Doctors</span>
+          <span className="text-[11px] font-semibold text-slate-500 uppercase">{t('adminPortal.doctors')}</span>
           <div className="text-2xl font-extrabold text-slate-900 mt-1">
             {stats ? stats.totalDoctors : '...'}
           </div>
-          <span className="text-[10px] text-emerald-600 font-semibold">Verified Active</span>
+          <span className="text-[10px] text-emerald-600 font-semibold">{t('adminPortal.verifiedActive')}</span>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase">Hospitals</span>
+          <span className="text-[11px] font-semibold text-slate-500 uppercase">{t('adminPortal.hospitals')}</span>
           <div className="text-2xl font-extrabold text-slate-900 mt-1">
             {stats ? stats.totalHospitals : '...'}
           </div>
-          <span className="text-[10px] text-blue-600 font-semibold">Accredited</span>
+          <span className="text-[10px] text-blue-600 font-semibold">{t('adminPortal.accredited')}</span>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase">Clinics</span>
+          <span className="text-[11px] font-semibold text-slate-500 uppercase">{t('adminPortal.clinics')}</span>
           <div className="text-2xl font-extrabold text-slate-900 mt-1">
             {stats ? stats.totalClinics : '...'}
           </div>
-          <span className="text-[10px] text-blue-600 font-semibold">Specialized</span>
+          <span className="text-[10px] text-blue-600 font-semibold">{t('adminPortal.specialized')}</span>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase">Bookings</span>
+          <span className="text-[11px] font-semibold text-slate-500 uppercase">{t('adminPortal.bookings')}</span>
           <div className="text-2xl font-extrabold text-blue-600 mt-1">
             {stats ? stats.totalBookings : '...'}
           </div>
-          <span className="text-[10px] text-slate-400 font-medium">All-time visits</span>
+          <span className="text-[10px] text-slate-400 font-medium">{t('adminPortal.allTimeVisits')}</span>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase">Waitlist</span>
+          <span className="text-[11px] font-semibold text-slate-500 uppercase">{t('adminPortal.waitlist')}</span>
           <div className="text-2xl font-extrabold text-amber-600 mt-1">{waitlistCount}</div>
-          <span className="text-[10px] text-amber-700 font-medium">Subscribers</span>
+          <span className="text-[10px] text-amber-700 font-medium">{t('adminPortal.subscribers')}</span>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase">Join Requests</span>
+          <span className="text-[11px] font-semibold text-slate-500 uppercase">{t('adminPortal.joinRequests')}</span>
           <div className="text-2xl font-extrabold text-purple-600 mt-1">
             {pendingRequests.length}
           </div>
-          <span className="text-[10px] text-purple-700 font-medium">Pending Review</span>
+          <span className="text-[10px] text-purple-700 font-medium">{t('adminPortal.pendingReview')}</span>
         </div>
       </div>
 
@@ -144,26 +147,26 @@ export const AdminDashboard: React.FC = () => {
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
           <div className="p-5 border-b border-slate-100 flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Recent Ecosystem Bookings</h3>
-              <p className="text-xs text-slate-500">Live feed of scheduled patient consultations</p>
+              <h3 className="text-base font-bold text-slate-900">{t('adminPortal.recentBookings')}</h3>
+              <p className="text-xs text-slate-500">{t('adminPortal.recentBookingsSubtitle')}</p>
             </div>
             <Link
               to="/admin/bookings"
               className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
             >
-              <span>View All</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>{t('adminPortal.viewAll')}</span>
+              <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
             </Link>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left rtl:text-right text-xs">
               <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
                 <tr>
-                  <th className="px-5 py-3">Patient</th>
-                  <th className="px-5 py-3">Doctor</th>
-                  <th className="px-5 py-3">Date & Slot</th>
-                  <th className="px-5 py-3">Status</th>
+                  <th className="px-5 py-3">{t('adminPortal.patient')}</th>
+                  <th className="px-5 py-3">{t('adminPortal.doctor')}</th>
+                  <th className="px-5 py-3">{t('adminPortal.dateSlot')}</th>
+                  <th className="px-5 py-3">{t('adminPortal.status')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -171,7 +174,7 @@ export const AdminDashboard: React.FC = () => {
                   <tr key={appt.id} className="hover:bg-slate-50/50">
                     <td className="px-5 py-3.5 font-semibold text-slate-900">
                       <div>{appt.patientName}</div>
-                      <div className="text-[10px] text-slate-400 font-mono">{appt.patientPhone}</div>
+                      <div className="text-[10px] text-slate-400 font-mono" dir="ltr">{appt.patientPhone}</div>
                     </td>
                     <td className="px-5 py-3.5 text-slate-800">
                       <div>{appt.doctorName}</div>
@@ -196,17 +199,17 @@ export const AdminDashboard: React.FC = () => {
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Provider Applications</h3>
-                <p className="text-xs text-slate-500">Inbound clinical onboarding</p>
+                <h3 className="text-base font-bold text-slate-900">{t('adminPortal.providerApplications')}</h3>
+                <p className="text-xs text-slate-500">{t('adminPortal.providerApplicationsSubtitle')}</p>
               </div>
               <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">
-                {pendingRequests.length} New
+                {pendingRequests.length} {t('adminPortal.newBadge')}
               </span>
             </div>
 
             {pendingRequests.length === 0 ? (
               <div className="py-8 text-center text-xs text-slate-400">
-                No pending provider requests at this time.
+                {t('adminPortal.noPendingRequests')}
               </div>
             ) : (
               <div className="space-y-3">
@@ -224,7 +227,7 @@ export const AdminDashboard: React.FC = () => {
                     <p className="text-[11px] text-slate-500">
                       {req.location}, {req.country}
                     </p>
-                    <p className="text-[11px] text-slate-600 font-mono">{req.contactNumber}</p>
+                    <p className="text-[11px] text-slate-600 font-mono" dir="ltr">{req.contactNumber}</p>
                   </div>
                 ))}
               </div>
@@ -236,8 +239,8 @@ export const AdminDashboard: React.FC = () => {
               to="/admin/requests"
               className="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-1"
             >
-              <span>Manage All Applications</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>{t('adminPortal.manageApplications')}</span>
+              <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
             </Link>
           </div>
         </div>

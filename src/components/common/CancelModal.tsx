@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
+import { useTranslation } from '../../i18n';
 
 interface CancelModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   onClose,
   onConfirm,
 }) => {
+  const { t } = useTranslation();
   const [reason, setReason] = useState<string>('Unforeseen Event');
   const [otherNote, setOtherNote] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -30,7 +32,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (reason === 'Others' && !otherNote.trim()) {
-      setError('Please provide a brief reason for cancellation.');
+      setError(t('appointment.cancelReasonRequired'));
       return;
     }
 
@@ -45,6 +47,12 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       setIsSubmitting(false);
     }
   };
+
+  const reasonOptions = [
+    { value: 'Unforeseen Event', label: t('appointment.reasonUnforeseen') },
+    { value: 'Wrongly Scheduled', label: t('appointment.reasonWrongTime') },
+    { value: 'Others', label: t('appointment.reasonOther') },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
@@ -61,14 +69,14 @@ export const CancelModal: React.FC<CancelModalProps> = ({
               <AlertTriangle className="w-5 h-5" />
             </div>
             <h3 id="cancel-modal-title" className="font-semibold text-slate-900 text-lg">
-              Cancel Appointment
+              {t('appointment.cancelTitle')}
             </h3>
           </div>
           <button
             onClick={onClose}
             disabled={isSubmitting}
-            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-            aria-label="Close dialog"
+            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+            aria-label={t('common.close')}
           >
             <X className="w-5 h-5" />
           </button>
@@ -76,41 +84,37 @@ export const CancelModal: React.FC<CancelModalProps> = ({
 
         <div className="py-4 text-sm text-slate-600">
           <p className="mb-3">
-            Are you sure you want to cancel your appointment with{' '}
-            <strong className="text-slate-900 font-semibold">{doctorName}</strong> on{' '}
-            <strong className="text-slate-900 font-semibold">{date}</strong> at{' '}
-            <strong className="text-slate-900 font-semibold">{time}</strong>?
+            {t('appointment.cancelConfirmQuestion', { doctor: doctorName, date, time })}
           </p>
           <p className="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-200">
-            Booking ID: <code className="font-mono text-slate-700">{appointmentId}</code>. If this
-            was done in error, you will need to re-book a fresh time slot.
+            {t('appointment.cancelWarning', { id: appointmentId })}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
-              Reason for Cancellation <span className="text-rose-500">*</span>
+              {t('appointment.cancelReasonLabel')} <span className="text-rose-500">*</span>
             </label>
             <div className="space-y-2">
-              {['Unforeseen Event', 'Wrongly Scheduled', 'Others'].map((option) => (
+              {reasonOptions.map((opt) => (
                 <label
-                  key={option}
+                  key={opt.value}
                   className={`flex items-center gap-3 p-3 rounded-xl border text-sm font-medium cursor-pointer transition-all ${
-                    reason === option
-                      ? 'border-blue-600 bg-blue-50/50 text-blue-950'
+                    reason === opt.value
+                      ? 'border-teal-600 bg-teal-50/50 text-teal-950'
                       : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                   }`}
                 >
                   <input
                     type="radio"
                     name="cancel_reason"
-                    value={option}
-                    checked={reason === option}
+                    value={opt.value}
+                    checked={reason === opt.value}
                     onChange={(e) => setReason(e.target.value)}
-                    className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                    className="w-4 h-4 text-teal-600 border-slate-300 focus:ring-teal-500"
                   />
-                  <span>{option}</span>
+                  <span>{opt.label}</span>
                 </label>
               ))}
             </div>
@@ -119,14 +123,14 @@ export const CancelModal: React.FC<CancelModalProps> = ({
           {reason === 'Others' && (
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-                Please specify <span className="text-rose-500">*</span>
+                {t('appointment.pleaseSpecify')} <span className="text-rose-500">*</span>
               </label>
               <textarea
                 rows={3}
                 value={otherNote}
                 onChange={(e) => setOtherNote(e.target.value)}
-                placeholder="Explain the reason for cancellation..."
-                className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 resize-none"
+                placeholder={t('appointment.pleaseSpecify')}
+                className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600 resize-none"
               />
             </div>
           )}
@@ -138,16 +142,16 @@ export const CancelModal: React.FC<CancelModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+              className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
             >
-              Keep Appointment
+              {t('appointment.keepAppointment')}
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium transition-colors shadow-xs disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
             >
-              {isSubmitting ? 'Cancelling...' : 'Confirm Cancellation'}
+              {isSubmitting ? t('appointment.cancelling') : t('appointment.confirmCancel')}
             </button>
           </div>
         </form>

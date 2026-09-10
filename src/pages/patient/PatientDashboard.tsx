@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
 import { bookingService } from '../../services/bookingService';
 import { Appointment } from '../../types';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -34,11 +35,14 @@ interface ReviewModalProps {
 }
 
 const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmit }) => {
+  const { t, translateSpecialty, isArabic } = useTranslation();
   const [rating, setRating] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [comment, setComment] = useState('');
 
-  const ratingLabels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+  const ratingLabels = isArabic
+    ? ['', 'ضعيف', 'مقبول', 'جيد', 'جيد جداً', 'ممتاز']
+    : ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
@@ -49,8 +53,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
               <Star className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-900">Rate Your Visit</h3>
-              <p className="text-[11px] text-slate-500">Step 11 — Post-Visit Review</p>
+              <h3 className="text-base font-bold text-slate-900">{t('patientPortal.rateVisitModalTitle')}</h3>
+              <p className="text-[11px] text-slate-500">{t('patientPortal.rateVisitModalSubtitle')}</p>
             </div>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
@@ -68,14 +72,14 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
           />
           <div>
             <p className="text-sm font-bold text-slate-900">{appointment.doctorName}</p>
-            <p className="text-xs text-teal-700 font-semibold">{appointment.specialty}</p>
+            <p className="text-xs text-teal-700 font-semibold">{translateSpecialty(appointment.specialty)}</p>
             <p className="text-[11px] text-slate-500">{appointment.facilityName || appointment.hospitalName}</p>
           </div>
         </div>
 
         {/* Star Rating */}
         <div className="text-center space-y-2">
-          <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">How was your experience?</p>
+          <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t('patientPortal.rateExperience')}</p>
           <div className="flex items-center justify-center gap-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -106,12 +110,12 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
         {/* Comment */}
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1.5">
-            Share details (optional)
+            {t('patientPortal.shareDetails')}
           </label>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="How was your consultation experience? Any feedback for the doctor or clinic..."
+            placeholder={t('patientPortal.sharePlaceholder')}
             rows={3}
             className="w-full text-xs border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 resize-none text-slate-700 placeholder:text-slate-400 transition-all"
           />
@@ -123,7 +127,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
           >
-            Skip for now
+            {t('patientPortal.skipForNow')}
           </button>
           <button
             type="button"
@@ -136,7 +140,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
             }`}
           >
             <Star className="w-3.5 h-3.5" />
-            Submit Review
+            {t('patientPortal.submitReview')}
           </button>
         </div>
       </div>
@@ -149,6 +153,7 @@ export const PatientDashboard: React.FC = () => {
   const { user, login } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const { t, translateSpecialty, translateLocation, isRTL, isArabic } = useTranslation();
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [activeTab, setActiveTab] = useState<'my_bookings' | 'confirmed' | 'cancelled'>('my_bookings');
@@ -180,11 +185,11 @@ export const PatientDashboard: React.FC = () => {
     if (!cancellingAppt) return;
     try {
       await bookingService.cancelAppointment(cancellingAppt.id, reason, 'patient', user?.name || 'Sarah Jenkins');
-      showToast('Appointment successfully cancelled.', 'info');
+      showToast(isArabic ? 'تم إلغاء الموعد بنجاح.' : 'Appointment successfully cancelled.', 'info');
       setCancellingAppt(null);
       loadData();
     } catch (err: any) {
-      showToast(err.message || 'Failed to cancel appointment', 'error');
+      showToast(err.message || (isArabic ? 'فشل إلغاء الموعد' : 'Failed to cancel appointment'), 'error');
     }
   };
 
@@ -192,7 +197,12 @@ export const PatientDashboard: React.FC = () => {
     if (!reviewingAppt) return;
     setReviewedIds((prev) => new Set([...prev, reviewingAppt.id]));
     setReviewingAppt(null);
-    showToast(`Thank you! ${rating}★ review submitted for ${reviewingAppt.doctorName}.`, 'success');
+    showToast(
+      isArabic
+        ? `شكراً لك! تم إرسال تقييم ${rating}★ للدكتور ${reviewingAppt.doctorName}.`
+        : `Thank you! ${rating}★ review submitted for ${reviewingAppt.doctorName}.`,
+      'success'
+    );
   };
 
   const handleRebook = (appt: Appointment) => {
@@ -201,15 +211,26 @@ export const PatientDashboard: React.FC = () => {
 
   // OTP handlers
   const handleSendOtp = () => {
-    if (!mobileNumber.trim()) { showToast('Please enter your mobile number', 'error'); return; }
+    if (!mobileNumber.trim()) {
+      showToast(isArabic ? 'يرجى إدخال رقم هاتفك المتحرك' : 'Please enter your mobile number', 'error');
+      return;
+    }
     setOtpSent(true);
-    showToast(`Verification code sent via SMS to ${countryCode} ${mobileNumber}. (Demo OTP: 1234)`, 'info');
+    showToast(
+      isArabic
+        ? `تم إرسال رمز التحقق عبر الرسائل النصية إلى ${countryCode} ${mobileNumber}. (الرمز التجريبي: 1234)`
+        : `Verification code sent via SMS to ${countryCode} ${mobileNumber}. (Demo OTP: 1234)`,
+      'info'
+    );
   };
 
   const handleVerifyOtp = async () => {
-    if (otpCode.trim() !== '1234') { showToast('Invalid OTP. Please enter demo OTP: 1234', 'error'); return; }
+    if (otpCode.trim() !== '1234') {
+      showToast(isArabic ? 'رمز غير صالح. يرجى إدخال الرمز التجريبي: 1234' : 'Invalid OTP. Please enter demo OTP: 1234', 'error');
+      return;
+    }
     await login('patient@meetadr.demo', 'Patient@123');
-    showToast('Verified with mobile OTP successfully!', 'success');
+    showToast(isArabic ? 'تم التحقق بنجاح!' : 'Verified with mobile OTP successfully!', 'success');
     setShowOtpModal(false);
     setOtpSent(false);
     setOtpCode('');
@@ -224,10 +245,10 @@ export const PatientDashboard: React.FC = () => {
     activeTab === 'my_bookings' ? myBookings : activeTab === 'confirmed' ? confirmed : cancelled;
 
   const nearbyHospitals = [
-    { id: 'cmc_dubai', name: 'CMC (Clemenceau Medical Center Hospital Dubai)', location: 'Dubai Healthcare City Phase 2 - Al Jaddaf', distance: '1.8 km', specialties: ['Cardiology', 'Neurology', 'Orthopedics'] },
-    { id: 'medcare_al_safa', name: 'Medcare Hospital Al Safa', location: 'Near Safa Park, Sheikh Zayed Road', distance: '4.2 km', specialties: ['Dermatology', 'Pediatrics', 'General Practice'] },
-    { id: 'csh_dubai', name: 'Canadian Specialist Hospital', location: 'Abu Hail Road, Deira, Dubai', distance: '6.5 km', specialties: ['Cardiology', 'Internal Medicine', 'Surgery'] },
-    { id: 'aster_mankhool', name: 'Aster Hospital Mankhool', location: 'Kuwait Street, Al Mankhool, Bur Dubai', distance: '5.1 km', specialties: ['General Practice', 'Orthopedics', 'ENT'] },
+    { id: 'cmc_dubai', name: isArabic ? 'مستشفى كليمنصو الطبي دبي' : 'CMC (Clemenceau Medical Center Hospital Dubai)', location: isArabic ? 'مدينة دبي الطبية المرحلة 2 - الجداف' : 'Dubai Healthcare City Phase 2 - Al Jaddaf', distance: isArabic ? '1.8 كم' : '1.8 km', specialties: isArabic ? ['أمراض القلب', 'طب الأعصاب', 'جراحة العظام'] : ['Cardiology', 'Neurology', 'Orthopedics'] },
+    { id: 'medcare_al_safa', name: isArabic ? 'مستشفى ميدكير الصفا' : 'Medcare Hospital Al Safa', location: isArabic ? 'بالقرب من حديقة الصفا، شارع الشيخ زايد' : 'Near Safa Park, Sheikh Zayed Road', distance: isArabic ? '4.2 كم' : '4.2 km', specialties: isArabic ? ['الجلدية', 'طب الأطفال', 'طب عام'] : ['Dermatology', 'Pediatrics', 'General Practice'] },
+    { id: 'csh_dubai', name: isArabic ? 'المستشفى الكندي التخصصي' : 'Canadian Specialist Hospital', location: isArabic ? 'شارع أبو هيل، ديرة، دبي' : 'Abu Hail Road, Deira, Dubai', distance: isArabic ? '6.5 كم' : '6.5 km', specialties: isArabic ? ['أمراض القلب', 'الأمراض الباطنية', 'الجراحة العامة'] : ['Cardiology', 'Internal Medicine', 'Surgery'] },
+    { id: 'aster_mankhool', name: isArabic ? 'مستشفى أستر المنخول' : 'Aster Hospital Mankhool', location: isArabic ? 'شارع الكويت، المنخول، بر دبي' : 'Kuwait Street, Al Mankhool, Bur Dubai', distance: isArabic ? '5.1 كم' : '5.1 km', specialties: isArabic ? ['طب عام', 'جراحة العظام', 'أنف وأذن وحنجرة'] : ['General Practice', 'Orthopedics', 'ENT'] },
   ];
 
   return (
@@ -239,7 +260,7 @@ export const PatientDashboard: React.FC = () => {
             <Calendar className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Bookings</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('patientPortal.activeBookings')}</p>
             <p className="text-xl font-black text-slate-900">{confirmed.length}</p>
           </div>
         </div>
@@ -249,8 +270,8 @@ export const PatientDashboard: React.FC = () => {
             <FileText className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Prescriptions</p>
-            <p className="text-xl font-black text-slate-900">1 Ready</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('patientPortal.digitalRx')}</p>
+            <p className="text-xl font-black text-slate-900">{isArabic ? '1 جاهزة' : '1 Ready'}</p>
           </div>
         </div>
 
@@ -259,8 +280,8 @@ export const PatientDashboard: React.FC = () => {
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Insurance</p>
-            <p className="text-xs font-black text-emerald-700 truncate">Daman Active</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{isArabic ? 'التأمين' : 'Insurance'}</p>
+            <p className="text-xs font-black text-emerald-700 truncate">{isArabic ? 'ضمان نشط' : 'Daman Active'}</p>
           </div>
         </div>
 
@@ -269,8 +290,8 @@ export const PatientDashboard: React.FC = () => {
             <User className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Family Members</p>
-            <p className="text-xl font-black text-slate-900">2 Dependents</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('patientPortal.dependentsCount')}</p>
+            <p className="text-xl font-black text-slate-900">{isArabic ? '2 تابعين' : '2 Dependents'}</p>
           </div>
         </div>
       </div>
@@ -281,14 +302,16 @@ export const PatientDashboard: React.FC = () => {
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800">Next Scheduled Visit</h3>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800">
+                {isArabic ? 'الموعد القادم المحدد' : 'Next Scheduled Visit'}
+              </h3>
             </div>
             <Link
               to="/patient/bookings"
               className="text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-1"
             >
-              <span>View All Bookings</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>{t('patientBookings.pageTitle')}</span>
+              <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
             </Link>
           </div>
 
@@ -305,7 +328,7 @@ export const PatientDashboard: React.FC = () => {
                   />
                   <div className="space-y-1">
                     <span className="inline-block px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 text-[11px] font-bold border border-teal-200">
-                      {nextAppt.specialty}
+                      {translateSpecialty(nextAppt.specialty)}
                     </span>
                     <h4 className="text-base sm:text-lg font-black text-slate-900">{nextAppt.doctorName}</h4>
                     <p className="text-xs text-slate-600 flex items-center gap-1.5">
@@ -334,21 +357,21 @@ export const PatientDashboard: React.FC = () => {
                     className="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors"
                   >
                     <MapPin className="w-3.5 h-3.5 text-teal-600" />
-                    <span>Get Directions</span>
+                    <span>{t('patientPortal.directions')}</span>
                   </a>
                   <button
                     type="button"
                     onClick={() => handleRebook(nextAppt)}
                     className="px-3.5 py-2 rounded-xl bg-teal-50 border border-teal-200 text-xs font-bold text-teal-700 hover:bg-teal-100 transition-colors cursor-pointer"
                   >
-                    Reschedule
+                    {t('patientPortal.reschedule')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setCancellingAppt(nextAppt)}
                     className="px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                   >
-                    Cancel
+                    {t('patientPortal.cancel')}
                   </button>
                 </div>
               </div>
@@ -362,9 +385,9 @@ export const PatientDashboard: React.FC = () => {
         <div className="flex items-center justify-between border-b border-slate-200 pb-4">
           <div className="flex items-center gap-2 flex-wrap">
             {([
-              { key: 'my_bookings', label: 'All Bookings', count: myBookings.length },
-              { key: 'confirmed', label: 'Confirmed', count: confirmed.length },
-              { key: 'cancelled', label: 'Cancelled', count: cancelled.length },
+              { key: 'my_bookings', label: t('patientPortal.allAppointments'), count: myBookings.length },
+              { key: 'confirmed', label: t('patientPortal.confirmedVisits'), count: confirmed.length },
+              { key: 'cancelled', label: t('patientPortal.cancelledVisits'), count: cancelled.length },
             ] as const).map((tab) => (
               <button
                 key={tab.key}
@@ -384,17 +407,17 @@ export const PatientDashboard: React.FC = () => {
             to="/patient/bookings"
             className="text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-1"
           >
-            <span>Full History</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>{isArabic ? 'السجل الكامل' : 'Full History'}</span>
+            <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
           </Link>
         </div>
 
         {displayedAppointments.length === 0 ? (
           <div className="text-center py-14 space-y-3 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
             <CalendarCheck className="w-10 h-10 text-slate-400 mx-auto opacity-50" />
-            <p className="text-xs font-bold text-slate-700">No appointments in this tab.</p>
+            <p className="text-xs font-bold text-slate-700">{t('patientPortal.noBookings')}</p>
             <Link to="/doctors" className="inline-block px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition-colors">
-              Browse Specialists
+              {t('patientPortal.findDoctorBtn')}
             </Link>
           </div>
         ) : (
@@ -417,7 +440,7 @@ export const PatientDashboard: React.FC = () => {
                         />
                         <div className="truncate">
                           <h4 className="text-sm font-bold text-slate-900 truncate">{appt.doctorName}</h4>
-                          <p className="text-xs font-semibold text-teal-700">{appt.specialty}</p>
+                          <p className="text-xs font-semibold text-teal-700">{translateSpecialty(appt.specialty)}</p>
                           <p className="text-[11px] text-slate-500 truncate">{appt.facilityName || appt.hospitalName || 'CMC Hospital Dubai'}</p>
                         </div>
                       </div>
@@ -446,7 +469,7 @@ export const PatientDashboard: React.FC = () => {
                       className="text-teal-700 font-bold hover:underline flex items-center gap-1"
                     >
                       <MapPin className="w-3 h-3" />
-                      View Map
+                      {t('patientPortal.directions')}
                       <ExternalLink className="w-3 h-3" />
                     </a>
 
@@ -463,7 +486,7 @@ export const PatientDashboard: React.FC = () => {
                           }`}
                         >
                           <RefreshCw className="w-3 h-3" />
-                          {appt.status === 'cancelled' ? 'Rebook' : 'Reschedule'}
+                          {appt.status === 'cancelled' ? t('patientPortal.rebook') : t('patientPortal.reschedule')}
                         </button>
                       )}
 
@@ -475,7 +498,7 @@ export const PatientDashboard: React.FC = () => {
                           className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 font-bold transition-colors cursor-pointer"
                         >
                           <Star className="w-3 h-3" />
-                          Rate Visit
+                          {t('patientPortal.rateVisit')}
                         </button>
                       )}
 
@@ -483,7 +506,7 @@ export const PatientDashboard: React.FC = () => {
                       {isReviewed && (
                         <span className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-teal-50 text-teal-700 font-bold text-[11px]">
                           <CheckCircle2 className="w-3 h-3" />
-                          Reviewed
+                          {t('patientPortal.reviewed')}
                         </span>
                       )}
 
@@ -494,7 +517,7 @@ export const PatientDashboard: React.FC = () => {
                           onClick={() => setCancellingAppt(appt)}
                           className="text-xs font-semibold text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
                         >
-                          Cancel
+                          {t('patientPortal.cancel')}
                         </button>
                       )}
                     </div>
@@ -511,10 +534,10 @@ export const PatientDashboard: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-xs font-bold text-teal-800 mb-1.5">
             <MapPin className="w-3.5 h-3.5 text-teal-600" />
-            <span>Nearby Network</span>
+            <span>{isArabic ? 'شبكة المنشآت القريبة' : 'Nearby Network'}</span>
           </div>
-          <h2 className="text-lg font-bold text-slate-900">Hospitals & Clinics Near You</h2>
-          <p className="text-xs text-slate-500">Directly connected accredited facilities across Dubai and the UAE</p>
+          <h2 className="text-lg font-bold text-slate-900">{t('patientPortal.nearbyHospitals')}</h2>
+          <p className="text-xs text-slate-500">{isArabic ? 'مستشفيات ومراكز طبية تخصصية معتمدة عبر دبي وكافة الإمارات' : 'Directly connected accredited facilities across Dubai and the UAE'}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -525,7 +548,7 @@ export const PatientDashboard: React.FC = () => {
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-slate-900 pr-2">{hosp.name}</h3>
+                  <h3 className="text-sm font-bold text-slate-900 pr-2 rtl:pr-0 rtl:pl-2">{hosp.name}</h3>
                   <span className="text-[10px] font-bold text-teal-700 bg-teal-100 px-2 py-0.5 rounded-full shrink-0">{hosp.distance}</span>
                 </div>
                 <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
@@ -546,13 +569,13 @@ export const PatientDashboard: React.FC = () => {
                   rel="noreferrer"
                   className="font-bold text-teal-700 hover:underline flex items-center gap-1"
                 >
-                  Directions <ExternalLink className="w-3 h-3" />
+                  {t('patientPortal.directions')} <ExternalLink className="w-3 h-3" />
                 </a>
                 <Link
                   to="/doctors"
                   className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-bold text-xs flex items-center gap-1 transition-colors shadow-2xs"
                 >
-                  Book Here <ArrowRight className="w-3 h-3" />
+                  {t('common.bookNow')} <ArrowRight className="w-3 h-3 rtl:rotate-180" />
                 </Link>
               </div>
             </div>
@@ -586,7 +609,7 @@ export const PatientDashboard: React.FC = () => {
                 <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center">
                   <Smartphone className="w-4 h-4" />
                 </div>
-                <h3 className="text-base font-bold text-slate-900">Mobile & OTP Login</h3>
+                <h3 className="text-base font-bold text-slate-900">{t('patientPortal.smsOtpNotice')}</h3>
               </div>
               <button onClick={() => setShowOtpModal(false)} className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
                 <XCircle className="w-5 h-5" />
@@ -594,12 +617,12 @@ export const PatientDashboard: React.FC = () => {
             </div>
 
             <p className="text-xs text-slate-600">
-              Enter your mobile number to receive a one-time SMS code for direct dashboard access.
+              {t('patientPortal.smsOtpDesc')}
             </p>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-900 mb-1.5">Mobile Number</label>
+                <label className="block text-xs font-bold text-slate-900 mb-1.5">{t('patientPortal.enterMobile')}</label>
                 <div className="flex gap-2">
                   <select
                     value={countryCode}
@@ -623,7 +646,7 @@ export const PatientDashboard: React.FC = () => {
               {otpSent ? (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-900 mb-1.5">Enter 4-Digit OTP</label>
+                    <label className="block text-xs font-bold text-slate-900 mb-1.5">{t('patientPortal.enterOtpCode')}</label>
                     <input
                       type="text"
                       maxLength={4}
@@ -639,7 +662,7 @@ export const PatientDashboard: React.FC = () => {
                     onClick={handleVerifyOtp}
                     className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
                   >
-                    Verify & Enter Dashboard
+                    {t('patientPortal.confirmOtp')}
                   </button>
                 </div>
               ) : (
@@ -648,7 +671,7 @@ export const PatientDashboard: React.FC = () => {
                   onClick={handleSendOtp}
                   className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
                 >
-                  Send OTP via SMS
+                  {t('patientPortal.sendOtp')}
                 </button>
               )}
             </div>

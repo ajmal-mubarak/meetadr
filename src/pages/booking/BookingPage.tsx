@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   Calendar,
@@ -27,8 +27,7 @@ import { useAuth } from '../../context/AuthContext';
 import { bookingService } from '../../services/bookingService';
 import { useToast } from '../../context/ToastContext';
 import { INITIAL_DOCTORS } from '../../data/mockDoctors';
-import { Doctor } from '../../types';
-import { UserRole } from '../../types';
+import { useTranslation } from '../../i18n';
 
 // ─── Guest Login Modal (intercepts booking when not authenticated) ────────────
 interface GuestLoginModalProps {
@@ -40,6 +39,7 @@ interface GuestLoginModalProps {
 const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, doctorName }) => {
   const { login, quickLoginAs } = useAuth();
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   const [mode, setMode] = useState<'options' | 'email' | 'otp'>('options');
   const [email, setEmail] = useState('patient@meetadr.demo');
@@ -98,7 +98,7 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="bg-gradient-to-br from-teal-600 to-teal-700 p-6 text-white">
@@ -106,7 +106,7 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <LogIn className="w-5 h-5" />
-                <span className="font-bold text-sm">Sign in to confirm booking</span>
+                <span className="font-bold text-sm">{t('auth.loginTitle')}</span>
               </div>
               <p className="text-xs text-teal-100 leading-relaxed">
                 You're one step away from booking with <strong>{doctorName}</strong>.<br />
@@ -132,16 +132,16 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
                 <div className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0">
                   {isLoading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Zap className="w-5 h-5" />}
                 </div>
-                <div className="text-left">
-                  <p className="text-sm font-bold text-slate-900">Quick Demo Login</p>
+                <div className="text-left rtl:text-right">
+                  <p className="text-sm font-bold text-slate-900">{t('auth.demoPatient')}</p>
                   <p className="text-[11px] text-slate-500">Enter as patient instantly — for demo/review</p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-teal-600 ml-auto group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-4 h-4 text-teal-600 ml-auto rtl:ml-0 rtl:mr-auto rtl:rotate-180 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform" />
               </button>
 
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-slate-100" />
-                <span className="text-[11px] text-slate-400 font-semibold">or</span>
+                <span className="text-[11px] text-slate-400 font-semibold">{t('common.or', 'or')}</span>
                 <div className="flex-1 h-px bg-slate-100" />
               </div>
 
@@ -154,11 +154,11 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
                 <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                   <Mail className="w-5 h-5" />
                 </div>
-                <div className="text-left">
-                  <p className="text-sm font-bold text-slate-800">Sign in with Email</p>
+                <div className="text-left rtl:text-right">
+                  <p className="text-sm font-bold text-slate-800">{t('auth.email')}</p>
                   <p className="text-[11px] text-slate-500">Use your meetAdr account credentials</p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-4 h-4 text-slate-400 ml-auto rtl:ml-0 rtl:mr-auto rtl:rotate-180 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform" />
               </button>
 
               {/* OTP Login */}
@@ -170,17 +170,17 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
                 <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
                   <Smartphone className="w-5 h-5" />
                 </div>
-                <div className="text-left">
+                <div className="text-left rtl:text-right">
                   <p className="text-sm font-bold text-slate-800">Sign in with Mobile OTP</p>
                   <p className="text-[11px] text-slate-500">Receive a 4-digit SMS code</p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-4 h-4 text-slate-400 ml-auto rtl:ml-0 rtl:mr-auto rtl:rotate-180 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform" />
               </button>
 
               <p className="text-center text-[11px] text-slate-400 pt-1">
                 New here?{' '}
                 <Link to="/login" className="text-teal-600 font-bold hover:underline">
-                  Create a patient account
+                  {t('auth.registerPatient')}
                 </Link>
               </p>
             </div>
@@ -189,7 +189,7 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
           {mode === 'email' && (
             <form onSubmit={handleEmailLogin} className="space-y-4">
               <button type="button" onClick={() => setMode('options')} className="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-1 cursor-pointer">
-                <ChevronLeft className="w-3.5 h-3.5" /> Back
+                <ChevronLeft className="w-3.5 h-3.5 rtl:rotate-180" /> {t('common.back')}
               </button>
 
               {/* Demo hint */}
@@ -199,25 +199,25 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Email</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('auth.email')}</label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3 rtl:left-auto rtl:right-3" />
                   <input
                     type="email" required value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                    className="w-full pl-9 pr-3 rtl:pl-3 rtl:pr-9 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-hidden transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Password</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('auth.password')}</label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3 rtl:left-auto rtl:right-3" />
                   <input
                     type="password" required value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                    className="w-full pl-9 pr-3 rtl:pl-3 rtl:pr-9 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-hidden transition-all"
                   />
                 </div>
               </div>
@@ -225,7 +225,7 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
               >
                 {isLoading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <LogIn className="w-4 h-4" />}
                 {isLoading ? 'Signing in...' : 'Sign In & Book'}
@@ -236,21 +236,21 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
           {mode === 'otp' && (
             <div className="space-y-4">
               <button type="button" onClick={() => { setMode('options'); setOtpSent(false); setOtp(''); }} className="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-1 cursor-pointer">
-                <ChevronLeft className="w-3.5 h-3.5" /> Back
+                <ChevronLeft className="w-3.5 h-3.5 rtl:rotate-180" /> {t('common.back')}
               </button>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Mobile Number</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('booking.mobileNumber')}</label>
                 <div className="flex gap-2">
                   <select value={countryCode} onChange={(e) => setCountryCode(e.target.value)}
-                    className="w-24 bg-slate-50 border border-slate-200 rounded-xl px-2 py-2.5 text-xs font-bold focus:outline-none">
+                    className="w-24 bg-slate-50 border border-slate-200 rounded-xl px-2 py-2.5 text-xs font-bold focus:outline-hidden">
                     <option value="+971">+971 UAE</option>
                     <option value="+965">+965 KWT</option>
                     <option value="+966">+966 KSA</option>
                   </select>
                   <input type="tel" value={mobile} onChange={(e) => setMobile(e.target.value)}
                     placeholder="52 412 2794"
-                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-teal-500 focus:outline-none transition-all" />
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-medium focus:border-teal-500 focus:outline-hidden transition-all" />
                 </div>
               </div>
 
@@ -262,7 +262,7 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
                       type="text" maxLength={4} value={otp}
                       onChange={(e) => setOtp(e.target.value)}
                       placeholder="1234"
-                      className="w-full border border-slate-200 rounded-xl px-4 py-3 text-center text-xl font-mono font-bold tracking-widest focus:border-teal-500 focus:outline-none"
+                      className="w-full border border-slate-200 rounded-xl px-4 py-3 text-center text-xl font-mono font-bold tracking-widest focus:border-teal-500 focus:outline-hidden"
                     />
                     <p className="text-[11px] text-teal-600 font-bold text-center mt-1">Demo code: 1234</p>
                   </div>
@@ -297,6 +297,7 @@ export const BookingPage: React.FC = () => {
   // Pending booking flag — set to true when user fills form but isn't logged in yet
   const [pendingBooking, setPendingBooking] = useState(false);
   const { showToast } = useToast();
+  const { t, language, translateSpecialty } = useTranslation();
 
   const allDoctors = INITIAL_DOCTORS;
 
@@ -357,13 +358,13 @@ export const BookingPage: React.FC = () => {
       const d = new Date();
       d.setDate(today.getDate() + i);
       const iso = d.toISOString().split('T')[0];
-      const dayName = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
-      const display = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const fullDisplay = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      const dayName = i === 0 ? t('booking.today') : i === 1 ? t('booking.tomorrow') : d.toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US', { weekday: 'short' });
+      const display = d.toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US', { month: 'short', day: 'numeric' });
+      const fullDisplay = d.toLocaleDateString(language === 'ar' ? 'ar-AE' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
       dates.push({ date: iso, dayName, display, fullDisplay });
     }
     return dates;
-  }, []);
+  }, [language, t]);
 
   const [selectedDateObj, setSelectedDateObj] = useState(nextDates[0]);
   const [selectedSlot, setSelectedSlot] = useState(doctor.availableSlots[0] || '10:00 AM');
@@ -411,7 +412,7 @@ export const BookingPage: React.FC = () => {
         timeSlot: selectedSlot,
       });
       setBookedAppointment(newAppt);
-      showToast('Appointment placed successfully! The hospital will contact you.', 'success');
+      showToast(t('booking.bookingConfirmedTitle'), 'success');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       showToast(err.message || 'Failed to place booking.', 'error');
@@ -469,12 +470,12 @@ export const BookingPage: React.FC = () => {
             onClick={() => navigate('/doctors')}
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#525252] hover:text-[#000000] transition-colors cursor-pointer"
           >
-            <ChevronLeft className="w-4 h-4" />
-            <span>Back to Doctors</span>
+            <ChevronLeft className="w-4 h-4 rtl:rotate-180" />
+            <span>{t('booking.backToDoctors')}</span>
           </button>
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#008B74] bg-[#E6F4F1] px-3.5 py-1.5 rounded-full border border-[#B2E2D9]">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#008B74]" />
-            <span>In-Person Consultation • Pay at Reception</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-[#008B74] shrink-0" />
+            <span>{t('booking.inPersonPayAtReception')}</span>
           </span>
         </div>
 
@@ -489,14 +490,14 @@ export const BookingPage: React.FC = () => {
                 <CheckCircle2 className="w-9 h-9" />
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold text-[#111827] tracking-tight">
-                Booking Completed!
+                {t('booking.bookingConfirmedTitle')}
               </h1>
               <p className="text-xs sm:text-sm text-[#6B7280] mt-2 leading-relaxed">
-                Your appointment has been placed with <strong>{doctor.hospitalName || 'CMC Hospital Dubai'}</strong>. The clinic reception will contact you shortly.
+                {t('booking.bookingConfirmedSubtitle')}
               </p>
 
               <div className="inline-flex items-center gap-2 mt-4 px-4 py-1.5 rounded-full bg-[#FAF9F5] border border-[#E5DFCD] text-xs font-mono font-bold text-[#111827]">
-                <span className="text-[#6B7280]">Booking Reference:</span>
+                <span className="text-[#6B7280]">{t('booking.bookingReference')}:</span>
                 <span className="text-[#008B74]">#MADR-{bookedAppointment.id.slice(-6).toUpperCase()}</span>
               </div>
             </div>
@@ -512,7 +513,7 @@ export const BookingPage: React.FC = () => {
                 />
                 <div>
                   <h3 className="text-base font-bold text-[#111827]">{doctor.name}</h3>
-                  <p className="text-xs font-semibold text-[#008B74]">{selectedSpecialty}</p>
+                  <p className="text-xs font-semibold text-[#008B74]">{translateSpecialty(selectedSpecialty)}</p>
                   <p className="text-xs text-[#6B7280] mt-0.5 flex items-center gap-1">
                     <Building2 className="w-3.5 h-3.5 text-[#008B74] shrink-0" />
                     <span>{doctor.hospitalName || 'CMC Hospital Dubai'}</span>
@@ -522,25 +523,25 @@ export const BookingPage: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="space-y-1">
-                  <span className="text-[#6B7280] block">Date &amp; Time:</span>
+                  <span className="text-[#6B7280] block">{t('booking.dateTimeLabel')}:</span>
                   <p className="font-bold text-[#111827] text-sm">
                     {selectedDateObj.fullDisplay} at <span className="text-[#008B74]">{selectedSlot}</span>
                   </p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[#6B7280] block">Patient Name:</span>
+                  <span className="text-[#6B7280] block">{t('booking.patientLabel')}:</span>
                   <p className="font-bold text-[#111827] text-sm">{patientName}</p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[#6B7280] block">Contact Mobile:</span>
+                  <span className="text-[#6B7280] block">{t('booking.contactLabel')}:</span>
                   <p className="font-semibold text-[#111827]">{countryCode} {mobileNumber}</p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[#6B7280] block">Consultation Payment:</span>
-                  <p className="font-semibold text-[#008B74]">Pay at Clinic Reception (Zero Online Fee)</p>
+                  <span className="text-[#6B7280] block">{t('booking.feeNote')}:</span>
+                  <p className="font-semibold text-[#008B74]">{t('booking.payAtReception')} ({t('booking.zeroUpfrontPayment')})</p>
                 </div>
               </div>
 
@@ -554,8 +555,8 @@ export const BookingPage: React.FC = () => {
                   onClick={() => setShowMapModal(true)}
                   className="font-bold text-[#008B74] hover:underline flex items-center gap-1 shrink-0 cursor-pointer"
                 >
-                  <span>View Map</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <span>{t('booking.viewMap')}</span>
+                  <ExternalLink className="w-3 h-3 rtl:mr-1" />
                 </button>
               </div>
             </div>
@@ -568,22 +569,22 @@ export const BookingPage: React.FC = () => {
               </p>
             </div>
 
-            {/* The 2 Primary Action Buttons Requested */}
+            {/* The 2 Primary Action Buttons */}
             <div className="mt-8 flex flex-col sm:flex-row items-center gap-3">
               <Link
                 to="/patient/dashboard"
-                className="w-full sm:w-1/2 py-3.5 px-5 bg-[#008B74] hover:bg-[#007461] text-white text-xs sm:text-sm font-bold rounded-xl text-center transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-1/2 py-3.5 px-5 bg-[#008B74] hover:bg-[#007461] text-white text-xs sm:text-sm font-bold rounded-xl text-center transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Eye className="w-4 h-4" />
-                <span>View Booking</span>
+                <span>{t('booking.viewBookingsBtn')}</span>
               </Link>
               <button
                 type="button"
                 onClick={() => navigate('/doctors')}
                 className="w-full sm:w-1/2 py-3.5 px-5 bg-[#FAF9F5] hover:bg-[#E5DFCD] text-[#111827] text-xs sm:text-sm font-bold rounded-xl text-center transition-all border border-[#E5DFCD] flex items-center justify-center gap-2 cursor-pointer"
               >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Go Back</span>
+                <ChevronLeft className="w-4 h-4 rtl:rotate-180" />
+                <span>{t('booking.goBack')}</span>
               </button>
             </div>
 
@@ -596,23 +597,23 @@ export const BookingPage: React.FC = () => {
                 }}
                 className="text-xs font-semibold text-[#6B7280] hover:text-[#111827] underline cursor-pointer"
               >
-                Book another appointment
+                {t('booking.bookAnotherBtn')}
               </button>
             </div>
           </div>
         ) : (
           /* ========================================================================= */
-          /* VIEW 2: DEDICATED BOOKING PAGE (NOT A DASHBOARD)                          */
+          /* VIEW 2: DEDICATED BOOKING PAGE                                            */
           /* ========================================================================= */
           <div className="bg-white rounded-3xl border border-[#E5DFCD] p-6 sm:p-8 shadow-xs">
             
             {/* Page Header */}
             <div className="pb-5 border-b border-[#E5DFCD]">
               <h1 className="text-xl sm:text-2xl font-bold text-[#111827] tracking-tight">
-                Book In-Person Consultation
+                {t('booking.pageTitle')}
               </h1>
               <p className="text-xs text-[#6B7280] mt-1">
-                Select your preferred consultation time and confirm your details.
+                {t('booking.pageSubtitle')}
               </p>
             </div>
 
@@ -631,11 +632,11 @@ export const BookingPage: React.FC = () => {
                       {doctor.name}
                     </h2>
                     <span className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E6F4F1] text-[#008B74] border border-[#B2E2D9]">
-                      Verified Specialist
+                      {t('booking.verifiedSpecialist')}
                     </span>
                   </div>
                   <p className="text-xs font-semibold text-[#008B74] mt-0.5">
-                    {doctor.specialty}
+                    {translateSpecialty(doctor.specialty)}
                   </p>
                   <p className="text-xs text-[#6B7280] mt-0.5 flex items-center gap-1">
                     <Building2 className="w-3.5 h-3.5 text-[#008B74] shrink-0" />
@@ -645,23 +646,23 @@ export const BookingPage: React.FC = () => {
               </div>
 
               {/* Doctor switcher dropdown */}
-              <div className="sm:text-right shrink-0">
+              <div className="sm:text-right rtl:sm:text-left shrink-0">
                 <label className="block text-[10px] font-semibold uppercase tracking-wider text-[#6B7280] mb-1">
-                  Change Doctor
+                  {t('booking.changeDoctor')}
                 </label>
                 <div className="relative inline-block">
                   <select
                     value={selectedDocId}
                     onChange={(e) => handleSelectDoctor(e.target.value)}
-                    className="appearance-none text-xs bg-white border border-[#E5DFCD] rounded-xl pl-3 pr-7 py-2 font-medium text-[#111827] cursor-pointer focus:outline-hidden hover:border-[#BAC7AD]"
+                    className="appearance-none text-xs bg-white border border-[#E5DFCD] rounded-xl pl-3 pr-7 rtl:pl-7 rtl:pr-3 py-2 font-medium text-[#111827] cursor-pointer focus:outline-hidden hover:border-[#BAC7AD]"
                   >
                     {allDoctors.map((d) => (
                       <option key={d.id} value={d.id}>
-                        {d.name} ({d.specialty})
+                        {d.name} ({translateSpecialty(d.specialty)})
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-[#6B7280] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-3.5 h-3.5 text-[#6B7280] absolute right-2 rtl:right-auto rtl:left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
             </div>
@@ -669,40 +670,40 @@ export const BookingPage: React.FC = () => {
             <form onSubmit={handleBookNow} className="mt-6 space-y-6">
               
               {/* =================================================================== */}
-              {/* STYLED DEPARTMENT DROPDOWN (ONLY SHOWS THIS DOCTOR'S DEPARTMENTS)   */}
+              {/* STYLED DEPARTMENT DROPDOWN                                          */}
               {/* =================================================================== */}
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
                     <Stethoscope className="w-4 h-4 text-[#008B74]" />
-                    <span>Speciality / Consultation Department</span>
+                    <span>{t('booking.specialtyLabel')}</span>
                   </label>
                   <span className="text-[10px] font-semibold text-[#008B74] bg-[#E6F4F1] px-2 py-0.5 rounded-md border border-[#B2E2D9]">
-                    Doctor's Specialties
+                    {t('booking.doctorsSpecialties')}
                   </span>
                 </div>
 
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#008B74]">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 rtl:left-auto rtl:right-0 rtl:pl-0 rtl:pr-3.5 flex items-center pointer-events-none text-[#008B74]">
                     <Stethoscope className="w-4 h-4" />
                   </div>
                   <select
                     value={selectedSpecialty}
                     onChange={(e) => setSelectedSpecialty(e.target.value)}
-                    className="w-full appearance-none bg-[#FAF9F5] hover:bg-white focus:bg-white border border-[#E5DFCD] hover:border-[#BAC7AD] focus:border-[#008B74] focus:ring-2 focus:ring-[#008B74]/20 rounded-2xl pl-10 pr-10 py-3.5 text-xs sm:text-sm font-semibold text-[#111827] transition-all cursor-pointer outline-hidden shadow-2xs"
+                    className="w-full appearance-none bg-[#FAF9F5] hover:bg-white focus:bg-white border border-[#E5DFCD] hover:border-[#BAC7AD] focus:border-[#008B74] focus:ring-2 focus:ring-[#008B74]/20 rounded-2xl pl-10 pr-10 rtl:pr-10 rtl:pl-10 py-3.5 text-xs sm:text-sm font-semibold text-[#111827] transition-all cursor-pointer outline-hidden shadow-2xs"
                   >
                     {doctorDepartments.map((dept) => (
                       <option key={dept} value={dept}>
-                        {dept}
+                        {translateSpecialty(dept)}
                       </option>
                     ))}
                   </select>
-                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-[#6B7280]">
+                  <div className="absolute inset-y-0 right-0 pr-3.5 rtl:right-auto rtl:left-0 rtl:pr-0 rtl:pl-3.5 flex items-center pointer-events-none text-[#6B7280]">
                     <ChevronDown className="w-4 h-4" />
                   </div>
                 </div>
                 <p className="text-[11px] text-[#6B7280] mt-1.5">
-                  Showing departments offered by {doctor.name}.
+                  {t('booking.showingDepartments', { name: doctor.name })}
                 </p>
               </div>
 
@@ -713,7 +714,7 @@ export const BookingPage: React.FC = () => {
                 <div className="flex items-center justify-between mb-2.5">
                   <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
                     <Calendar className="w-4 h-4 text-[#008B74]" />
-                    <span>Select Consultation Date</span>
+                    <span>{t('booking.selectDate')}</span>
                   </label>
                   <span className="text-[11px] text-[#6B7280] font-medium">
                     {selectedDateObj.fullDisplay}
@@ -753,10 +754,10 @@ export const BookingPage: React.FC = () => {
                 <div className="flex items-center justify-between mb-2.5">
                   <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
                     <Clock className="w-4 h-4 text-[#008B74]" />
-                    <span>Select 30-Minute Slot</span>
+                    <span>{t('booking.selectTime')}</span>
                   </label>
                   <span className="text-xs font-bold text-[#008B74]">
-                    Selected Slot: {selectedSlot}
+                    {t('booking.selectedSlotLabel')}: {selectedSlot}
                   </span>
                 </div>
 
@@ -788,24 +789,24 @@ export const BookingPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
                     <User className="w-4 h-4 text-[#008B74]" />
-                    <span>Patient Contact Information</span>
+                    <span>{t('booking.patientInfoTitle')}</span>
                   </h3>
                   <span className="text-[11px] text-[#6B7280]">
-                    * Required fields
+                    * {t('common.required', 'Required fields')}
                   </span>
                 </div>
 
                 {/* Patient Full Name */}
                 <div>
                   <label className="block text-[11px] font-bold text-[#374151] mb-1.5">
-                    Patient Full Name *
+                    {t('booking.fullName')} *
                   </label>
                   <div className="bg-[#FAF9F5] hover:bg-white focus-within:bg-white rounded-2xl border border-[#E5DFCD] focus-within:border-[#008B74] focus-within:ring-2 focus-within:ring-[#008B74]/20 px-4 py-3 flex items-center transition-all">
-                    <User className="w-4 h-4 text-[#6B7280] mr-2.5 shrink-0" />
+                    <User className="w-4 h-4 text-[#6B7280] mr-2.5 rtl:mr-0 rtl:ml-2.5 shrink-0" />
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Ahmed Al Mansoori"
+                      placeholder={t('booking.fullNamePlaceholder')}
                       value={patientName}
                       onChange={(e) => setPatientName(e.target.value)}
                       className="w-full bg-transparent text-xs sm:text-sm text-[#111827] focus:outline-hidden font-medium placeholder:text-[#9CA3AF]"
@@ -816,7 +817,7 @@ export const BookingPage: React.FC = () => {
                 {/* Patient Mobile with Country Code */}
                 <div>
                   <label className="block text-[11px] font-bold text-[#374151] mb-1.5">
-                    Mobile Number (for SMS &amp; Clinic Confirmation) *
+                    {t('booking.mobileNumber')} *
                   </label>
                   <div className="flex gap-2">
                     <div className="relative w-32 shrink-0">
@@ -832,15 +833,15 @@ export const BookingPage: React.FC = () => {
                         <option value="+44">+44 (UK)</option>
                         <option value="+1">+1 (US)</option>
                       </select>
-                      <ChevronDown className="w-3.5 h-3.5 text-[#6B7280] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <ChevronDown className="w-3.5 h-3.5 text-[#6B7280] absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
 
                     <div className="flex-1 bg-[#FAF9F5] hover:bg-white focus-within:bg-white rounded-2xl border border-[#E5DFCD] focus-within:border-[#008B74] focus-within:ring-2 focus-within:ring-[#008B74]/20 px-4 py-3 flex items-center transition-all">
-                      <Phone className="w-4 h-4 text-[#6B7280] mr-2.5 shrink-0" />
+                      <Phone className="w-4 h-4 text-[#6B7280] mr-2.5 rtl:mr-0 rtl:ml-2.5 shrink-0" />
                       <input
                         type="tel"
                         required
-                        placeholder="52 412 2794"
+                        placeholder={t('booking.mobilePlaceholder')}
                         value={mobileNumber}
                         onChange={(e) => setMobileNumber(e.target.value)}
                         className="w-full bg-transparent text-xs sm:text-sm text-[#111827] focus:outline-hidden font-medium placeholder:text-[#9CA3AF]"
@@ -852,13 +853,13 @@ export const BookingPage: React.FC = () => {
                 {/* Email (Optional) */}
                 <div>
                   <label className="block text-[11px] font-bold text-[#374151] mb-1.5">
-                    Email Address <span className="text-[#6B7280] font-normal">(Optional, for calendar invite)</span>
+                    {t('booking.email')} <span className="text-[#6B7280] font-normal">({t('common.optional', 'Optional')})</span>
                   </label>
                   <div className="bg-[#FAF9F5] hover:bg-white focus-within:bg-white rounded-2xl border border-[#E5DFCD] focus-within:border-[#008B74] focus-within:ring-2 focus-within:ring-[#008B74]/20 px-4 py-3 flex items-center transition-all">
-                    <Mail className="w-4 h-4 text-[#6B7280] mr-2.5 shrink-0" />
+                    <Mail className="w-4 h-4 text-[#6B7280] mr-2.5 rtl:mr-0 rtl:ml-2.5 shrink-0" />
                     <input
                       type="email"
-                      placeholder="name@example.com"
+                      placeholder={t('booking.emailPlaceholder')}
                       value={patientEmail}
                       onChange={(e) => setPatientEmail(e.target.value)}
                       className="w-full bg-transparent text-xs sm:text-sm text-[#111827] focus:outline-hidden font-medium placeholder:text-[#9CA3AF]"
@@ -871,9 +872,9 @@ export const BookingPage: React.FC = () => {
               <div className="bg-[#E6F4F1] border border-[#B2E2D9] rounded-2xl p-4 flex items-start gap-3 text-xs text-[#284E46]">
                 <ShieldCheck className="w-5 h-5 text-[#008B74] mt-0.5 shrink-0" />
                 <div className="space-y-0.5">
-                  <span className="font-bold text-[#008B74] block">Zero Upfront Online Payment</span>
+                  <span className="font-bold text-[#008B74] block">{t('booking.zeroUpfrontPayment')}</span>
                   <p className="leading-relaxed">
-                    MeetAdr appointments are 100% in-person clinic consultations. Consultation fees or insurance copays are settled directly at the hospital reception upon arrival.
+                    {t('booking.zeroUpfrontDesc')}
                   </p>
                 </div>
               </div>
@@ -888,7 +889,7 @@ export const BookingPage: React.FC = () => {
                   className="mt-0.5 rounded-sm border-[#E5DFCD] text-[#008B74] focus:ring-[#008B74] cursor-pointer"
                 />
                 <label htmlFor="termsCheckbox" className="text-xs text-[#4B5563] cursor-pointer leading-snug">
-                  I have read the provisions of the Terms and Conditions and accept them as binding on me.
+                  {t('booking.termsText')}
                 </label>
               </div>
 
@@ -897,7 +898,7 @@ export const BookingPage: React.FC = () => {
                 <div className="flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-2xl">
                   <LogIn className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
                   <p className="text-[11px] text-amber-800 leading-snug">
-                    <strong>Sign in required to confirm.</strong> You've filled all details — clicking Book will show a quick sign-in step, then complete your booking automatically.
+                    {t('booking.signInRequiredNotice')}
                   </p>
                 </div>
               )}
@@ -916,24 +917,24 @@ export const BookingPage: React.FC = () => {
                   {isSubmitting ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Confirming with Hospital...</span>
+                      <span>{t('booking.confirmingWithHospital')}</span>
                     </>
                   ) : !isAuthenticated && isFormValid ? (
                     <>
                       <LogIn className="w-4 h-4" />
-                      <span>Sign In & Book Appointment</span>
+                      <span>{t('booking.signInAndBook')}</span>
                     </>
                   ) : (
                     <>
-                      <span>Book Appointment</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>{t('booking.confirmAndBook')}</span>
+                      <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                     </>
                   )}
                 </button>
 
                 {!isFormValid && (
                   <p className="text-center text-[11px] text-[#6B7280] mt-2">
-                    Please fill patient name and mobile number to proceed.
+                    {t('booking.fillRequiredNotice')}
                   </p>
                 )}
               </div>
@@ -948,7 +949,7 @@ export const BookingPage: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 border border-[#E5DFCD] shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-[#111827]">CMC Hospital Dubai Location</h3>
+              <h3 className="text-base font-bold text-[#111827]">{t('booking.hospitalLocation')}</h3>
               <button
                 onClick={() => setShowMapModal(false)}
                 className="text-[#6B7280] hover:text-[#111827] p-1 cursor-pointer"
@@ -967,7 +968,7 @@ export const BookingPage: React.FC = () => {
             </div>
 
             <p className="text-xs text-[#4B5563]">
-              Address: Dubai Healthcare City Phase 2 - Al Jaddaf - Dubai, UAE
+              {t('booking.address')}: Dubai Healthcare City Phase 2 - Al Jaddaf - Dubai, UAE
             </p>
 
             <button
@@ -975,7 +976,7 @@ export const BookingPage: React.FC = () => {
               onClick={() => setShowMapModal(false)}
               className="w-full py-2.5 bg-[#008B74] hover:bg-[#007461] text-white text-xs font-bold rounded-xl cursor-pointer transition-colors"
             >
-              Close
+              {t('booking.close')}
             </button>
           </div>
         </div>

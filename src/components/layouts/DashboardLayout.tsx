@@ -11,12 +11,12 @@ import {
   UserCheck,
   ClipboardList,
   ChevronRight,
-  Shield,
-  Clock,
   ExternalLink,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
+import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
@@ -38,11 +38,20 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { t, isRTL, isArabic } = useTranslation();
 
   const handleLogout = async () => {
     await logout();
-    showToast('Signed out successfully.', 'info');
+    showToast(t('auth.logoutSuccess'), 'info');
     navigate('/login');
+  };
+
+  const getPortalLabel = (role?: string) => {
+    if (role === 'patient') return isArabic ? 'بوابة المريض' : 'Patient Portal';
+    if (role === 'doctor') return isArabic ? 'بوابة الطبيب' : 'Doctor Portal';
+    if (role === 'hospital') return isArabic ? 'بوابة المستشفى والعيادة' : 'Hospital Portal';
+    if (role === 'admin') return isArabic ? 'بوابة الإدارة' : 'Admin Portal';
+    return isArabic ? 'بوابة النظام' : 'Portal';
   };
 
   const getNavItems = () => {
@@ -50,40 +59,40 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
     if (user.role === 'patient') {
       return [
-        { name: 'Overview', path: '/patient/dashboard', icon: LayoutDashboard },
-        { name: 'My Bookings', path: '/patient/bookings', icon: Calendar },
-        { name: 'Find Doctors', path: '/doctors', icon: Stethoscope },
-        { name: 'Hospitals & Clinics', path: '/hospitals', icon: Building2 },
+        { name: t('navigation.overview'), path: '/patient/dashboard', icon: LayoutDashboard },
+        { name: t('navigation.myBookings'), path: '/patient/bookings', icon: Calendar },
+        { name: t('navigation.findDoctor'), path: '/doctors', icon: Stethoscope },
+        { name: t('navigation.hospitals'), path: '/hospitals', icon: Building2 },
       ];
     }
 
     if (user.role === 'doctor') {
       return [
-        { name: 'Doctor Dashboard', path: '/doctor/dashboard', icon: LayoutDashboard },
-        { name: 'Weekly Schedule', path: '/doctor/schedule', icon: Calendar },
-        { name: 'Patient Directory', path: '/doctor/patients', icon: Users },
-        { name: 'Find Providers', path: '/search', icon: Stethoscope },
+        { name: t('navigation.doctorDashboard'), path: '/doctor/dashboard', icon: LayoutDashboard },
+        { name: t('navigation.weeklySchedule'), path: '/doctor/schedule', icon: Calendar },
+        { name: t('navigation.patientDirectory'), path: '/doctor/patients', icon: Users },
+        { name: t('navigation.findDoctor'), path: '/search', icon: Stethoscope },
       ];
     }
 
     if (user.role === 'hospital') {
       return [
-        { name: 'Hospital Overview', path: '/hospital/dashboard', icon: LayoutDashboard },
-        { name: 'Doctors Roster', path: '/hospital/doctors', icon: Stethoscope },
-        { name: 'Departments', path: '/hospital/departments', icon: Building2 },
-        { name: 'Facility Settings', path: '/hospital/settings', icon: Users },
+        { name: t('navigation.hospitalDashboard'), path: '/hospital/dashboard', icon: LayoutDashboard },
+        { name: t('navigation.doctorsRoster'), path: '/hospital/doctors', icon: Stethoscope },
+        { name: t('navigation.departments'), path: '/hospital/departments', icon: Building2 },
+        { name: t('navigation.facilitySettings'), path: '/hospital/settings', icon: Users },
       ];
     }
 
     if (user.role === 'admin') {
       return [
-        { name: 'Admin Overview', path: '/admin/dashboard', icon: LayoutDashboard },
-        { name: 'Doctors Verification', path: '/admin/doctors', icon: Stethoscope },
-        { name: 'Providers Directory', path: '/admin/providers', icon: Building2 },
-        { name: 'Bookings Registry', path: '/admin/bookings', icon: Calendar },
-        { name: 'Patient Waitlist', path: '/admin/waitlist', icon: ClipboardList },
-        { name: 'Provider Requests', path: '/admin/requests', icon: UserCheck },
-        { name: 'Analytical Reports', path: '/admin/reports', icon: BarChart3 },
+        { name: t('navigation.adminDashboard'), path: '/admin/dashboard', icon: LayoutDashboard },
+        { name: t('navigation.doctorsVerification'), path: '/admin/doctors', icon: Stethoscope },
+        { name: t('navigation.providersDirectory'), path: '/admin/providers', icon: Building2 },
+        { name: t('navigation.bookingsRegistry'), path: '/admin/bookings', icon: Calendar },
+        { name: t('navigation.patientWaitlist'), path: '/admin/waitlist', icon: ClipboardList },
+        { name: t('navigation.providerRequests'), path: '/admin/requests', icon: UserCheck },
+        { name: t('navigation.analyticalReports'), path: '/admin/reports', icon: BarChart3 },
       ];
     }
 
@@ -95,17 +104,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row selection:bg-teal-100 selection:text-teal-900 overflow-x-clip w-full max-w-full">
       {/* ── SIDEBAR NAVIGATION ── */}
-      <aside className="w-full md:w-64 bg-white border-r border-slate-200 shrink-0 flex flex-col">
+      <aside className="w-full md:w-64 bg-white border-r rtl:border-r-0 rtl:border-l border-slate-200 shrink-0 flex flex-col">
         {/* User Card */}
         <div className="p-5 border-b border-slate-200 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-base border border-teal-200 shadow-2xs">
+          <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-base border border-teal-200 shadow-2xs shrink-0">
             {user?.name.charAt(0) || 'U'}
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-slate-900 truncate">{user?.name}</p>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="capitalize text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full">
-                {user?.role} Portal
+              <span className="capitalize text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full truncate">
+                {getPortalLabel(user?.role)}
               </span>
             </div>
           </div>
@@ -126,9 +135,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                <span className="flex-1">{item.name}</span>
-                {isActive && <ChevronRight className="w-3.5 h-3.5 opacity-80" />}
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                <span className="flex-1 truncate">{item.name}</span>
+                {isActive && <ChevronRight className="w-3.5 h-3.5 opacity-80 shrink-0 rtl:rotate-180" />}
               </Link>
             );
           })}
@@ -140,23 +149,23 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             to="/"
             className="flex items-center gap-2.5 w-full px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
           >
-            <ExternalLink className="w-3.5 h-3.5" />
-            <span>Public Website</span>
+            <ExternalLink className="w-3.5 h-3.5 shrink-0 rtl:rotate-180" />
+            <span>{t('navigation.publicWebsite')}</span>
           </Link>
           <button
             type="button"
             onClick={handleLogout}
             className="flex items-center gap-2.5 w-full px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
           >
-            <LogOut className="w-4 h-4" />
-            <span>Sign Out</span>
+            <LogOut className="w-4 h-4 shrink-0 rtl:rotate-180" />
+            <span>{t('navigation.signOut')}</span>
           </button>
         </div>
       </aside>
 
       {/* ── MAIN CONTENT AREA ── */}
       <div className="flex-1 min-w-0 flex flex-col">
-        {/* Top Header Bar with Sign Out Button for all Dashboards */}
+        {/* Top Header Bar with Language Switcher & Sign Out Button */}
         <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between shadow-2xs">
           <div className="flex items-center gap-3">
             <Link to="/" className="text-base font-black tracking-tight text-slate-900 hover:text-teal-700 transition-colors">
@@ -164,17 +173,20 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </Link>
             <span className="text-slate-300">/</span>
             <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200 capitalize">
-              {user?.role} Portal
+              {getPortalLabel(user?.role)}
             </span>
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Language Switcher Button (Single button toggle) */}
+            <LanguageSwitcher variant="header" />
+
             <Link
               to="/"
               className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition-colors"
             >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>View Site</span>
+              <ExternalLink className="w-3.5 h-3.5 rtl:rotate-180" />
+              <span>{t('navigation.viewSite')}</span>
             </Link>
 
             <div className="w-px h-5 bg-slate-200 hidden sm:block" />
@@ -192,10 +204,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <button
               type="button"
               onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-all shadow-2xs cursor-pointer ml-1"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-all shadow-2xs cursor-pointer ml-1 rtl:ml-0 rtl:mr-1"
             >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Sign Out</span>
+              <LogOut className="w-3.5 h-3.5 rtl:rotate-180" />
+              <span>{t('navigation.signOut')}</span>
             </button>
           </div>
         </header>

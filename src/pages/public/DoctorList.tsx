@@ -18,8 +18,10 @@ import {
 import { doctorService } from '../../services/doctorService';
 import { Doctor } from '../../types';
 import { SPECIALTIES, LOCATIONS } from '../../data/mockSpecialties';
+import { useTranslation } from '../../i18n';
 
 export const DoctorList: React.FC = () => {
+  const { t, translateSpecialty, translateLocation } = useTranslation();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [specialty, setSpecialty] = useState('All');
@@ -52,8 +54,8 @@ export const DoctorList: React.FC = () => {
 
   const popularLocationSuggestions = [
     { id: 'All', label: 'All UAE' },
-    { id: 'Al Jaddaf', label: 'Al Jaddaf (CMC)' },
-    { id: 'Healthcare City', label: 'DHCC' },
+    { id: 'Al Jaddaf', label: 'Al Jaddaf' },
+    { id: 'Healthcare City', label: 'Healthcare City' },
     { id: 'Downtown', label: 'Downtown' },
     { id: 'Jumeirah', label: 'Jumeirah' },
     { id: 'Deira', label: 'Deira' },
@@ -88,13 +90,13 @@ export const DoctorList: React.FC = () => {
         <div className="space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-xs font-bold text-teal-800">
             <Stethoscope className="w-3.5 h-3.5 text-teal-600" />
-            <span>Verified Medical Specialists</span>
+            <span>{t('doctors.verifiedBadge')}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            Find & Book Hospital Doctors
+            {t('doctors.pageTitle')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 max-w-2xl">
-            Browse certified physicians across Dubai and the UAE with guaranteed 30-minute in-person consultation slots.
+            {t('doctors.pageDesc')}
           </p>
         </div>
 
@@ -103,19 +105,19 @@ export const DoctorList: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
             {/* Search Input */}
             <div className="sm:col-span-6 relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-3.5" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by doctor name, specialty, or clinic..."
-                className="w-full pl-10 pr-4 py-2.5 text-xs font-medium border border-slate-200 rounded-xl text-slate-900 focus:outline-hidden focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 bg-slate-50/50 focus:bg-white transition-all"
+                placeholder={t('doctors.searchPlaceholder')}
+                className="w-full pl-10 rtl:pl-4 rtl:pr-10 pr-4 py-2.5 text-xs font-medium border border-slate-200 rounded-xl text-slate-900 focus:outline-hidden focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 bg-slate-50/50 focus:bg-white transition-all"
               />
               {search && (
                 <button
                   type="button"
                   onClick={() => setSearch('')}
-                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
+                  className="absolute right-3 rtl:right-auto rtl:left-3 top-3 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -129,10 +131,10 @@ export const DoctorList: React.FC = () => {
                 onChange={(e) => setSpecialty(e.target.value)}
                 className="w-full py-2.5 px-3 text-xs font-bold border border-slate-200 rounded-xl text-slate-800 focus:outline-hidden focus:border-teal-500 bg-slate-50/50 focus:bg-white transition-colors cursor-pointer"
               >
-                <option value="All">All Specialties</option>
+                <option value="All">{t('doctors.allSpecialties')}</option>
                 {SPECIALTIES.map((s) => (
                   <option key={s} value={s}>
-                    {s}
+                    {translateSpecialty(s)}
                   </option>
                 ))}
               </select>
@@ -145,10 +147,10 @@ export const DoctorList: React.FC = () => {
                 onChange={(e) => setLocation(e.target.value)}
                 className="w-full py-2.5 px-3 text-xs font-bold border border-slate-200 rounded-xl text-slate-800 focus:outline-hidden focus:border-teal-500 bg-slate-50/50 focus:bg-white transition-colors cursor-pointer"
               >
-                <option value="All">All UAE Locations</option>
+                <option value="All">{t('doctors.allLocations')}</option>
                 {LOCATIONS.map((l) => (
                   <option key={l} value={l.split('-')[0].trim()}>
-                    {l}
+                    {translateLocation(l)}
                   </option>
                 ))}
               </select>
@@ -159,7 +161,9 @@ export const DoctorList: React.FC = () => {
           <div className="pt-2 border-t border-slate-100 space-y-2">
             {/* Suggested Specialties */}
             <div className="flex items-center gap-1.5 flex-wrap text-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">Specialty:</span>
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 rtl:mr-0 rtl:ml-1">
+                {t('doctors.specialtyFilterLabel')}
+              </span>
               {popularSpecialtySuggestions.map((spec) => (
                 <button
                   key={spec}
@@ -171,14 +175,16 @@ export const DoctorList: React.FC = () => {
                       : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200/80'
                   }`}
                 >
-                  {spec}
+                  {spec === 'All' ? t('common.all') : translateSpecialty(spec)}
                 </button>
               ))}
             </div>
 
             {/* Suggested Locations */}
             <div className="flex items-center gap-1.5 flex-wrap text-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">Area:</span>
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 rtl:mr-0 rtl:ml-1">
+                {t('doctors.areaFilterLabel')}
+              </span>
               {popularLocationSuggestions.map((loc) => (
                 <button
                   key={loc.id}
@@ -190,7 +196,7 @@ export const DoctorList: React.FC = () => {
                       : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200/80'
                   }`}
                 >
-                  {loc.label}
+                  {loc.id === 'All' ? t('home.allUae') : translateLocation(loc.label)}
                 </button>
               ))}
             </div>
@@ -200,7 +206,7 @@ export const DoctorList: React.FC = () => {
         {/* Results Counter */}
         <div className="flex items-center justify-between text-xs text-slate-500 font-medium px-1">
           <span>
-            Showing <strong className="text-slate-900 font-bold">{filtered.length}</strong> accredited doctors
+            {t('doctors.showingAccredited', { count: filtered.length })}
           </span>
           {(specialty !== 'All' || location !== 'All' || search) && (
             <button
@@ -212,7 +218,7 @@ export const DoctorList: React.FC = () => {
               }}
               className="text-teal-600 font-bold hover:underline cursor-pointer"
             >
-              Reset all filters
+              {t('doctors.resetFilters')}
             </button>
           )}
         </div>
@@ -221,16 +227,16 @@ export const DoctorList: React.FC = () => {
         {isLoading ? (
           <div className="py-20 text-center bg-white rounded-3xl border border-slate-200 p-12 shadow-xs">
             <div className="w-9 h-9 border-3 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-xs font-bold text-slate-500">Finding available physicians...</p>
+            <p className="text-xs font-bold text-slate-500">{t('doctors.findingPhysicians')}</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center max-w-md mx-auto shadow-xs space-y-3">
             <div className="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
               <Stethoscope className="w-7 h-7" />
             </div>
-            <h3 className="text-base font-bold text-slate-900">No doctors match your criteria</h3>
+            <h3 className="text-base font-bold text-slate-900">{t('doctors.noDoctorsFound')}</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Try adjusting your specialty, selected location, or search keywords.
+              {t('doctors.noDoctorsDesc')}
             </p>
             <button
               onClick={() => {
@@ -240,7 +246,7 @@ export const DoctorList: React.FC = () => {
               }}
               className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs"
             >
-              Reset Filters
+              {t('doctors.resetFiltersBtn')}
             </button>
           </div>
         ) : (
@@ -262,16 +268,16 @@ export const DoctorList: React.FC = () => {
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
                     />
-                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-full text-xs font-bold text-slate-900 shadow-xs flex items-center gap-1 border border-slate-200">
+                    <div className="absolute top-3 right-3 rtl:right-auto rtl:left-3 bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-full text-xs font-bold text-slate-900 shadow-xs flex items-center gap-1 border border-slate-200">
                       <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                       <span>{doc.rating}</span>
                       <span className="text-slate-400 text-[10px] font-normal">({doc.reviewCount || 98})</span>
                     </div>
 
                     {/* Live Next Slot badge */}
-                    <div className="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur-xs px-2.5 py-1 rounded-full text-[10px] font-bold text-white flex items-center gap-1.5">
+                    <div className="absolute bottom-3 left-3 rtl:left-auto rtl:right-3 bg-slate-900/80 backdrop-blur-xs px-2.5 py-1 rounded-full text-[10px] font-bold text-white flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>Next Slot: Today at 10:30 AM</span>
+                      <span>{t('doctors.nextSlotToday')}</span>
                     </div>
                   </div>
 
@@ -279,7 +285,7 @@ export const DoctorList: React.FC = () => {
                   <div className="p-5 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-bold text-teal-700 bg-teal-50 border border-teal-200 px-2.5 py-0.5 rounded-full">
-                        {doc.specialty}
+                        {translateSpecialty(doc.specialty)}
                       </span>
                       <span className="text-xs text-slate-400 font-medium">
                         {doc.experience}
@@ -297,7 +303,7 @@ export const DoctorList: React.FC = () => {
 
                     <p className="text-xs text-slate-500 flex items-center gap-1.5">
                       <MapPin className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                      <span className="truncate">{doc.location}</span>
+                      <span className="truncate">{translateLocation(doc.location)}</span>
                     </p>
 
                     <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed pt-1">
@@ -310,16 +316,16 @@ export const DoctorList: React.FC = () => {
                 <div className="p-5 pt-0">
                   <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-medium">Fee</span>
-                      <span className="text-xs font-black text-slate-900">AED {doc.consultationFee || 350}</span>
+                      <span className="text-[10px] text-slate-400 block font-medium">{t('doctors.fee')}</span>
+                      <span className="text-xs font-black text-slate-900">{t('common.aed')} {doc.consultationFee || 350}</span>
                     </div>
 
                     <Link
                       to={`/book/doctor/${doc.id}`}
                       className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs shadow-teal-600/20 cursor-pointer"
                     >
-                      <span>Book Appointment</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <span>{t('doctors.bookAppointment')}</span>
+                      <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
                     </Link>
                   </div>
                 </div>

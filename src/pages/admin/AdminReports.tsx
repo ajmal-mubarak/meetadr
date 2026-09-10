@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { FileBarChart, Download, Calendar, ArrowUpRight } from 'lucide-react';
 import { reportService } from '../../services/reportService';
 import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
 
 export const AdminReports: React.FC = () => {
   const { showToast } = useToast();
+  const { t, isRTL, isArabic, translateSpecialty } = useTranslation();
   const [data, setData] = useState<{
     byDoctor: { name: string; count: number }[];
     bySpecialty: { specialty: string; count: number }[];
@@ -36,14 +38,14 @@ export const AdminReports: React.FC = () => {
     a.href = url;
     a.download = `meetadr-analytics-report-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
-    showToast('Analytics summary exported.', 'success');
+    showToast(t('adminPortal.exportSuccess'), 'success');
   };
 
   if (isLoading || !data) {
     return (
       <div className="py-16 text-center">
         <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-xs text-slate-500">Aggregating analytical reports...</p>
+        <p className="text-xs text-slate-500">{t('adminPortal.aggregatingReports')}</p>
       </div>
     );
   }
@@ -57,18 +59,18 @@ export const AdminReports: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Healthcare Operational Reports</h1>
+          <h1 className="text-2xl font-bold text-slate-900">{t('adminPortal.reportsTitle')}</h1>
           <p className="text-xs text-slate-500 mt-1">
-            Breakdown of consultations across doctor specialties, clinical institutions, and time periods.
+            {t('adminPortal.reportsSubtitle')}
           </p>
         </div>
 
         <button
           onClick={handleDownload}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 shrink-0"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer"
         >
           <Download className="w-4 h-4" />
-          <span>Export Analytics</span>
+          <span>{t('adminPortal.exportJson')}</span>
         </button>
       </div>
 
@@ -76,34 +78,34 @@ export const AdminReports: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            Daily Visits
+            {t('adminPortal.daily')}
           </span>
           <div className="text-3xl font-extrabold text-slate-900 mt-2">{data.summary.daily}</div>
-          <p className="text-[11px] text-slate-400 mt-1">Scheduled today</p>
+          <p className="text-[11px] text-slate-400 mt-1">{t('hospitalPortal.today')}</p>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            Weekly Volume
+            {t('adminPortal.weekly')}
           </span>
           <div className="text-3xl font-extrabold text-blue-600 mt-2">{data.summary.weekly}</div>
-          <p className="text-[11px] text-slate-400 mt-1">Last 7 rolling days</p>
+          <p className="text-[11px] text-slate-400 mt-1">{isArabic ? 'آخر 7 أيام' : 'Last 7 rolling days'}</p>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            Monthly Volume
+            {t('adminPortal.monthly')}
           </span>
           <div className="text-3xl font-extrabold text-emerald-600 mt-2">{data.summary.monthly}</div>
-          <p className="text-[11px] text-slate-400 mt-1">Current calendar month</p>
+          <p className="text-[11px] text-slate-400 mt-1">{isArabic ? 'الشهر الحالي' : 'Current calendar month'}</p>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            All-Time Total
+            {t('adminPortal.totalConsultations')}
           </span>
           <div className="text-3xl font-extrabold text-slate-900 mt-2">{data.summary.total}</div>
-          <p className="text-[11px] text-slate-400 mt-1">Cumulative bookings</p>
+          <p className="text-[11px] text-slate-400 mt-1">{t('adminPortal.allTimeVisits')}</p>
         </div>
       </div>
 
@@ -111,15 +113,15 @@ export const AdminReports: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Appointments by Specialty */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-          <h3 className="text-base font-bold text-slate-900">Appointments by Specialty</h3>
+          <h3 className="text-base font-bold text-slate-900">{t('adminPortal.topSpecialties')}</h3>
           <div className="space-y-3">
             {data.bySpecialty.map((item) => {
               const pct = Math.round((item.count / maxSpecialty) * 100);
               return (
                 <div key={item.specialty} className="space-y-1">
                   <div className="flex justify-between text-xs font-semibold text-slate-700">
-                    <span>{item.specialty}</span>
-                    <span className="text-blue-600">{item.count} appointments</span>
+                    <span>{translateSpecialty(item.specialty)}</span>
+                    <span className="text-blue-600">{item.count} {t('hospitalPortal.bookings')}</span>
                   </div>
                   <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                     <div
@@ -135,7 +137,7 @@ export const AdminReports: React.FC = () => {
 
         {/* Appointments by Facility */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-          <h3 className="text-base font-bold text-slate-900">Appointments by Facility</h3>
+          <h3 className="text-base font-bold text-slate-900">{t('adminPortal.facilityBreakdown')}</h3>
           <div className="space-y-3">
             {data.byHospital.map((item) => {
               const pct = Math.round((item.count / maxHospital) * 100);
@@ -143,7 +145,7 @@ export const AdminReports: React.FC = () => {
                 <div key={item.facility} className="space-y-1">
                   <div className="flex justify-between text-xs font-semibold text-slate-700">
                     <span className="truncate max-w-[200px]">{item.facility}</span>
-                    <span className="text-emerald-600">{item.count} appointments</span>
+                    <span className="text-emerald-600">{item.count} {t('hospitalPortal.bookings')}</span>
                   </div>
                   <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                     <div
@@ -159,7 +161,7 @@ export const AdminReports: React.FC = () => {
 
         {/* Appointments by Doctor (Full width) */}
         <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-          <h3 className="text-base font-bold text-slate-900">Appointments by Practitioner</h3>
+          <h3 className="text-base font-bold text-slate-900">{t('adminPortal.activeDoctors')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {data.byDoctor.map((item) => {
               const pct = Math.round((item.count / maxDoctor) * 100);

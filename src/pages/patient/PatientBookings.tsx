@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
 import { bookingService } from '../../services/bookingService';
 import { Appointment } from '../../types';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -33,10 +34,13 @@ interface ReviewModalProps {
 }
 
 const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmit }) => {
+  const { t, translateSpecialty, isArabic } = useTranslation();
   const [rating, setRating] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [comment, setComment] = useState('');
-  const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+  const labels = isArabic
+    ? ['', 'ضعيف', 'مقبول', 'جيد', 'جيد جداً', 'ممتاز']
+    : ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
@@ -47,8 +51,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
               <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-900">Rate Your Clinical Visit</h3>
-              <p className="text-[11px] text-slate-500">Post-visit verification feedback</p>
+              <h3 className="text-base font-bold text-slate-900">{t('patientPortal.rateVisitModalTitle')}</h3>
+              <p className="text-[11px] text-slate-500">{t('patientPortal.rateVisitModalSubtitle')}</p>
             </div>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
@@ -65,13 +69,13 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
           />
           <div className="truncate">
             <p className="text-sm font-bold text-slate-900 truncate">{appointment.doctorName}</p>
-            <p className="text-xs text-teal-700 font-semibold">{appointment.specialty}</p>
+            <p className="text-xs text-teal-700 font-semibold">{translateSpecialty(appointment.specialty)}</p>
             <p className="text-[11px] text-slate-500 truncate">{appointment.facilityName || appointment.hospitalName}</p>
           </div>
         </div>
 
         <div className="text-center space-y-2">
-          <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">How was your doctor consultation?</p>
+          <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t('patientPortal.rateExperience')}</p>
           <div className="flex items-center justify-center gap-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -94,7 +98,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="Share your experience — consultation quality, wait time, facility cleanliness..."
+          placeholder={t('patientPortal.sharePlaceholder')}
           rows={3}
           className="w-full text-xs border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 resize-none text-slate-700 placeholder:text-slate-400 transition-all"
         />
@@ -105,7 +109,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
           >
-            Skip
+            {t('patientPortal.skipForNow')}
           </button>
           <button
             type="button"
@@ -118,7 +122,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
             }`}
           >
             <Star className="w-3.5 h-3.5" />
-            Submit Review
+            {t('patientPortal.submitReview')}
           </button>
         </div>
       </div>
@@ -131,6 +135,7 @@ export const PatientBookings: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const { t, translateSpecialty, isRTL, isArabic } = useTranslation();
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [filterStatus, setFilterStatus] = useState<'all' | 'confirmed' | 'completed' | 'cancelled'>('all');
@@ -156,11 +161,11 @@ export const PatientBookings: React.FC = () => {
     if (!cancellingAppt) return;
     try {
       await bookingService.cancelAppointment(cancellingAppt.id, reason, 'patient', user?.name || 'Patient');
-      showToast('Appointment successfully cancelled.', 'info');
+      showToast(isArabic ? 'تم إلغاء الموعد بنجاح.' : 'Appointment successfully cancelled.', 'info');
       setCancellingAppt(null);
       loadData();
     } catch (err: any) {
-      showToast(err.message || 'Failed to cancel appointment', 'error');
+      showToast(err.message || (isArabic ? 'فشل إلغاء الموعد' : 'Failed to cancel appointment'), 'error');
     }
   };
 
@@ -168,7 +173,12 @@ export const PatientBookings: React.FC = () => {
     if (!reviewingAppt) return;
     setReviewedIds((prev) => new Set([...prev, reviewingAppt.id]));
     setReviewingAppt(null);
-    showToast(`${rating}★ review submitted for ${reviewingAppt.doctorName}. Thank you!`, 'success');
+    showToast(
+      isArabic
+        ? `تم إرسال تقييم ${rating}★ للدكتور ${reviewingAppt.doctorName}. شكراً لك!`
+        : `${rating}★ review submitted for ${reviewingAppt.doctorName}. Thank you!`,
+      'success'
+    );
   };
 
   // Counts
@@ -202,13 +212,13 @@ export const PatientBookings: React.FC = () => {
         <div className="space-y-1">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200/80 text-xs font-bold text-teal-800">
             <Calendar className="w-3.5 h-3.5 text-teal-600" />
-            <span>Consultation Registry</span>
+            <span>{t('patientBookings.registryBadge')}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            My Appointments & Visits
+            {t('patientBookings.pageTitle')}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500">
-            Manage your hospital appointments, access digital prescriptions, and schedule follow-ups.
+            {t('patientBookings.pageSubtitle')}
           </p>
         </div>
 
@@ -217,7 +227,7 @@ export const PatientBookings: React.FC = () => {
           className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl text-xs font-bold shadow-xs transition-all shrink-0 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Book New Appointment</span>
+          <span>{t('patientBookings.bookNew')}</span>
         </Link>
       </div>
 
@@ -226,27 +236,27 @@ export const PatientBookings: React.FC = () => {
         <button
           type="button"
           onClick={() => setFilterStatus('all')}
-          className={`p-4 rounded-2xl border transition-all text-left cursor-pointer ${
+          className={`p-4 rounded-2xl border transition-all text-left rtl:text-right cursor-pointer ${
             filterStatus === 'all'
               ? 'bg-white border-teal-500 ring-2 ring-teal-500/20 shadow-xs'
               : 'bg-white border-slate-200 hover:border-slate-300'
           }`}
         >
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Bookings</p>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('patientBookings.totalBookings')}</p>
           <p className="text-2xl font-black text-slate-900 mt-1">{counts.all}</p>
         </button>
 
         <button
           type="button"
           onClick={() => setFilterStatus('confirmed')}
-          className={`p-4 rounded-2xl border transition-all text-left cursor-pointer ${
+          className={`p-4 rounded-2xl border transition-all text-left rtl:text-right cursor-pointer ${
             filterStatus === 'confirmed'
               ? 'bg-white border-teal-500 ring-2 ring-teal-500/20 shadow-xs'
               : 'bg-white border-slate-200 hover:border-slate-300'
           }`}
         >
           <div className="flex items-center justify-between">
-            <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Upcoming Visits</p>
+            <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">{t('patientBookings.upcomingVisits')}</p>
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           </div>
           <p className="text-2xl font-black text-emerald-700 mt-1">{counts.confirmed}</p>
@@ -255,26 +265,26 @@ export const PatientBookings: React.FC = () => {
         <button
           type="button"
           onClick={() => setFilterStatus('completed')}
-          className={`p-4 rounded-2xl border transition-all text-left cursor-pointer ${
+          className={`p-4 rounded-2xl border transition-all text-left rtl:text-right cursor-pointer ${
             filterStatus === 'completed'
               ? 'bg-white border-teal-500 ring-2 ring-teal-500/20 shadow-xs'
               : 'bg-white border-slate-200 hover:border-slate-300'
           }`}
         >
-          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Completed</p>
+          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{t('patientBookings.completed')}</p>
           <p className="text-2xl font-black text-slate-700 mt-1">{counts.completed}</p>
         </button>
 
         <button
           type="button"
           onClick={() => setFilterStatus('cancelled')}
-          className={`p-4 rounded-2xl border transition-all text-left cursor-pointer ${
+          className={`p-4 rounded-2xl border transition-all text-left rtl:text-right cursor-pointer ${
             filterStatus === 'cancelled'
               ? 'bg-white border-teal-500 ring-2 ring-teal-500/20 shadow-xs'
               : 'bg-white border-slate-200 hover:border-slate-300'
           }`}
         >
-          <p className="text-[11px] font-bold text-rose-500 uppercase tracking-wider">Cancelled</p>
+          <p className="text-[11px] font-bold text-rose-500 uppercase tracking-wider">{t('patientBookings.cancelled')}</p>
           <p className="text-2xl font-black text-rose-600 mt-1">{counts.cancelled}</p>
         </button>
       </div>
@@ -284,10 +294,10 @@ export const PatientBookings: React.FC = () => {
         {/* Status Filter Tabs */}
         <div className="flex rounded-xl bg-slate-100 p-1 w-full sm:w-auto text-xs font-semibold gap-1">
           {([
-            { id: 'all', label: 'All', count: counts.all },
-            { id: 'confirmed', label: 'Confirmed', count: counts.confirmed },
-            { id: 'completed', label: 'Completed', count: counts.completed },
-            { id: 'cancelled', label: 'Cancelled', count: counts.cancelled },
+            { id: 'all', label: t('patientBookings.allTab'), count: counts.all },
+            { id: 'confirmed', label: t('patientBookings.confirmedTab'), count: counts.confirmed },
+            { id: 'completed', label: t('patientBookings.completedTab'), count: counts.completed },
+            { id: 'cancelled', label: t('patientBookings.cancelledTab'), count: counts.cancelled },
           ] as const).map((tab) => (
             <button
               key={tab.id}
@@ -305,13 +315,13 @@ export const PatientBookings: React.FC = () => {
 
         {/* Search Box */}
         <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-3" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search doctor, hospital, specialty..."
-            className="w-full pl-9 pr-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all font-medium"
+            placeholder={t('patientBookings.searchPlaceholder')}
+            className="w-full pl-9 rtl:pl-3.5 rtl:pr-9 pr-3.5 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all font-medium"
           />
         </div>
       </div>
@@ -320,25 +330,25 @@ export const PatientBookings: React.FC = () => {
       {isLoading ? (
         <div className="bg-white rounded-3xl border border-slate-200 p-16 text-center shadow-xs">
           <div className="w-10 h-10 border-3 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-xs font-bold text-slate-500">Loading your consultation schedule...</p>
+          <p className="text-xs font-bold text-slate-500">{t('patientBookings.loading')}</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-xs space-y-3">
           <div className="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
             <Calendar className="w-7 h-7" />
           </div>
-          <h3 className="text-base font-bold text-slate-900">No appointments found</h3>
+          <h3 className="text-base font-bold text-slate-900">{t('patientBookings.noBookings')}</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
             {search.trim()
-              ? `No bookings match your search query "${search}".`
-              : 'You do not have any appointments in this status category.'}
+              ? t('patientBookings.noBookingsMatch', { query: search })
+              : t('patientBookings.noCategoryBookings')}
           </p>
           <Link
             to="/doctors"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>Find & Book a Doctor</span>
+            <span>{t('patientPortal.findDoctorBtn')}</span>
           </Link>
         </div>
       ) : (
@@ -363,7 +373,7 @@ export const PatientBookings: React.FC = () => {
                       <span className="text-xs sm:text-sm font-black text-teal-800 tracking-tight">
                         {appt.date}
                       </span>
-                      <span className="text-xs font-mono font-bold text-teal-600 sm:mt-1 ml-2 sm:ml-0 bg-white sm:bg-transparent px-2 py-0.5 sm:p-0 rounded-md">
+                      <span className="text-xs font-mono font-bold text-teal-600 sm:mt-1 ml-2 sm:ml-0 rtl:mr-2 rtl:ml-0 bg-white sm:bg-transparent px-2 py-0.5 sm:p-0 rounded-md">
                         {appt.timeSlot}
                       </span>
                     </div>
@@ -384,7 +394,7 @@ export const PatientBookings: React.FC = () => {
                           <StatusBadge status={appt.status} />
                           {isConfirmed && (
                             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                              In-Person Visit
+                              {t('patientPortal.inPersonVisit')}
                             </span>
                           )}
                         </div>
@@ -394,7 +404,7 @@ export const PatientBookings: React.FC = () => {
                         </h3>
 
                         <p className="text-xs font-bold text-teal-700">
-                          {appt.specialty}
+                          {translateSpecialty(appt.specialty)}
                         </p>
 
                         <p className="text-xs text-slate-500 flex items-center gap-1">
@@ -405,7 +415,7 @@ export const PatientBookings: React.FC = () => {
                         {isCancelled && appt.cancelReason && (
                           <div className="flex items-center gap-1.5 text-xs text-rose-600 bg-rose-50 border border-rose-200/60 px-3 py-1 rounded-xl mt-1.5">
                             <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                            <span>Cancelled reason: {appt.cancelReason}</span>
+                            <span>{t('patientPortal.cancelledReason', { reason: appt.cancelReason })}</span>
                           </div>
                         )}
                       </div>
@@ -422,18 +432,18 @@ export const PatientBookings: React.FC = () => {
                       className="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <MapPin className="w-3.5 h-3.5 text-teal-600" />
-                      <span>Directions</span>
+                      <span>{t('patientPortal.directions')}</span>
                     </a>
 
                     {/* Prescription download */}
                     {isConfirmed && (
                       <button
                         type="button"
-                        onClick={() => showToast('Prescription is ready for pickup at clinic pharmacy.', 'info')}
+                        onClick={() => showToast(isArabic ? 'الوصفة الطبية جاهزة للاستلام من صيدلية المركز الطبي.' : 'Prescription is ready for pickup at clinic pharmacy.', 'info')}
                         className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-teal-200 bg-teal-50/50 text-xs font-bold text-teal-800 hover:bg-teal-100 transition-colors cursor-pointer"
                       >
                         <FileText className="w-3.5 h-3.5 text-teal-600" />
-                        <span>Prescription</span>
+                        <span>{t('patientPortal.prescription')}</span>
                       </button>
                     )}
 
@@ -445,14 +455,14 @@ export const PatientBookings: React.FC = () => {
                         className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-xs font-bold text-amber-800 hover:bg-amber-100 transition-colors cursor-pointer"
                       >
                         <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                        <span>Rate Visit</span>
+                        <span>{t('patientPortal.rateVisit')}</span>
                       </button>
                     )}
 
                     {isReviewed && (
                       <span className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 border border-teal-200 text-xs font-bold text-teal-700">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Reviewed</span>
+                        <span>{t('patientPortal.reviewed')}</span>
                       </span>
                     )}
 
@@ -463,7 +473,7 @@ export const PatientBookings: React.FC = () => {
                         className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-xs font-bold text-white transition-colors cursor-pointer"
                       >
                         <RefreshCw className="w-3.5 h-3.5" />
-                        <span>Rebook Visit</span>
+                        <span>{t('patientPortal.rebook')}</span>
                       </Link>
                     )}
 
@@ -474,7 +484,7 @@ export const PatientBookings: React.FC = () => {
                         onClick={() => navigate(`/book/doctor/${appt.doctorId}`)}
                         className="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
                       >
-                        Reschedule
+                        {t('patientPortal.reschedule')}
                       </button>
                     )}
 
@@ -485,7 +495,7 @@ export const PatientBookings: React.FC = () => {
                         onClick={() => setCancellingAppt(appt)}
                         className="px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
                       >
-                        Cancel
+                        {t('patientPortal.cancel')}
                       </button>
                     )}
                   </div>

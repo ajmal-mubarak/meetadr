@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
 import { bookingService } from '../../services/bookingService';
 import { Appointment } from '../../types';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -23,6 +24,7 @@ export const DoctorDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const { t, isRTL, isArabic } = useTranslation();
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [cancellingAppt, setCancellingAppt] = useState<Appointment | null>(null);
@@ -46,10 +48,10 @@ export const DoctorDashboard: React.FC = () => {
   const handleMarkCompleted = async (id: string) => {
     try {
       await bookingService.completeAppointment(id);
-      showToast('Appointment marked as completed.', 'success');
+      showToast(t('doctorPortal.completeSuccess'), 'success');
       loadData();
     } catch (err: any) {
-      showToast(err.message || 'Failed to update status', 'error');
+      showToast(err.message || t('doctorPortal.failedUpdate'), 'error');
     }
   };
 
@@ -60,13 +62,13 @@ export const DoctorDashboard: React.FC = () => {
         cancellingAppt.id,
         reason,
         'doctor',
-        user?.name || 'Dr. Tariq Al-Mansoor'
+        user?.name || (isArabic ? 'د. طارق المنصور' : 'Dr. Tariq Al-Mansoor')
       );
-      showToast('Appointment cancelled and slot released.', 'info');
+      showToast(t('doctorPortal.cancelSlotReleased'), 'info');
       setCancellingAppt(null);
       loadData();
     } catch (err: any) {
-      showToast(err.message || 'Failed to cancel appointment', 'error');
+      showToast(err.message || t('doctorPortal.failedCancel'), 'error');
     }
   };
 
@@ -80,31 +82,31 @@ export const DoctorDashboard: React.FC = () => {
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
-            Physician Consultation Portal
+            {t('doctorPortal.portalTitle')}
           </span>
           <h1 className="text-2xl font-bold text-slate-900 mt-0.5">
-            {user?.name || 'Dr. Tariq Al-Mansoor'}
+            {user?.name || (isArabic ? 'د. طارق المنصور' : 'Dr. Tariq Al-Mansoor')}
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Department of Cardiology • City Care Specialty Hospital
+            {t('doctorPortal.departmentCardiology')}
           </p>
         </div>
         <div className="flex items-center gap-2.5">
           <span className="text-xs font-semibold px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Active Clinic Hours
+            {t('doctorPortal.activeClinicHours')}
           </span>
           <button
             type="button"
             onClick={async () => {
               await logout();
-              showToast('Signed out successfully.', 'info');
+              showToast(isArabic ? 'تم تسجيل الخروج بنجاح.' : 'Signed out successfully.', 'info');
               navigate('/login');
             }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-all cursor-pointer shadow-2xs"
           >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
+            <LogOut className="w-3.5 h-3.5 rtl:rotate-180" />
+            <span>{t('common.logout')}</span>
           </button>
         </div>
       </div>
@@ -113,34 +115,34 @@ export const DoctorDashboard: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            Total Queue
+            {t('doctorPortal.totalQueue')}
           </span>
           <div className="text-3xl font-extrabold text-slate-900 mt-2">{appointments.length}</div>
-          <p className="text-[11px] text-slate-400 mt-1">All appointments</p>
+          <p className="text-[11px] text-slate-400 mt-1">{t('doctorPortal.allAppointments')}</p>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            Upcoming / Pending
+            {t('doctorPortal.upcomingPending')}
           </span>
           <div className="text-3xl font-extrabold text-blue-600 mt-2">{confirmed.length}</div>
-          <p className="text-[11px] text-slate-400 mt-1">Ready for consultation</p>
+          <p className="text-[11px] text-slate-400 mt-1">{t('doctorPortal.readyForConsultation')}</p>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            Completed Visits
+            {t('doctorPortal.completedVisits')}
           </span>
           <div className="text-3xl font-extrabold text-emerald-600 mt-2">{completed.length}</div>
-          <p className="text-[11px] text-slate-400 mt-1">Finished consultations</p>
+          <p className="text-[11px] text-slate-400 mt-1">{t('doctorPortal.finishedConsultations')}</p>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            Cancelled
+            {t('doctorPortal.cancelled')}
           </span>
           <div className="text-3xl font-extrabold text-slate-600 mt-2">{cancelled.length}</div>
-          <p className="text-[11px] text-slate-400 mt-1">Doctor/patient cancelled</p>
+          <p className="text-[11px] text-slate-400 mt-1">{t('doctorPortal.cancelledDesc')}</p>
         </div>
       </div>
 
@@ -148,26 +150,26 @@ export const DoctorDashboard: React.FC = () => {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-900">Patient Consultation Queue</h3>
+            <h3 className="text-base font-bold text-slate-900">{t('doctorPortal.queueTitle')}</h3>
             <p className="text-xs text-slate-500">
-              Review patient symptoms, contact numbers, and complete or cancel visits
+              {t('doctorPortal.queueSubtitle')}
             </p>
           </div>
           <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg">
-            {confirmed.length} Pending Today
+            {confirmed.length} {t('doctorPortal.pendingToday')}
           </span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left rtl:text-right text-xs">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
               <tr>
-                <th className="px-5 py-3">Patient Name</th>
-                <th className="px-5 py-3">Date & Slot</th>
-                <th className="px-5 py-3">Contact Phone</th>
-                <th className="px-5 py-3">Symptoms / Notes</th>
-                <th className="px-5 py-3">Status</th>
-                <th className="px-5 py-3 text-right">Actions</th>
+                <th className="px-5 py-3">{t('doctorPortal.patientName')}</th>
+                <th className="px-5 py-3">{t('doctorPortal.dateSlot')}</th>
+                <th className="px-5 py-3">{t('doctorPortal.contactPhone')}</th>
+                <th className="px-5 py-3">{t('doctorPortal.symptomsNotes')}</th>
+                <th className="px-5 py-3">{t('doctorPortal.status')}</th>
+                <th className="px-5 py-3 text-right rtl:text-left">{t('doctorPortal.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -191,37 +193,37 @@ export const DoctorDashboard: React.FC = () => {
                   <td className="px-5 py-3.5 text-slate-800 font-mono">
                     <div className="flex items-center gap-1">
                       <Phone className="w-3.5 h-3.5 text-blue-600" />
-                      <span>{appt.patientPhone}</span>
+                      <span dir="ltr">{appt.patientPhone}</span>
                     </div>
                   </td>
                   <td className="px-5 py-3.5 text-slate-600 max-w-xs truncate">
-                    {appt.notes || <span className="text-slate-400 italic">No notes provided</span>}
+                    {appt.notes || <span className="text-slate-400 italic">{t('doctorPortal.noNotes')}</span>}
                     {appt.cancelReason && (
                       <div className="text-rose-600 text-[10px] mt-0.5">
-                        Cancelled: {appt.cancelReason}
+                        {t('doctorPortal.cancelled')}: {appt.cancelReason}
                       </div>
                     )}
                   </td>
                   <td className="px-5 py-3.5">
                     <StatusBadge status={appt.status} />
                   </td>
-                  <td className="px-5 py-3.5 text-right">
+                  <td className="px-5 py-3.5 text-right rtl:text-left">
                     {appt.status === 'confirmed' ? (
-                      <div className="flex items-center justify-end gap-1.5">
+                      <div className="flex items-center justify-end rtl:justify-start gap-1.5">
                         <button
                           onClick={() => handleMarkCompleted(appt.id)}
-                          className="px-2.5 py-1 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center gap-1 shadow-xs"
+                          className="px-2.5 py-1 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center gap-1 shadow-xs cursor-pointer"
                           title="Mark Consultation Complete"
                         >
                           <Check className="w-3 h-3" />
-                          <span>Complete</span>
+                          <span>{t('doctorPortal.completeBtn')}</span>
                         </button>
                         <button
                           onClick={() => setCancellingAppt(appt)}
-                          className="px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg border border-rose-200 transition-colors"
+                          className="px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg border border-rose-200 transition-colors cursor-pointer"
                           title="Cancel Consultation"
                         >
-                          Cancel
+                          {t('doctorPortal.cancelBtn')}
                         </button>
                       </div>
                     ) : (
