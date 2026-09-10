@@ -39,4 +39,14 @@ export const clinicService = {
     }
     return clinics;
   },
+
+  async updateClinicStatus(id: string, status: 'Active' | 'Deactivated'): Promise<Clinic | null> {
+    await delay(100);
+    const clinics = mockDb.getClinics();
+    const idx = clinics.findIndex((c) => c.id === id);
+    if (idx === -1) return null;
+    clinics[idx] = { ...clinics[idx], status };
+    mockDb.saveClinics(clinics);
+    return clinics[idx];
+  },
 };

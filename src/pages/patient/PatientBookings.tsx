@@ -25,6 +25,7 @@ import { bookingService } from '../../services/bookingService';
 import { Appointment } from '../../types';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { CancelModal } from '../../components/common/CancelModal';
+import { getAppointmentTimestamp, formatCountdown } from './PatientDashboard';
 
 // ─── Inline Review Modal ─────────────────────────────────────────────────────
 interface ReviewModalProps {
@@ -140,6 +141,7 @@ export const PatientBookings: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [filterStatus, setFilterStatus] = useState<'all' | 'confirmed' | 'completed' | 'cancelled'>('all');
   const [search, setSearch] = useState<string>('');
+  const [now, setNow] = useState<number>(Date.now());
   const [isLoading, setIsLoading] = useState(true);
   const [cancellingAppt, setCancellingAppt] = useState<Appointment | null>(null);
   const [reviewingAppt, setReviewingAppt] = useState<Appointment | null>(null);
@@ -156,6 +158,14 @@ export const PatientBookings: React.FC = () => {
   };
 
   useEffect(() => { loadData(); }, [user]);
+
+  // Real-time ticker for countdown
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleCancelConfirm = async (reason: string) => {
     if (!cancellingAppt) return;
@@ -191,47 +201,36 @@ export const PatientBookings: React.FC = () => {
     };
   }, [appointments]);
 
-  const filtered = appointments.filter((a) => {
-    if (filterStatus !== 'all' && a.status !== filterStatus) return false;
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      return (
-        a.doctorName.toLowerCase().includes(q) ||
-        a.specialty.toLowerCase().includes(q) ||
-        a.facilityName.toLowerCase().includes(q) ||
-        a.id.toLowerCase().includes(q)
-      );
-    }
-    return true;
-  });
+  const filtered = useMemo(() => {
+    return appointments
+      .filter((a) => {
+        if (filterStatus !== 'all' && a.status !== filterStatus) return false;
+        if (search.trim()) {
+          const q = search.toLowerCase();
+          return (
+            a.doctorName.toLowerCase().includes(q) ||
+            a.specialty.toLowerCase().includes(q) ||
+            a.facilityName.toLowerCase().includes(q) ||
+            a.id.toLowerCase().includes(q)
+          );
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        const aIsConfirmed = a.status === 'confirmed';
+        const bIsConfirmed = b.status === 'confirmed';
+        if (aIsConfirmed && bIsConfirmed) {
+          return getAppointmentTimestamp(a) - getAppointmentTimestamp(b);
+        }
+        if (aIsConfirmed) return -1;
+        if (bIsConfirmed) return 1;
+        return getAppointmentTimestamp(b) - getAppointmentTimestamp(a);
+      });
+  }, [appointments, filterStatus, search]);
 
   return (
     <div className="space-y-6">
-      {/* ── 1. PAGE TITLE & HEADER ── */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-5">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200/80 text-xs font-bold text-teal-800">
-            <Calendar className="w-3.5 h-3.5 text-teal-600" />
-            <span>{t('patientBookings.registryBadge')}</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            {t('patientBookings.pageTitle')}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500">
-            {t('patientBookings.pageSubtitle')}
-          </p>
-        </div>
-
-        <Link
-          to="/doctors"
-          className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl text-xs font-bold shadow-xs transition-all shrink-0 cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>{t('patientBookings.bookNew')}</span>
-        </Link>
-      </div>
-
-      {/* ── 2. METRICS OVERVIEW ── */}
+      {/* ── 1. METRICS OVERVIEW ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         <button
           type="button"
@@ -355,9 +354,9 @@ export const PatientBookings: React.FC = () => {
         <div className="space-y-4">
           {filtered.map((appt) => {
             const isReviewed = reviewedIds.has(appt.id);
-            const isConfirmed = appt.status === 'confirmed';
-            const isCancelled = appt.status === 'cancelled';
-            const isCompleted = appt.status === 'completed';
+            const isConfirmed = appt.status?.toLowerCase() === 'confirmed';
+            const isCancelled = appt.status?.toLowerCase() === 'cancelled';
+            const isCompleted = appt.status?.toLowerCase() === 'completed';
 
             return (
               <div
@@ -392,6 +391,11 @@ export const PatientBookings: React.FC = () => {
                             #{appt.id.slice(-6).toUpperCase()}
                           </span>
                           <StatusBadge status={appt.status} />
+                          {isConfirmed && (
+                            <span className="text-[10px] font-mono text-slate-400 opacity-70 flex items-center gap-1">
+                              {formatCountdown(appt, now, isArabic)}
+                            </span>
+                          )}
                           {isConfirmed && (
                             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                               {t('patientPortal.inPersonVisit')}
@@ -435,8 +439,8 @@ export const PatientBookings: React.FC = () => {
                       <span>{t('patientPortal.directions')}</span>
                     </a>
 
-                    {/* Prescription download */}
-                    {isConfirmed && (
+                    {/* Prescription download — ONLY for completed visits */}
+                    {isCompleted && (
                       <button
                         type="button"
                         onClick={() => showToast(isArabic ? 'الوصفة الطبية جاهزة للاستلام من صيدلية المركز الطبي.' : 'Prescription is ready for pickup at clinic pharmacy.', 'info')}
@@ -447,8 +451,8 @@ export const PatientBookings: React.FC = () => {
                       </button>
                     )}
 
-                    {/* Rate & Review Visit */}
-                    {(isCompleted || isConfirmed) && !isReviewed && (
+                    {/* Rate & Review Visit — ONLY for completed visits (Step 11: Post-Visit Review) */}
+                    {isCompleted && !isReviewed && (
                       <button
                         type="button"
                         onClick={() => setReviewingAppt(appt)}
@@ -459,7 +463,8 @@ export const PatientBookings: React.FC = () => {
                       </button>
                     )}
 
-                    {isReviewed && (
+                    {/* Reviewed badge — only for completed visits that were reviewed */}
+                    {isCompleted && isReviewed && (
                       <span className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 border border-teal-200 text-xs font-bold text-teal-700">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>{t('patientPortal.reviewed')}</span>

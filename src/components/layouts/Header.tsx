@@ -17,6 +17,7 @@ import {
   Search,
   LogIn,
   Hospital,
+  LayoutDashboard,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -258,8 +259,32 @@ export const Header: React.FC = () => {
 
             {isAuthenticated && user ? (
               <>
-                {/* Notification Bell */}
-                <div className="relative" ref={notifRef}>
+                {/* For staff accounts (admin, hospital, doctor): show quick Dashboard button */}
+                {user.role !== 'patient' && (
+                  <Link
+                    to={
+                      user.role === 'admin'
+                        ? '/admin/dashboard'
+                        : user.role === 'hospital'
+                        ? '/hospital/dashboard'
+                        : '/doctor/dashboard'
+                    }
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 transition-all cursor-pointer shadow-2xs"
+                  >
+                    <LayoutDashboard className="w-3.5 h-3.5 text-teal-600" />
+                    <span>
+                      {user.role === 'admin'
+                        ? t('navigation.adminDashboard')
+                        : user.role === 'hospital'
+                        ? t('navigation.hospitalDashboard')
+                        : t('navigation.doctorDashboard')}
+                    </span>
+                  </Link>
+                )}
+
+                {/* Notification Bell (for patients) */}
+                {user.role === 'patient' && (
+                  <div className="relative" ref={notifRef}>
                   <button
                     id="header-nav-notification-button"
                     type="button"
@@ -336,6 +361,7 @@ export const Header: React.FC = () => {
                     )}
                   </AnimatePresence>
                 </div>
+              )}
 
                 {/* Profile Dropdown */}
                 <div className="relative" ref={profileRef}>
@@ -534,7 +560,7 @@ export const Header: React.FC = () => {
                       <span className="text-[11px] text-slate-500 capitalize">{user.role}</span>
                     </div>
                   </div>
-                  {user.role === 'patient' && (
+                  {user.role === 'patient' ? (
                     <Link
                       to="/patient/bookings"
                       onClick={() => setMobileMenuOpen(false)}
@@ -542,6 +568,27 @@ export const Header: React.FC = () => {
                     >
                       <Calendar className="w-4 h-4 text-teal-600" />
                       {t('navigation.myBookings')}
+                    </Link>
+                  ) : (
+                    <Link
+                      to={
+                        user.role === 'admin'
+                          ? '/admin/dashboard'
+                          : user.role === 'hospital'
+                          ? '/hospital/dashboard'
+                          : '/doctor/dashboard'
+                      }
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2.5 text-sm font-bold text-teal-700 bg-teal-50 rounded-xl border border-teal-200"
+                    >
+                      <LayoutDashboard className="w-4 h-4 text-teal-600" />
+                      <span>
+                        {user.role === 'admin'
+                          ? t('navigation.adminDashboard')
+                          : user.role === 'hospital'
+                          ? t('navigation.hospitalDashboard')
+                          : t('navigation.doctorDashboard')}
+                      </span>
                     </Link>
                   )}
                   <button

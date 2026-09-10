@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import { useTranslation } from '../../i18n';
+import { Appointment } from '../../types';
 
 interface CancelModalProps {
-  isOpen: boolean;
-  appointmentId: string;
-  doctorName: string;
-  date: string;
-  time: string;
+  isOpen?: boolean;
+  appointment?: Appointment | null;
+  appointmentId?: string;
+  doctorName?: string;
+  date?: string;
+  time?: string;
   onClose: () => void;
-  onConfirm: (reason: string, note?: string) => Promise<void>;
+  onConfirm: (reason: string, note?: string) => Promise<void> | void;
 }
 
 export const CancelModal: React.FC<CancelModalProps> = ({
   isOpen,
+  appointment,
   appointmentId,
   doctorName,
   date,
@@ -27,7 +30,13 @@ export const CancelModal: React.FC<CancelModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
-  if (!isOpen) return null;
+  const effectiveIsOpen = isOpen !== undefined ? isOpen : Boolean(appointment);
+  if (!effectiveIsOpen) return null;
+
+  const apptId = appointmentId || appointment?.id || '';
+  const docName = doctorName || appointment?.doctorName || '';
+  const apptDate = date || appointment?.date || '';
+  const apptTime = time || appointment?.timeSlot || appointment?.time || '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,10 +93,10 @@ export const CancelModal: React.FC<CancelModalProps> = ({
 
         <div className="py-4 text-sm text-slate-600">
           <p className="mb-3">
-            {t('appointment.cancelConfirmQuestion', { doctor: doctorName, date, time })}
+            {t('appointment.cancelConfirmQuestion', { doctor: docName, date: apptDate, time: apptTime })}
           </p>
           <p className="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg border border-slate-200">
-            {t('appointment.cancelWarning', { id: appointmentId })}
+            {t('appointment.cancelWarning', { id: apptId })}
           </p>
         </div>
 

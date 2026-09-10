@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, Heart, Save, Plus, Trash2, Users, AlertCircle } from 'lucide-react';
+import { User, Mail, Phone, Heart, Save, Plus, Trash2, Users, AlertCircle, Edit3, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useTranslation } from '../../i18n';
@@ -17,6 +17,9 @@ export const PatientProfile: React.FC = () => {
   const { showToast } = useToast();
   const { t, isRTL, isArabic } = useTranslation();
 
+  // Edit Mode state (Default: locked / non-editable)
+  const [isEditing, setIsEditing] = useState(false);
+
   // Personal info
   const [name, setName] = useState(user?.name || 'Sarah Jenkins');
   const [email, setEmail] = useState(user?.email || 'patient@meetadr.demo');
@@ -26,6 +29,18 @@ export const PatientProfile: React.FC = () => {
   const [allergies, setAllergies] = useState('Penicillin (Mild)');
   const [insuranceProvider, setInsuranceProvider] = useState('Daman — National Health Insurance Company');
   const [insuranceNumber, setInsuranceNumber] = useState('DAM-9482-UAE-2024');
+
+  // Saved snapshot for Cancel button
+  const [savedData, setSavedData] = useState({
+    name: user?.name || 'Sarah Jenkins',
+    email: user?.email || 'patient@meetadr.demo',
+    phone: user?.phone || '+971 52 412 2794',
+    bloodGroup: 'O+',
+    emergencyContact: '+971 55 987 6543 (Spouse)',
+    allergies: 'Penicillin (Mild)',
+    insuranceProvider: 'Daman — National Health Insurance Company',
+    insuranceNumber: 'DAM-9482-UAE-2024',
+  });
 
   // Dependents (PDF: "Profile & Dependents")
   const [dependents, setDependents] = useState<Dependent[]>([
@@ -45,7 +60,30 @@ export const PatientProfile: React.FC = () => {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    setSavedData({
+      name,
+      email,
+      phone,
+      bloodGroup,
+      emergencyContact,
+      allergies,
+      insuranceProvider,
+      insuranceNumber,
+    });
+    setIsEditing(false);
     showToast(isArabic ? 'تم تحديث الملف الصحي بنجاح.' : 'Patient health profile updated successfully.', 'success');
+  };
+
+  const handleCancel = () => {
+    setName(savedData.name);
+    setEmail(savedData.email);
+    setPhone(savedData.phone);
+    setBloodGroup(savedData.bloodGroup);
+    setEmergencyContact(savedData.emergencyContact);
+    setAllergies(savedData.allergies);
+    setInsuranceProvider(savedData.insuranceProvider);
+    setInsuranceNumber(savedData.insuranceNumber);
+    setIsEditing(false);
   };
 
   const handleAddDependent = () => {
@@ -65,6 +103,20 @@ export const PatientProfile: React.FC = () => {
     showToast(isArabic ? `تم حذف ${dep?.name} من التابعين.` : `${dep?.name} removed from dependents.`, 'info');
   };
 
+  // Common styling for inputs depending on edit mode
+  const inputClass = (extra: string = '') =>
+    `w-full py-2.5 px-3 border rounded-xl text-sm transition-all ${
+      isEditing
+        ? 'bg-white text-slate-900 border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none shadow-2xs'
+        : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed select-none'
+    } ${extra}`;
+
+  const iconInputClass = `w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2.5 border rounded-xl text-sm transition-all ${
+    isEditing
+      ? 'bg-white text-slate-900 border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none shadow-2xs'
+      : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed select-none'
+  }`;
+
   return (
     <div className="max-w-3xl space-y-6">
 
@@ -79,7 +131,14 @@ export const PatientProfile: React.FC = () => {
       {/* ── PERSONAL & CONTACT ── */}
       <form onSubmit={handleSave} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
         <div>
-          <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider mb-4">{t('patientProfile.personalSection')}</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider">{t('patientProfile.personalSection')}</h3>
+            {!isEditing && (
+              <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                {isArabic ? 'للقراءة فقط' : 'View Only'}
+              </span>
+            )}
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.fullName')}</label>
@@ -88,9 +147,10 @@ export const PatientProfile: React.FC = () => {
                 <input
                   type="text"
                   required
+                  disabled={!isEditing}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                  className={iconInputClass}
                 />
               </div>
             </div>
@@ -102,9 +162,10 @@ export const PatientProfile: React.FC = () => {
                 <input
                   type="email"
                   required
+                  disabled={!isEditing}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                  className={iconInputClass}
                 />
               </div>
             </div>
@@ -118,9 +179,10 @@ export const PatientProfile: React.FC = () => {
                 <input
                   type="tel"
                   required
+                  disabled={!isEditing}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                  className={iconInputClass}
                 />
               </div>
             </div>
@@ -135,18 +197,20 @@ export const PatientProfile: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.insuranceProvider')}</label>
               <input
                 type="text"
+                disabled={!isEditing}
                 value={insuranceProvider}
                 onChange={(e) => setInsuranceProvider(e.target.value)}
-                className="w-full py-2.5 px-3 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                className={inputClass()}
               />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.insuranceNumber')}</label>
               <input
                 type="text"
+                disabled={!isEditing}
                 value={insuranceNumber}
                 onChange={(e) => setInsuranceNumber(e.target.value)}
-                className="w-full py-2.5 px-3 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all font-mono"
+                className={inputClass('font-mono')}
               />
             </div>
           </div>
@@ -159,9 +223,10 @@ export const PatientProfile: React.FC = () => {
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.bloodGroup')}</label>
               <select
+                disabled={!isEditing}
                 value={bloodGroup}
                 onChange={(e) => setBloodGroup(e.target.value)}
-                className="w-full py-2.5 px-3 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                className={inputClass(isEditing ? 'cursor-pointer' : '')}
               >
                 {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map((bg) => (
                   <option key={bg} value={bg}>{bg}</option>
@@ -173,9 +238,10 @@ export const PatientProfile: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.emergencyContact')}</label>
               <input
                 type="text"
+                disabled={!isEditing}
                 value={emergencyContact}
                 onChange={(e) => setEmergencyContact(e.target.value)}
-                className="w-full py-2.5 px-3 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                className={inputClass()}
               />
             </div>
 
@@ -183,22 +249,45 @@ export const PatientProfile: React.FC = () => {
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.allergies')}</label>
               <input
                 type="text"
+                disabled={!isEditing}
                 value={allergies}
                 onChange={(e) => setAllergies(e.target.value)}
-                className="w-full py-2.5 px-3 border border-slate-200 rounded-xl text-sm focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none transition-all"
+                className={inputClass()}
               />
             </div>
           </div>
         </div>
 
-        <div className="pt-2 flex justify-end">
-          <button
-            type="submit"
-            className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <Save className="w-4 h-4" />
-            {t('patientProfile.saveProfile')}
-          </button>
+        {/* Form Action Buttons */}
+        <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+          {!isEditing ? (
+            <button
+              type="button"
+              onClick={() => setIsEditing(true)}
+              className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
+            >
+              <Edit3 className="w-4 h-4" />
+              <span>{t('patientProfile.editProfile')}</span>
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="px-4 py-2.5 border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>{t('patientProfile.cancelEdit')}</span>
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
+              >
+                <Save className="w-4 h-4" />
+                <span>{t('patientProfile.saveProfile')}</span>
+              </button>
+            </>
+          )}
         </div>
       </form>
 

@@ -320,13 +320,19 @@ export const DoctorList: React.FC = () => {
                       <span className="text-xs font-black text-slate-900">{t('common.aed')} {doc.consultationFee || 350}</span>
                     </div>
 
-                    <Link
-                      to={`/book/doctor/${doc.id}`}
-                      className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs shadow-teal-600/20 cursor-pointer"
-                    >
-                      <span>{t('doctors.bookAppointment')}</span>
-                      <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
-                    </Link>
+                    {doc.status === 'Deactivated' ? (
+                      <span className="px-3 py-1.5 bg-slate-100 text-slate-400 rounded-xl text-xs font-semibold cursor-not-allowed">
+                        Unavailable
+                      </span>
+                    ) : (
+                      <Link
+                        to={`/book/doctor/${doc.id}`}
+                        className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs shadow-teal-600/20 cursor-pointer"
+                      >
+                        <span>{t('doctors.bookAppointment')}</span>
+                        <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                      </Link>
+                    )}
                   </div>
                 </div>
               </motion.div>

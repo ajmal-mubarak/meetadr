@@ -95,7 +95,7 @@ export const bookingService = {
       providerName: facility,
       facilityName: facility,
       specialty: input.specialty,
-      location: input.location,
+      location: input.location || 'Dubai, UAE',
       date: input.date,
       time: slot,
       timeSlot: slot,

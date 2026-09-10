@@ -9,7 +9,6 @@ import {
   BarChart3,
   LogOut,
   UserCheck,
-  ClipboardList,
   ChevronRight,
   ExternalLink,
 } from 'lucide-react';
@@ -90,7 +89,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         { name: t('navigation.doctorsVerification'), path: '/admin/doctors', icon: Stethoscope },
         { name: t('navigation.providersDirectory'), path: '/admin/providers', icon: Building2 },
         { name: t('navigation.bookingsRegistry'), path: '/admin/bookings', icon: Calendar },
-        { name: t('navigation.patientWaitlist'), path: '/admin/waitlist', icon: ClipboardList },
         { name: t('navigation.providerRequests'), path: '/admin/requests', icon: UserCheck },
         { name: t('navigation.analyticalReports'), path: '/admin/reports', icon: BarChart3 },
       ];

@@ -95,4 +95,14 @@ export const doctorService = {
     mockDb.saveDoctors(doctors);
     return newDoc;
   },
+
+  async updateDoctorStatus(id: string, status: 'Active' | 'Deactivated'): Promise<Doctor | null> {
+    await delay(100);
+    const doctors = mockDb.getDoctors();
+    const idx = doctors.findIndex((d) => d.id === id);
+    if (idx === -1) return null;
+    doctors[idx] = { ...doctors[idx], status };
+    mockDb.saveDoctors(doctors);
+    return doctors[idx];
+  },
 };

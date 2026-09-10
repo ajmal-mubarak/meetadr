@@ -39,4 +39,14 @@ export const hospitalService = {
     }
     return hospitals;
   },
+
+  async updateHospitalStatus(id: string, status: 'Active' | 'Deactivated'): Promise<Hospital | null> {
+    await delay(100);
+    const hospitals = mockDb.getHospitals();
+    const idx = hospitals.findIndex((h) => h.id === id);
+    if (idx === -1) return null;
+    hospitals[idx] = { ...hospitals[idx], status };
+    mockDb.saveHospitals(hospitals);
+    return hospitals[idx];
+  },
 };

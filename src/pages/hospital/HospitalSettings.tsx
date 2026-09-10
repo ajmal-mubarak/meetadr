@@ -1,99 +1,223 @@
 import React, { useState } from 'react';
-import { Building2, MapPin, Phone, Clock, Save, ShieldCheck } from 'lucide-react';
+import { Building2, MapPin, Phone, Clock, Save, ShieldCheck, Edit3, X, Check } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useTranslation } from '../../i18n';
 
 export const HospitalSettings: React.FC = () => {
+  const { user } = useAuth();
   const { showToast } = useToast();
-  const [name, setName] = useState('City Care Specialty Hospital');
-  const [address, setAddress] = useState('Building 42, Dubai Healthcare City, Dubai, UAE');
-  const [phone, setPhone] = useState('+971 4 362 4700');
-  const [operatingHours, setOperatingHours] = useState('Mon - Sat: 08:00 - 21:00');
-  const [emergency, setEmergency] = useState(true);
+  const { isArabic } = useTranslation();
+
+  // Edit Mode state (default: non-editable / locked)
+  const [isEditing, setIsEditing] = useState(false);
+
+  const initialHospitalName = user?.name || 'City Care Specialty Hospital';
+  const initialAddress = 'Building 42, Dubai Healthcare City, Dubai, UAE';
+  const initialPhone = '+971 4 362 4700';
+  const initialHours = 'Mon - Sat: 08:00 - 21:00';
+  const initialEmergency = true;
+
+  const [name, setName] = useState(initialHospitalName);
+  const [address, setAddress] = useState(initialAddress);
+  const [phone, setPhone] = useState(initialPhone);
+  const [operatingHours, setOperatingHours] = useState(initialHours);
+  const [emergency, setEmergency] = useState(initialEmergency);
+
+  // Saved snapshot for Cancel restoration
+  const [savedData, setSavedData] = useState({
+    name: initialHospitalName,
+    address: initialAddress,
+    phone: initialPhone,
+    operatingHours: initialHours,
+    emergency: initialEmergency,
+  });
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    showToast('Facility settings saved successfully.', 'success');
+    setSavedData({
+      name,
+      address,
+      phone,
+      operatingHours,
+      emergency,
+    });
+    setIsEditing(false);
+    showToast(
+      isArabic ? 'تم حفظ إعدادات المنشأة بنجاح.' : 'Facility settings saved successfully.',
+      'success'
+    );
+  };
+
+  const handleCancel = () => {
+    setName(savedData.name);
+    setAddress(savedData.address);
+    setPhone(savedData.phone);
+    setOperatingHours(savedData.operatingHours);
+    setEmergency(savedData.emergency);
+    setIsEditing(false);
   };
 
   return (
     <div className="max-w-3xl space-y-6">
+      {/* Header Card */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
-        <h1 className="text-2xl font-bold text-slate-900">Hospital Facility Configuration</h1>
+        <div className="flex items-center gap-2">
+          <Building2 className="w-5 h-5 text-teal-600" />
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+            {isArabic ? 'إعدادات المنشأة والمستشفى' : 'Hospital Facility Configuration'}
+          </h1>
+        </div>
         <p className="text-xs text-slate-500 mt-1">
-          Public profile, emergency status, and facility operational contacts.
+          {isArabic
+            ? 'الملف العام، حالة الطوارئ، وبيانات الاتصال التشغيلية للمستشفى.'
+            : 'Public profile, emergency status, and facility operational contacts.'}
         </p>
       </div>
 
+      {/* Configuration Form */}
       <form onSubmit={handleSave} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">Facility Name</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+            <Building2 className="w-3.5 h-3.5 text-slate-400" />
+            <span>{isArabic ? 'اسم المنشأة' : 'Facility Name'}</span>
+          </label>
           <input
             type="text"
             required
+            disabled={!isEditing}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-blue-600 focus:outline-none"
+            className={`w-full p-3 rounded-xl text-sm transition-all border ${
+              isEditing
+                ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-500/10 focus:outline-none'
+                : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed'
+            }`}
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">Physical Address</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-slate-400" />
+            <span>{isArabic ? 'العنوان الجغرافي' : 'Physical Address'}</span>
+          </label>
           <input
             type="text"
             required
+            disabled={!isEditing}
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-blue-600 focus:outline-none"
+            className={`w-full p-3 rounded-xl text-sm transition-all border ${
+              isEditing
+                ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-500/10 focus:outline-none'
+                : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed'
+            }`}
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Direct Phone</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <Phone className="w-3.5 h-3.5 text-slate-400" />
+              <span>{isArabic ? 'هاتف الاستقبال المباشر' : 'Direct Phone'}</span>
+            </label>
             <input
               type="text"
               required
+              disabled={!isEditing}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-blue-600 focus:outline-none"
+              className={`w-full p-3 rounded-xl text-sm font-mono transition-all border ${
+                isEditing
+                  ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-500/10 focus:outline-none'
+                  : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed'
+              }`}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Operating Hours</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-slate-400" />
+              <span>{isArabic ? 'ساعات العمل الرسمية' : 'Operating Hours'}</span>
+            </label>
             <input
               type="text"
               required
+              disabled={!isEditing}
               value={operatingHours}
               onChange={(e) => setOperatingHours(e.target.value)}
-              className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-blue-600 focus:outline-none"
+              className={`w-full p-3 rounded-xl text-sm transition-all border ${
+                isEditing
+                  ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-500/10 focus:outline-none'
+                  : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed'
+              }`}
             />
           </div>
         </div>
 
-        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
-          <div>
-            <strong className="text-xs font-bold text-slate-900 block">24/7 Emergency Department</strong>
-            <span className="text-[11px] text-slate-500">
-              Display emergency badge on public listings and search results.
-            </span>
+        {/* 24/7 Emergency Toggle Box */}
+        <div
+          onClick={() => {
+            if (isEditing) setEmergency(!emergency);
+          }}
+          className={`p-4.5 rounded-2xl border flex items-center justify-between transition-all ${
+            isEditing ? 'cursor-pointer bg-slate-50 hover:bg-teal-50/40 border-slate-300' : 'bg-slate-50 border-slate-200 cursor-not-allowed'
+          }`}
+        >
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-teal-600" />
+              <strong className="text-xs font-bold text-slate-900">
+                {isArabic ? 'قسم طوارئ على مدار 24/7' : '24/7 Emergency Department'}
+              </strong>
+            </div>
+            <p className="text-[11px] text-slate-500">
+              {isArabic
+                ? 'عرض شارة الطوارئ على القوائم العامة ونتائج البحث لمراكز الطوارئ.'
+                : 'Display emergency badge on public listings and search results.'}
+            </p>
           </div>
           <input
             type="checkbox"
+            disabled={!isEditing}
             checked={emergency}
             onChange={(e) => setEmergency(e.target.checked)}
-            className="w-4 h-4 rounded text-blue-600 border-slate-300"
+            className={`w-5 h-5 rounded-md text-teal-600 border-slate-300 focus:ring-teal-500 ${
+              isEditing ? 'cursor-pointer' : 'cursor-not-allowed opacity-80'
+            }`}
           />
         </div>
 
-        <div className="pt-2 flex justify-end">
-          <button
-            type="submit"
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2"
-          >
-            <Save className="w-4 h-4" />
-            <span>Save Configuration</span>
-          </button>
+        {/* Action Buttons */}
+        <div className="pt-2 flex items-center justify-end gap-3">
+          {isEditing ? (
+            <>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="px-4 py-2.5 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>{isArabic ? 'إلغاء' : 'Cancel'}</span>
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <Check className="w-4 h-4" />
+                <span>{isArabic ? 'حفظ التعديلات' : 'Save Configuration'}</span>
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsEditing(true)}
+              className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <Edit3 className="w-4 h-4" />
+              <span>{isArabic ? 'تعديل الإعدادات' : 'Edit Configuration'}</span>
+            </button>
+          )}
         </div>
       </form>
     </div>

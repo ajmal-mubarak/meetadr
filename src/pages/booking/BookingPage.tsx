@@ -22,9 +22,14 @@ import {
   LogIn,
   Smartphone,
   Zap,
+  ShieldAlert,
+  LayoutDashboard,
+  LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { bookingService } from '../../services/bookingService';
+import { doctorService } from '../../services/doctorService';
+import { Doctor, Appointment } from '../../types';
 import { useToast } from '../../context/ToastContext';
 import { INITIAL_DOCTORS } from '../../data/mockDoctors';
 import { useTranslation } from '../../i18n';
@@ -141,7 +146,7 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
 
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-slate-100" />
-                <span className="text-[11px] text-slate-400 font-semibold">{t('common.or', 'or')}</span>
+                <span className="text-[11px] text-slate-400 font-semibold">{t('common.or') || 'or'}</span>
                 <div className="flex-1 h-px bg-slate-100" />
               </div>
 
@@ -292,14 +297,87 @@ const GuestLoginModal: React.FC<GuestLoginModalProps> = ({ onSuccess, onClose, d
 export const BookingPage: React.FC = () => {
   const { doctorId } = useParams<{ doctorId: string }>();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   // Pending booking flag — set to true when user fills form but isn't logged in yet
   const [pendingBooking, setPendingBooking] = useState(false);
   const { showToast } = useToast();
-  const { t, language, translateSpecialty } = useTranslation();
+  const { t, language, translateSpecialty, isArabic } = useTranslation();
 
-  const allDoctors = INITIAL_DOCTORS;
+  const isStaff = Boolean(user && user.role !== 'patient');
+  const staffDashboardPath = user?.role === 'admin'
+    ? '/admin/dashboard'
+    : user?.role === 'hospital'
+    ? '/hospital/dashboard'
+    : '/doctor/dashboard';
+
+  const staffRoleLabel = user?.role === 'admin'
+    ? (language === 'ar' ? 'المسؤول' : 'Admin')
+    : user?.role === 'hospital'
+    ? (language === 'ar' ? 'المستشفى' : 'Hospital')
+    : (language === 'ar' ? 'الطبيب' : 'Doctor');
+
+  const staffDashboardName = user?.role === 'admin'
+    ? (language === 'ar' ? 'لوحة تحكم المسؤول' : 'Admin Dashboard')
+    : user?.role === 'hospital'
+    ? (language === 'ar' ? 'لوحة تحكم المستشفى' : 'Hospital Dashboard')
+    : (language === 'ar' ? 'لوحة تحكم الطبيب' : 'Doctor Dashboard');
+
+// ─── Schedule Time Parsing & Full Daily Slots Generator ──────────────────────
+const parseTimeToMinutes = (timeStr: string): number => {
+  const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+  if (!match) return 0;
+  let h = parseInt(match[1], 10);
+  const m = parseInt(match[2], 10);
+  const meridiem = match[3]?.toUpperCase();
+  if (meridiem === 'PM' && h < 12) h += 12;
+  if (meridiem === 'AM' && h === 12) h = 0;
+  return h * 60 + m;
+};
+
+const generateFullScheduleSlots = (doctorSlots: string[]): string[] => {
+  const has20 = doctorSlots.some((s) => s.includes(':20') || s.includes(':40'));
+  const slotSet = new Set<string>();
+
+  // Full day clinical schedule: 09:00 AM to 05:00 PM
+  if (has20) {
+    const startMins = 9 * 60; // 09:00 AM
+    const endMins = 17 * 60; // 05:00 PM
+    for (let m = startMins; m <= endMins; m += 20) {
+      const hours24 = Math.floor(m / 60);
+      const mins = m % 60;
+      const meridiem = hours24 >= 12 ? 'PM' : 'AM';
+      const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+      const formatted = `${String(hours12).padStart(2, '0')}:${String(mins).padStart(2, '0')} ${meridiem}`;
+      slotSet.add(formatted);
+    }
+  } else {
+    const hasEarly = doctorSlots.some((s) => s.startsWith('08:'));
+    const startMins = hasEarly ? 8 * 60 + 30 : 9 * 60;
+    const endMins = 17 * 60;
+    for (let m = startMins; m <= endMins; m += 30) {
+      const hours24 = Math.floor(m / 60);
+      const mins = m % 60;
+      const meridiem = hours24 >= 12 ? 'PM' : 'AM';
+      const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+      const formatted = `${String(hours12).padStart(2, '0')}:${String(mins).padStart(2, '0')} ${meridiem}`;
+      slotSet.add(formatted);
+    }
+  }
+
+  // Always include all doctor's specifically configured slots
+  doctorSlots.forEach((s) => slotSet.add(s.trim()));
+
+  return Array.from(slotSet).sort((a, b) => parseTimeToMinutes(a) - parseTimeToMinutes(b));
+};
+
+  const [allDoctors, setAllDoctors] = useState<Doctor[]>(INITIAL_DOCTORS);
+
+  React.useEffect(() => {
+    doctorService.getAllDoctors().then((docs) => {
+      if (docs && docs.length > 0) setAllDoctors(docs);
+    });
+  }, []);
 
   // Selected doctor (defaulting to Dr. Sarah Chen or the param)
   const [selectedDocId, setSelectedDocId] = useState<string>(
@@ -368,6 +446,58 @@ export const BookingPage: React.FC = () => {
 
   const [selectedDateObj, setSelectedDateObj] = useState(nextDates[0]);
   const [selectedSlot, setSelectedSlot] = useState(doctor.availableSlots[0] || '10:00 AM');
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [existingAppointments, setExistingAppointments] = useState<Appointment[]>([]);
+
+  // Load existing bookings from the database
+  React.useEffect(() => {
+    bookingService.getAllAppointments().then((data) => {
+      if (data) setExistingAppointments(data);
+    });
+  }, []);
+
+  // Compute which slots are already booked for this doctor on the selected date
+  const bookedSlotsForDate = useMemo(() => {
+    const dateStr = selectedDateObj.date;
+    const set = new Set<string>();
+    existingAppointments.forEach((a) => {
+      const isDocMatch =
+        a.doctorId === doctor.id ||
+        (a.doctorName && a.doctorName.toLowerCase().trim() === doctor.name.toLowerCase().trim());
+      if (!isDocMatch) return;
+      if (a.date !== dateStr) return;
+      if (a.status?.toLowerCase() === 'cancelled') return;
+
+      const slotTime = (a.timeSlot || a.time || '').trim();
+      if (slotTime) set.add(slotTime);
+    });
+    return set;
+  }, [existingAppointments, doctor, selectedDateObj.date]);
+
+  // Generate full daily schedule of slots (all times across the clinical day)
+  const fullScheduleSlots = useMemo(() => {
+    const base = generateFullScheduleSlots(doctor.availableSlots || []);
+    bookedSlotsForDate.forEach((s) => {
+      if (!base.includes(s)) base.push(s);
+    });
+    return base.sort((a, b) => parseTimeToMinutes(a) - parseTimeToMinutes(b));
+  }, [doctor.availableSlots, bookedSlotsForDate]);
+
+  // Keep selectedSlot on an available and unbooked slot
+  React.useEffect(() => {
+    const isAvailable = (doctor.availableSlots || []).includes(selectedSlot);
+    const isBooked = bookedSlotsForDate.has(selectedSlot);
+    if (!isAvailable || isBooked) {
+      const firstValid = fullScheduleSlots.find(
+        (s) => (doctor.availableSlots || []).includes(s) && !bookedSlotsForDate.has(s)
+      );
+      if (firstValid) {
+        setSelectedSlot(firstValid);
+      } else {
+        setSelectedSlot('');
+      }
+    }
+  }, [doctor, selectedDateObj.date, fullScheduleSlots, bookedSlotsForDate]);
 
   // Booking completion state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -375,20 +505,32 @@ export const BookingPage: React.FC = () => {
   const [showMapModal, setShowMapModal] = useState(false);
 
   // Form validation for dynamic button styling
+  const isStep1Valid = doctor.status !== 'Deactivated' && Boolean(selectedSpecialty);
+  const isStep2Valid =
+    Boolean(selectedSlot) &&
+    (doctor.availableSlots || []).includes(selectedSlot) &&
+    !bookedSlotsForDate.has(selectedSlot);
+
   const isFormValid = useMemo(() => {
     return (
       patientName.trim().length > 0 &&
       mobileNumber.trim().length >= 7 &&
       Boolean(selectedSlot) &&
+      (doctor.availableSlots || []).includes(selectedSlot) &&
+      !bookedSlotsForDate.has(selectedSlot) &&
       termsAccepted
     );
-  }, [patientName, mobileNumber, selectedSlot, termsAccepted]);
+  }, [patientName, mobileNumber, selectedSlot, doctor.availableSlots, bookedSlotsForDate, termsAccepted]);
 
   const handleSelectDoctor = (id: string) => {
     setSelectedDocId(id);
     const found = allDoctors.find((d) => d.id === id);
     if (found) {
-      setSelectedSlot(found.availableSlots[0] || '10:00 AM');
+      const foundSlots = generateFullScheduleSlots(found.availableSlots || []);
+      const firstValid = foundSlots.find(
+        (s) => (found.availableSlots || []).includes(s) && !bookedSlotsForDate.has(s)
+      );
+      setSelectedSlot(firstValid || '');
     }
   };
 
@@ -412,6 +554,7 @@ export const BookingPage: React.FC = () => {
         timeSlot: selectedSlot,
       });
       setBookedAppointment(newAppt);
+      setExistingAppointments((prev) => [...prev, newAppt]);
       showToast(t('booking.bookingConfirmedTitle'), 'success');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
@@ -431,6 +574,70 @@ export const BookingPage: React.FC = () => {
 
   const handleBookNow = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Staff check: Admin, Hospital, and Doctor accounts cannot place public bookings
+    if (isStaff) {
+      showToast(
+        language === 'ar'
+          ? 'حسابات الإدارة والمستشفيات لا يمكنها حجز المواعيد. يرجى التوجه للوحة التحكم الخاصة بك.'
+          : 'Administrative and hospital accounts cannot place patient bookings. Please use your portal dashboard.',
+        'error'
+      );
+      return;
+    }
+
+    // Step 1 progression
+    if (currentStep === 1) {
+      if (!isStep1Valid) {
+        showToast(
+          language === 'ar'
+            ? 'عذراً، هذا الطبيب غير متاح للحجز حالياً.'
+            : 'Sorry, this doctor is currently unavailable for bookings.',
+          'error'
+        );
+        return;
+      }
+      setCurrentStep(2);
+      window.scrollTo({ top: 160, behavior: 'smooth' });
+      return;
+    }
+
+    // Step 2 progression
+    if (currentStep === 2) {
+      if (!isStep2Valid) {
+        showToast(
+          language === 'ar'
+            ? 'يرجى اختيار وقت متاح للموعد للمتابعة.'
+            : 'Please select an available time slot to continue.',
+          'error'
+        );
+        return;
+      }
+      setCurrentStep(3);
+      window.scrollTo({ top: 160, behavior: 'smooth' });
+      return;
+    }
+
+    // Step 3 submission logic
+    if (isStaff) {
+      showToast(
+        language === 'ar'
+          ? 'حسابات الإدارة لا يمكنها حجز المواعيد كمريض.'
+          : 'Staff accounts cannot place patient bookings.',
+        'error'
+      );
+      return;
+    }
+
+    if (doctor.status === 'Deactivated') {
+      showToast(
+        language === 'ar'
+          ? 'عذراً، هذا الطبيب غير متاح للحجز حالياً.'
+          : 'Sorry, this doctor is currently unavailable for bookings.',
+        'error'
+      );
+      return;
+    }
 
     if (!isFormValid) {
       if (!patientName.trim()) {
@@ -593,6 +800,7 @@ export const BookingPage: React.FC = () => {
                 type="button"
                 onClick={() => {
                   setBookedAppointment(null);
+                  setCurrentStep(1);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="text-xs font-semibold text-[#6B7280] hover:text-[#111827] underline cursor-pointer"
@@ -605,342 +813,693 @@ export const BookingPage: React.FC = () => {
           /* ========================================================================= */
           /* VIEW 2: DEDICATED BOOKING PAGE                                            */
           /* ========================================================================= */
-          <div className="bg-white rounded-3xl border border-[#E5DFCD] p-6 sm:p-8 shadow-xs">
-            
-            {/* Page Header */}
-            <div className="pb-5 border-b border-[#E5DFCD]">
-              <h1 className="text-xl sm:text-2xl font-bold text-[#111827] tracking-tight">
-                {t('booking.pageTitle')}
-              </h1>
-              <p className="text-xs text-[#6B7280] mt-1">
-                {t('booking.pageSubtitle')}
-              </p>
-            </div>
+          <div className="space-y-4 sm:space-y-5">
+            {/* ── 3-STEP PROGRESS STEPPER (OUTSIDE THE BOX, MATCHING USER DESIGN) ── */}
+            <div className="px-1 sm:px-2 pt-1 pb-1">
+              <div className="grid grid-cols-3 gap-3 sm:gap-5 max-w-xl mx-auto">
+                {[
+                  { step: 1 as const, label: isArabic ? '01 الخدمة' : '01 Service' },
+                  { step: 2 as const, label: isArabic ? '02 التاريخ والوقت' : '02 Date & Time' },
+                  { step: 3 as const, label: isArabic ? '03 التأكيد' : '03 Confirm' },
+                ].map((s) => {
+                  const isActive = s.step === currentStep;
+                  const isCompleted = s.step < currentStep;
+                  const isPassedOrCurrent = isCompleted || isActive;
+                  const isClickable = isCompleted || s.step === currentStep;
 
-            {/* Doctor Profile Banner */}
-            <div className="mt-5 p-4 rounded-2xl bg-[#FAF9F5] border border-[#E5DFCD] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
-                <img
-                  src={doctor.photo}
-                  alt={doctor.name}
-                  className="w-16 h-16 rounded-2xl object-cover border border-[#E5DFCD] shrink-0"
-                  referrerPolicy="no-referrer"
-                />
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-base font-bold text-[#111827]">
-                      {doctor.name}
-                    </h2>
-                    <span className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E6F4F1] text-[#008B74] border border-[#B2E2D9]">
-                      {t('booking.verifiedSpecialist')}
-                    </span>
-                  </div>
-                  <p className="text-xs font-semibold text-[#008B74] mt-0.5">
-                    {translateSpecialty(doctor.specialty)}
-                  </p>
-                  <p className="text-xs text-[#6B7280] mt-0.5 flex items-center gap-1">
-                    <Building2 className="w-3.5 h-3.5 text-[#008B74] shrink-0" />
-                    <span>{doctor.hospitalName || 'CMC Hospital Dubai'}</span>
-                  </p>
-                </div>
-              </div>
-
-              {/* Doctor switcher dropdown */}
-              <div className="sm:text-right rtl:sm:text-left shrink-0">
-                <label className="block text-[10px] font-semibold uppercase tracking-wider text-[#6B7280] mb-1">
-                  {t('booking.changeDoctor')}
-                </label>
-                <div className="relative inline-block">
-                  <select
-                    value={selectedDocId}
-                    onChange={(e) => handleSelectDoctor(e.target.value)}
-                    className="appearance-none text-xs bg-white border border-[#E5DFCD] rounded-xl pl-3 pr-7 rtl:pl-7 rtl:pr-3 py-2 font-medium text-[#111827] cursor-pointer focus:outline-hidden hover:border-[#BAC7AD]"
-                  >
-                    {allDoctors.map((d) => (
-                      <option key={d.id} value={d.id}>
-                        {d.name} ({translateSpecialty(d.specialty)})
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="w-3.5 h-3.5 text-[#6B7280] absolute right-2 rtl:right-auto rtl:left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
+                  return (
+                    <button
+                      key={s.step}
+                      type="button"
+                      disabled={!isClickable}
+                      onClick={() => {
+                        if (isClickable) {
+                          setCurrentStep(s.step);
+                          window.scrollTo({ top: 120, behavior: 'smooth' });
+                        }
+                      }}
+                      className={`text-center transition-all ${
+                        isClickable ? 'cursor-pointer hover:opacity-85' : 'cursor-default'
+                      }`}
+                    >
+                      {/* Segmented Horizontal Line Bar */}
+                      <div
+                        className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 ${
+                          isPassedOrCurrent ? 'bg-[#008B74]' : 'bg-[#D6D3C7]'
+                        }`}
+                      />
+                      {/* Step Text Underneath */}
+                      <span
+                        className={`block mt-2 text-xs sm:text-sm font-semibold tracking-tight transition-colors ${
+                          isPassedOrCurrent ? 'text-[#008B74] font-bold' : 'text-[#8C827A]'
+                        }`}
+                      >
+                        {s.label}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            <form onSubmit={handleBookNow} className="mt-6 space-y-6">
+            {/* Main Booking White Card */}
+            <div className="bg-white rounded-3xl border border-[#E5DFCD] p-6 sm:p-8 shadow-xs">
               
-              {/* =================================================================== */}
-              {/* STYLED DEPARTMENT DROPDOWN                                          */}
-              {/* =================================================================== */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
-                    <Stethoscope className="w-4 h-4 text-[#008B74]" />
-                    <span>{t('booking.specialtyLabel')}</span>
-                  </label>
-                  <span className="text-[10px] font-semibold text-[#008B74] bg-[#E6F4F1] px-2 py-0.5 rounded-md border border-[#B2E2D9]">
-                    {t('booking.doctorsSpecialties')}
-                  </span>
-                </div>
-
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 rtl:left-auto rtl:right-0 rtl:pl-0 rtl:pr-3.5 flex items-center pointer-events-none text-[#008B74]">
-                    <Stethoscope className="w-4 h-4" />
-                  </div>
-                  <select
-                    value={selectedSpecialty}
-                    onChange={(e) => setSelectedSpecialty(e.target.value)}
-                    className="w-full appearance-none bg-[#FAF9F5] hover:bg-white focus:bg-white border border-[#E5DFCD] hover:border-[#BAC7AD] focus:border-[#008B74] focus:ring-2 focus:ring-[#008B74]/20 rounded-2xl pl-10 pr-10 rtl:pr-10 rtl:pl-10 py-3.5 text-xs sm:text-sm font-semibold text-[#111827] transition-all cursor-pointer outline-hidden shadow-2xs"
-                  >
-                    {doctorDepartments.map((dept) => (
-                      <option key={dept} value={dept}>
-                        {translateSpecialty(dept)}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute inset-y-0 right-0 pr-3.5 rtl:right-auto rtl:left-0 rtl:pr-0 rtl:pl-3.5 flex items-center pointer-events-none text-[#6B7280]">
-                    <ChevronDown className="w-4 h-4" />
-                  </div>
-                </div>
-                <p className="text-[11px] text-[#6B7280] mt-1.5">
-                  {t('booking.showingDepartments', { name: doctor.name })}
+              {/* Page Header */}
+              <div className="pb-5 border-b border-[#E5DFCD]">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#111827] tracking-tight">
+                  {t('booking.pageTitle')}
+                </h1>
+                <p className="text-xs text-[#6B7280] mt-1">
+                  {t('booking.pageSubtitle')}
                 </p>
               </div>
 
-              {/* =================================================================== */}
-              {/* DATE SELECTION (7-DAY STRIP)                                       */}
-              {/* =================================================================== */}
-              <div>
-                <div className="flex items-center justify-between mb-2.5">
-                  <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
-                    <Calendar className="w-4 h-4 text-[#008B74]" />
-                    <span>{t('booking.selectDate')}</span>
-                  </label>
-                  <span className="text-[11px] text-[#6B7280] font-medium">
-                    {selectedDateObj.fullDisplay}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
-                  {nextDates.map((d) => {
-                    const isSelected = selectedDateObj.date === d.date;
-                    return (
-                      <button
-                        key={d.date}
-                        type="button"
-                        onClick={() => setSelectedDateObj(d)}
-                        className={`p-2.5 rounded-2xl border text-center transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-[#008B74] text-white border-[#008B74] shadow-xs scale-[1.02]'
-                            : 'bg-[#FAF9F5] border-[#E5DFCD] text-[#4B5563] hover:bg-white hover:border-[#BAC7AD]'
-                        }`}
-                      >
-                        <span className="text-[10px] block font-bold capitalize">
-                          {d.dayName}
-                        </span>
-                        <span className="text-xs font-semibold block mt-0.5">
-                          {d.display}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* =================================================================== */}
-              {/* TIME SLOTS (30-MINUTE INTERVALS)                                   */}
-              {/* =================================================================== */}
-              <div>
-                <div className="flex items-center justify-between mb-2.5">
-                  <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
-                    <Clock className="w-4 h-4 text-[#008B74]" />
-                    <span>{t('booking.selectTime')}</span>
-                  </label>
-                  <span className="text-xs font-bold text-[#008B74]">
-                    {t('booking.selectedSlotLabel')}: {selectedSlot}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                  {doctor.availableSlots.map((slot) => {
-                    const isSelected = selectedSlot === slot;
-                    return (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`py-2.5 px-2 text-center rounded-xl border text-xs font-mono font-medium transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-[#008B74] text-white border-[#008B74] font-bold shadow-xs'
-                            : 'bg-[#FAF9F5] hover:bg-white text-[#1F2937] border-[#E5DFCD] hover:border-[#BAC7AD]'
-                        }`}
-                      >
-                        {slot}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* =================================================================== */}
-              {/* PATIENT DETAILS                                                    */}
-              {/* =================================================================== */}
-              <div className="pt-4 border-t border-[#E5DFCD] space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
-                    <User className="w-4 h-4 text-[#008B74]" />
-                    <span>{t('booking.patientInfoTitle')}</span>
-                  </h3>
-                  <span className="text-[11px] text-[#6B7280]">
-                    * {t('common.required', 'Required fields')}
-                  </span>
-                </div>
-
-                {/* Patient Full Name */}
-                <div>
-                  <label className="block text-[11px] font-bold text-[#374151] mb-1.5">
-                    {t('booking.fullName')} *
-                  </label>
-                  <div className="bg-[#FAF9F5] hover:bg-white focus-within:bg-white rounded-2xl border border-[#E5DFCD] focus-within:border-[#008B74] focus-within:ring-2 focus-within:ring-[#008B74]/20 px-4 py-3 flex items-center transition-all">
-                    <User className="w-4 h-4 text-[#6B7280] mr-2.5 rtl:mr-0 rtl:ml-2.5 shrink-0" />
-                    <input
-                      type="text"
-                      required
-                      placeholder={t('booking.fullNamePlaceholder')}
-                      value={patientName}
-                      onChange={(e) => setPatientName(e.target.value)}
-                      className="w-full bg-transparent text-xs sm:text-sm text-[#111827] focus:outline-hidden font-medium placeholder:text-[#9CA3AF]"
-                    />
-                  </div>
-                </div>
-
-                {/* Patient Mobile with Country Code */}
-                <div>
-                  <label className="block text-[11px] font-bold text-[#374151] mb-1.5">
-                    {t('booking.mobileNumber')} *
-                  </label>
-                  <div className="flex gap-2">
-                    <div className="relative w-32 shrink-0">
-                      <select
-                        value={countryCode}
-                        onChange={(e) => setCountryCode(e.target.value)}
-                        className="w-full appearance-none bg-[#FAF9F5] border border-[#E5DFCD] rounded-2xl px-3 py-3 text-xs font-bold text-[#111827] focus:outline-hidden focus:border-[#008B74] cursor-pointer"
-                      >
-                        <option value="+971">+971 (UAE)</option>
-                        <option value="+965">+965 (KWT)</option>
-                        <option value="+966">+966 (KSA)</option>
-                        <option value="+974">+974 (QAT)</option>
-                        <option value="+44">+44 (UK)</option>
-                        <option value="+1">+1 (US)</option>
-                      </select>
-                      <ChevronDown className="w-3.5 h-3.5 text-[#6B7280] absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              {/* Staff Account Detected Banner */}
+              {isStaff && (
+                <div className="mt-5 p-5 rounded-2xl bg-amber-50/90 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 text-amber-700 flex items-center justify-center shrink-0">
+                      <ShieldAlert className="w-5 h-5" />
                     </div>
-
-                    <div className="flex-1 bg-[#FAF9F5] hover:bg-white focus-within:bg-white rounded-2xl border border-[#E5DFCD] focus-within:border-[#008B74] focus-within:ring-2 focus-within:ring-[#008B74]/20 px-4 py-3 flex items-center transition-all">
-                      <Phone className="w-4 h-4 text-[#6B7280] mr-2.5 rtl:mr-0 rtl:ml-2.5 shrink-0" />
-                      <input
-                        type="tel"
-                        required
-                        placeholder={t('booking.mobilePlaceholder')}
-                        value={mobileNumber}
-                        onChange={(e) => setMobileNumber(e.target.value)}
-                        className="w-full bg-transparent text-xs sm:text-sm text-[#111827] focus:outline-hidden font-medium placeholder:text-[#9CA3AF]"
-                      />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-bold text-amber-900">
+                          {language === 'ar' ? `حساب إداري نشط (${staffRoleLabel})` : `Staff Account Active (${staffRoleLabel})`}
+                        </h3>
+                        <span className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 border border-amber-300 capitalize">
+                          {user?.role}
+                        </span>
+                      </div>
+                      <p className="text-xs text-amber-800 mt-1 leading-relaxed">
+                        {language === 'ar'
+                          ? 'حجز المواعيد على الموقع العام مخصص للمرضى فقط. بصفتك عضواً في الفريق، يرجى استخدام لوحة التحكم لإدارة المواعيد والعمليات.'
+                          : 'Public appointment booking is reserved for patients. As an administrator or team member, please use your portal dashboard to manage schedules and bookings.'}
+                      </p>
                     </div>
                   </div>
-                </div>
-
-                {/* Email (Optional) */}
-                <div>
-                  <label className="block text-[11px] font-bold text-[#374151] mb-1.5">
-                    {t('booking.email')} <span className="text-[#6B7280] font-normal">({t('common.optional', 'Optional')})</span>
-                  </label>
-                  <div className="bg-[#FAF9F5] hover:bg-white focus-within:bg-white rounded-2xl border border-[#E5DFCD] focus-within:border-[#008B74] focus-within:ring-2 focus-within:ring-[#008B74]/20 px-4 py-3 flex items-center transition-all">
-                    <Mail className="w-4 h-4 text-[#6B7280] mr-2.5 rtl:mr-0 rtl:ml-2.5 shrink-0" />
-                    <input
-                      type="email"
-                      placeholder={t('booking.emailPlaceholder')}
-                      value={patientEmail}
-                      onChange={(e) => setPatientEmail(e.target.value)}
-                      className="w-full bg-transparent text-xs sm:text-sm text-[#111827] focus:outline-hidden font-medium placeholder:text-[#9CA3AF]"
-                    />
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Link
+                      to={staffDashboardPath}
+                      className="py-2.5 px-4 bg-[#008B74] hover:bg-[#007461] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      <span>{staffDashboardName}</span>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await logout();
+                        showToast(language === 'ar' ? 'تم تسجيل الخروج. يمكنك الحجز الآن كمريض.' : 'Signed out. You can now book as a patient.', 'info');
+                      }}
+                      className="py-2.5 px-3 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-slate-500" />
+                      <span>{language === 'ar' ? 'تسجيل الخروج' : 'Sign Out'}</span>
+                    </button>
                   </div>
-                </div>
-              </div>
-
-              {/* Consultation Payment Notice */}
-              <div className="bg-[#E6F4F1] border border-[#B2E2D9] rounded-2xl p-4 flex items-start gap-3 text-xs text-[#284E46]">
-                <ShieldCheck className="w-5 h-5 text-[#008B74] mt-0.5 shrink-0" />
-                <div className="space-y-0.5">
-                  <span className="font-bold text-[#008B74] block">{t('booking.zeroUpfrontPayment')}</span>
-                  <p className="leading-relaxed">
-                    {t('booking.zeroUpfrontDesc')}
-                  </p>
-                </div>
-              </div>
-
-              {/* Terms Checkbox */}
-              <div className="flex items-start gap-2.5 pt-1">
-                <input
-                  type="checkbox"
-                  id="termsCheckbox"
-                  checked={termsAccepted}
-                  onChange={(e) => setTermsAccepted(e.target.checked)}
-                  className="mt-0.5 rounded-sm border-[#E5DFCD] text-[#008B74] focus:ring-[#008B74] cursor-pointer"
-                />
-                <label htmlFor="termsCheckbox" className="text-xs text-[#4B5563] cursor-pointer leading-snug">
-                  {t('booking.termsText')}
-                </label>
-              </div>
-
-              {/* Guest notice — shown when not signed in */}
-              {!isAuthenticated && isFormValid && (
-                <div className="flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-2xl">
-                  <LogIn className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-                  <p className="text-[11px] text-amber-800 leading-snug">
-                    {t('booking.signInRequiredNotice')}
-                  </p>
                 </div>
               )}
 
-              {/* PRIMARY SUBMIT BUTTON */}
-              <div>
-                <button
-                  type="submit"
-                  disabled={!isFormValid || isSubmitting}
-                  className={`w-full py-4 text-sm font-bold rounded-2xl flex items-center justify-center gap-2 transition-all duration-200 ${
-                    !isFormValid
-                      ? 'bg-[#8D9B7B] text-white/80 cursor-not-allowed opacity-75 shadow-none'
-                      : 'bg-[#008B74] hover:bg-[#007461] active:scale-[0.99] text-white cursor-pointer shadow-md hover:shadow-lg shadow-[#008B74]/20'
-                  }`}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>{t('booking.confirmingWithHospital')}</span>
-                    </>
-                  ) : !isAuthenticated && isFormValid ? (
-                    <>
-                      <LogIn className="w-4 h-4" />
-                      <span>{t('booking.signInAndBook')}</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>{t('booking.confirmAndBook')}</span>
-                      <ArrowRight className="w-4 h-4 rtl:rotate-180" />
-                    </>
-                  )}
-                </button>
+              <form onSubmit={handleBookNow} className="mt-6">
+              {/* ========================================================================= */}
+              {/* STEP 1: DOCTOR & SPECIALTY                                                */}
+              {/* ========================================================================= */}
+              {currentStep === 1 && (
+                <div className="space-y-6 animate-in fade-in duration-200">
+                  {/* Doctor Profile Banner */}
+                  <div className="p-4 rounded-2xl bg-[#FAF9F5] border border-[#E5DFCD] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3.5">
+                      <img
+                        src={doctor.photo}
+                        alt={doctor.name}
+                        className="w-16 h-16 rounded-2xl object-cover border border-[#E5DFCD] shrink-0"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h2 className="text-base font-bold text-[#111827]">
+                            {doctor.name}
+                          </h2>
+                          <span className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E6F4F1] text-[#008B74] border border-[#B2E2D9]">
+                            {t('booking.verifiedSpecialist')}
+                          </span>
+                        </div>
+                        <p className="text-xs font-semibold text-[#008B74] mt-0.5">
+                          {translateSpecialty(doctor.specialty)}
+                        </p>
+                        <p className="text-xs text-[#6B7280] mt-0.5 flex items-center gap-1">
+                          <Building2 className="w-3.5 h-3.5 text-[#008B74] shrink-0" />
+                          <span>{doctor.hospitalName || 'CMC Hospital Dubai'}</span>
+                        </p>
+                      </div>
+                    </div>
 
-                {!isFormValid && (
-                  <p className="text-center text-[11px] text-[#6B7280] mt-2">
-                    {t('booking.fillRequiredNotice')}
-                  </p>
-                )}
-              </div>
+                    {/* Doctor switcher dropdown */}
+                    <div className="sm:text-right rtl:sm:text-left shrink-0">
+                      <label className="block text-[10px] font-semibold uppercase tracking-wider text-[#6B7280] mb-1">
+                        {t('booking.changeDoctor')}
+                      </label>
+                      <div className="relative inline-block">
+                        <select
+                          value={selectedDocId}
+                          onChange={(e) => handleSelectDoctor(e.target.value)}
+                          className="appearance-none text-xs bg-white border border-[#E5DFCD] rounded-xl pl-3 pr-7 rtl:pl-7 rtl:pr-3 py-2 font-medium text-[#111827] cursor-pointer focus:outline-hidden hover:border-[#BAC7AD]"
+                        >
+                          {allDoctors.map((d) => (
+                            <option key={d.id} value={d.id}>
+                              {d.name} ({translateSpecialty(d.specialty)})
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="w-3.5 h-3.5 text-[#6B7280] absolute right-2 rtl:right-auto rtl:left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Deactivated Doctor Banner */}
+                  {doctor.status === 'Deactivated' && (
+                    <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center gap-3 text-xs text-rose-800">
+                      <ShieldAlert className="w-5 h-5 text-rose-600 shrink-0" />
+                      <div>
+                        <span className="font-bold block text-sm">
+                          {language === 'ar' ? 'الطبيب غير متاح حالياً' : 'Doctor Currently Unavailable'}
+                        </span>
+                        <p className="text-rose-700 mt-0.5">
+                          {language === 'ar'
+                            ? 'تم تعليق الحجوزات لهذا الطبيب مؤقتاً بواسطة الإدارة. يرجى اختيار طبيب آخر من القائمة أعلاه.'
+                            : 'Consultations for this specialist are temporarily suspended by administration. Please select another practitioner from the dropdown above.'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Specialty / Department Selector */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
+                        <Stethoscope className="w-4 h-4 text-[#008B74]" />
+                        <span>{t('booking.specialtyLabel')}</span>
+                      </label>
+                      <span className="text-[10px] font-semibold text-[#008B74] bg-[#E6F4F1] px-2 py-0.5 rounded-md border border-[#B2E2D9]">
+                        {t('booking.doctorsSpecialties')}
+                      </span>
+                    </div>
+
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 rtl:left-auto rtl:right-0 rtl:pl-0 rtl:pr-3.5 flex items-center pointer-events-none text-[#008B74]">
+                        <Stethoscope className="w-4 h-4" />
+                      </div>
+                      <select
+                        value={selectedSpecialty}
+                        onChange={(e) => setSelectedSpecialty(e.target.value)}
+                        className="w-full appearance-none bg-[#FAF9F5] hover:bg-white focus:bg-white border border-[#E5DFCD] hover:border-[#BAC7AD] focus:border-[#008B74] focus:ring-2 focus:ring-[#008B74]/20 rounded-2xl pl-10 pr-10 rtl:pr-10 rtl:pl-10 py-3.5 text-xs sm:text-sm font-semibold text-[#111827] transition-all cursor-pointer outline-hidden shadow-2xs"
+                      >
+                        {doctorDepartments.map((dept) => (
+                          <option key={dept} value={dept}>
+                            {translateSpecialty(dept)}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute inset-y-0 right-0 pr-3.5 rtl:right-auto rtl:left-0 rtl:pr-0 rtl:pl-3.5 flex items-center pointer-events-none text-[#6B7280]">
+                        <ChevronDown className="w-4 h-4" />
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-[#6B7280] mt-1.5">
+                      {t('booking.showingDepartments', { name: doctor.name })}
+                    </p>
+                  </div>
+
+                  {/* Step 1 Actions */}
+                  <div className="pt-4 border-t border-[#E5DFCD] flex items-center justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!isStep1Valid) {
+                          showToast(isArabic ? 'الطبيب غير متاح حالياً للحجز' : 'Doctor is currently unavailable', 'error');
+                          return;
+                        }
+                        setCurrentStep(2);
+                        window.scrollTo({ top: 160, behavior: 'smooth' });
+                      }}
+                      disabled={!isStep1Valid}
+                      className={`py-3.5 px-6 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer ${
+                        !isStep1Valid
+                          ? 'bg-[#8D9B7B] text-white/80 cursor-not-allowed opacity-75'
+                          : 'bg-[#008B74] hover:bg-[#007461] active:scale-[0.99] text-white shadow-md hover:shadow-lg shadow-[#008B74]/20'
+                      }`}
+                    >
+                      <span>{isArabic ? 'متابعة' : 'Continue'}</span>
+                      <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================================= */}
+              {/* STEP 2: DATE & TIME                                                       */}
+              {/* ========================================================================= */}
+              {currentStep === 2 && (
+                <div className="space-y-6 animate-in fade-in duration-200">
+                  {/* Selected Doctor Recap */}
+                  <div className="p-3.5 bg-[#FAF9F5] rounded-2xl border border-[#E5DFCD] flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={doctor.photo}
+                        alt={doctor.name}
+                        className="w-11 h-11 rounded-xl object-cover border border-[#E5DFCD]"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div>
+                        <h4 className="text-xs font-bold text-[#111827]">{doctor.name}</h4>
+                        <p className="text-[11px] text-[#008B74] font-semibold">{translateSpecialty(selectedSpecialty)}</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentStep(1);
+                        window.scrollTo({ top: 160, behavior: 'smooth' });
+                      }}
+                      className="text-xs font-bold text-[#008B74] hover:underline cursor-pointer flex items-center gap-1"
+                    >
+                      <span>{isArabic ? 'تغيير' : 'Change'}</span>
+                    </button>
+                  </div>
+
+                  {/* Date Selection (7-Day Strip) */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
+                        <Calendar className="w-4 h-4 text-[#008B74]" />
+                        <span>{t('booking.selectDate')}</span>
+                      </label>
+                      <span className="text-[11px] text-[#6B7280] font-medium">
+                        {selectedDateObj.fullDisplay}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                      {nextDates.map((d) => {
+                        const isSelected = selectedDateObj.date === d.date;
+                        return (
+                          <button
+                            key={d.date}
+                            type="button"
+                            onClick={() => setSelectedDateObj(d)}
+                            className={`p-2.5 rounded-2xl border text-center transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-[#008B74] text-white border-[#008B74] shadow-xs scale-[1.02]'
+                                : 'bg-[#FAF9F5] border-[#E5DFCD] text-[#4B5563] hover:bg-white hover:border-[#BAC7AD]'
+                            }`}
+                          >
+                            <span className="text-[10px] block font-bold capitalize">
+                              {d.dayName}
+                            </span>
+                            <span className="text-xs font-semibold block mt-0.5">
+                              {d.display}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Time Slots (Full Schedule Grid) */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                      <label className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
+                        <Clock className="w-4 h-4 text-[#008B74]" />
+                        <span>{t('booking.selectTime')}</span>
+                      </label>
+                      {selectedSlot ? (
+                        <span className="text-xs font-bold text-[#008B74]">
+                          {t('booking.selectedSlotLabel')}: {selectedSlot}
+                        </span>
+                      ) : (
+                        <span className="text-xs font-semibold text-rose-500">
+                          {isArabic ? 'يرجى اختيار وقت متاح' : 'Please select an available slot'}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Status Indicator Legend */}
+                    <div className="flex items-center gap-3.5 text-[11px] text-slate-500 mb-3 pb-2 border-b border-[#E5DFCD]/60 flex-wrap">
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#008B74]" />
+                        <span>{isArabic ? 'متاح' : 'Available'}</span>
+                      </span>
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+                        <span>{isArabic ? 'غير متاح' : 'Not Available'}</span>
+                      </span>
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
+                        <span>{isArabic ? 'محجوز' : 'Booked'}</span>
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                      {fullScheduleSlots.map((slot) => {
+                        const isConfiguredAvailable = (doctor.availableSlots || []).includes(slot);
+                        const isBooked = bookedSlotsForDate.has(slot);
+                        const isAvailable = isConfiguredAvailable && !isBooked;
+                        const isSelected = selectedSlot === slot && isAvailable;
+
+                        if (isBooked) {
+                          return (
+                            <div
+                              key={slot}
+                              title={isArabic ? 'تم حجز هذا الموعد مسبقاً' : 'This slot is already booked'}
+                              className="py-2.5 px-2 text-center rounded-xl border border-slate-200 bg-slate-100/90 text-slate-400 cursor-not-allowed select-none transition-all flex flex-col items-center justify-center min-h-[54px]"
+                            >
+                              <span className="text-xs font-mono font-medium line-through text-slate-400">
+                                {slot}
+                              </span>
+                              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight mt-0.5">
+                                {isArabic ? 'محجوز' : 'Booked'}
+                              </span>
+                            </div>
+                          );
+                        }
+
+                        if (!isConfiguredAvailable) {
+                          return (
+                            <div
+                              key={slot}
+                              title={isArabic ? 'هذا الموعد غير متاح في جدول الطبيب' : 'Doctor is not available at this time'}
+                              className="py-2.5 px-2 text-center rounded-xl border border-slate-200 bg-slate-100/60 text-slate-400 cursor-not-allowed select-none transition-all flex flex-col items-center justify-center min-h-[54px]"
+                            >
+                              <span className="text-xs font-mono font-medium text-slate-400">
+                                {slot}
+                              </span>
+                              <span className="text-[9px] font-medium text-slate-400 uppercase tracking-tight mt-0.5">
+                                {isArabic ? 'غير متاح' : 'Not Available'}
+                              </span>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <button
+                            key={slot}
+                            type="button"
+                            onClick={() => setSelectedSlot(slot)}
+                            className={`py-2.5 px-2 text-center rounded-xl border text-xs font-mono transition-all cursor-pointer flex flex-col items-center justify-center min-h-[54px] ${
+                              isSelected
+                                ? 'bg-[#008B74] text-white border-[#008B74] font-bold shadow-xs scale-[1.02]'
+                                : 'bg-[#FAF9F5] hover:bg-white text-[#1F2937] border-[#E5DFCD] hover:border-[#008B74] hover:shadow-2xs'
+                            }`}
+                          >
+                            <span className={`text-xs font-mono font-bold ${isSelected ? 'text-white' : 'text-[#1F2937]'}`}>
+                              {slot}
+                            </span>
+                            <span className={`text-[9px] font-bold uppercase tracking-tight mt-0.5 ${isSelected ? 'text-teal-100' : 'text-[#008B74]'}`}>
+                              {isSelected ? (isArabic ? 'محدد' : 'Selected') : (isArabic ? 'متاح' : 'Available')}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Step 2 Actions */}
+                  <div className="pt-4 border-t border-[#E5DFCD] flex items-center justify-between gap-3 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentStep(1);
+                        window.scrollTo({ top: 160, behavior: 'smooth' });
+                      }}
+                      className="py-3 px-5 rounded-2xl text-xs sm:text-sm font-bold border border-[#E5DFCD] bg-[#FAF9F5] hover:bg-white text-[#111827] transition-all flex items-center gap-2 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-4 h-4 rtl:rotate-180" />
+                      <span>{isArabic ? 'رجوع' : 'Back'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!isStep2Valid) {
+                          showToast(isArabic ? 'يرجى اختيار وقت متاح للموعد للمتابعة' : 'Please select an available time slot', 'error');
+                          return;
+                        }
+                        setCurrentStep(3);
+                        window.scrollTo({ top: 120, behavior: 'smooth' });
+                      }}
+                      disabled={!isStep2Valid}
+                      className={`py-3.5 px-7 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer ${
+                        !isStep2Valid
+                          ? 'bg-[#8D9B7B] text-white/80 cursor-not-allowed opacity-75'
+                          : 'bg-[#008B74] hover:bg-[#007461] active:scale-[0.99] text-white shadow-md hover:shadow-lg shadow-[#008B74]/20'
+                      }`}
+                    >
+                      <span>{isArabic ? 'متابعة' : 'Continue'}</span>
+                      <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================================= */}
+              {/* STEP 3: PATIENT DETAILS & CONFIRMATION                                    */}
+              {/* ========================================================================= */}
+              {currentStep === 3 && (
+                <div className="space-y-6 animate-in fade-in duration-200">
+                  {/* Selected Booking Recap Summary */}
+                  <div className="p-4 bg-[#FAF9F5] rounded-2xl border border-[#E5DFCD] space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                        {isArabic ? 'ملخص الحجز المحدد' : 'Selected Appointment Summary'}
+                      </span>
+                      <span className="text-xs font-bold text-[#008B74]">
+                        {t('booking.inPersonPayAtReception')}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2.5 border-t border-[#E5DFCD]">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={doctor.photo}
+                          alt={doctor.name}
+                          className="w-12 h-12 rounded-xl object-cover border border-[#E5DFCD] shrink-0"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div>
+                          <h4 className="text-sm font-bold text-[#111827]">{doctor.name}</h4>
+                          <p className="text-xs text-[#008B74] font-semibold">{translateSpecialty(selectedSpecialty)}</p>
+                          <p className="text-[11px] text-[#6B7280]">{doctor.hospitalName || 'CMC Hospital Dubai'}</p>
+                        </div>
+                      </div>
+
+                      <div className="sm:text-right rtl:sm:text-left bg-white px-3.5 py-2 rounded-xl border border-[#E5DFCD]">
+                        <div className="flex items-center sm:justify-end gap-1.5 text-xs font-bold text-[#111827]">
+                          <Calendar className="w-3.5 h-3.5 text-[#008B74]" />
+                          <span>{selectedDateObj.display}</span>
+                          <span className="text-slate-300">•</span>
+                          <Clock className="w-3.5 h-3.5 text-[#008B74]" />
+                          <span className="font-mono text-[#008B74]">{selectedSlot}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCurrentStep(2);
+                            window.scrollTo({ top: 160, behavior: 'smooth' });
+                          }}
+                          className="text-[11px] font-bold text-[#008B74] hover:underline mt-0.5 cursor-pointer"
+                        >
+                          {isArabic ? 'تعديل التاريخ والوقت' : 'Change Date / Time'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Patient Info Fields */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs font-bold text-[#111827] flex items-center gap-1.5">
+                        <User className="w-4 h-4 text-[#008B74]" />
+                        <span>{t('booking.patientInfoTitle')}</span>
+                      </h3>
+                      <span className="text-[11px] text-[#6B7280]">
+                        * {t('common.required') || 'Required fields'}
+                      </span>
+                    </div>
+
+                    {/* Full Name */}
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#374151] mb-1.5">
+                        {t('booking.fullName')} *
+                      </label>
+                      <div className="bg-[#FAF9F5] hover:bg-white focus-within:bg-white rounded-2xl border border-[#E5DFCD] focus-within:border-[#008B74] focus-within:ring-2 focus-within:ring-[#008B74]/20 px-4 py-3 flex items-center transition-all">
+                        <User className="w-4 h-4 text-[#6B7280] mr-2.5 rtl:mr-0 rtl:ml-2.5 shrink-0" />
+                        <input
+                          type="text"
+                          required
+                          placeholder={t('booking.fullNamePlaceholder')}
+                          value={patientName}
+                          onChange={(e) => setPatientName(e.target.value)}
+                          className="w-full bg-transparent text-xs sm:text-sm text-[#111827] focus:outline-hidden font-medium placeholder:text-[#9CA3AF]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Mobile Number */}
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#374151] mb-1.5">
+                        {t('booking.mobileNumber')} *
+                      </label>
+                      <div className="flex gap-2">
+                        <div className="relative w-32 shrink-0">
+                          <select
+                            value={countryCode}
+                            onChange={(e) => setCountryCode(e.target.value)}
+                            className="w-full appearance-none bg-[#FAF9F5] border border-[#E5DFCD] rounded-2xl px-3 py-3 text-xs font-bold text-[#111827] focus:outline-hidden focus:border-[#008B74] cursor-pointer"
+                          >
+                            <option value="+971">+971 (UAE)</option>
+                            <option value="+965">+965 (KWT)</option>
+                            <option value="+966">+966 (KSA)</option>
+                            <option value="+974">+974 (QAT)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+1">+1 (US)</option>
+                          </select>
+                          <ChevronDown className="w-3.5 h-3.5 text-[#6B7280] absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+
+                        <div className="flex-1 bg-[#FAF9F5] hover:bg-white focus-within:bg-white rounded-2xl border border-[#E5DFCD] focus-within:border-[#008B74] focus-within:ring-2 focus-within:ring-[#008B74]/20 px-4 py-3 flex items-center transition-all">
+                          <Phone className="w-4 h-4 text-[#6B7280] mr-2.5 rtl:mr-0 rtl:ml-2.5 shrink-0" />
+                          <input
+                            type="tel"
+                            required
+                            placeholder={t('booking.mobilePlaceholder')}
+                            value={mobileNumber}
+                            onChange={(e) => setMobileNumber(e.target.value)}
+                            className="w-full bg-transparent text-xs sm:text-sm text-[#111827] focus:outline-hidden font-medium placeholder:text-[#9CA3AF]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#374151] mb-1.5">
+                        {t('booking.email')} <span className="text-[#6B7280] font-normal">({t('common.optional') || 'Optional'})</span>
+                      </label>
+                      <div className="bg-[#FAF9F5] hover:bg-white focus-within:bg-white rounded-2xl border border-[#E5DFCD] focus-within:border-[#008B74] focus-within:ring-2 focus-within:ring-[#008B74]/20 px-4 py-3 flex items-center transition-all">
+                        <Mail className="w-4 h-4 text-[#6B7280] mr-2.5 rtl:mr-0 rtl:ml-2.5 shrink-0" />
+                        <input
+                          type="email"
+                          placeholder={t('booking.emailPlaceholder')}
+                          value={patientEmail}
+                          onChange={(e) => setPatientEmail(e.target.value)}
+                          className="w-full bg-transparent text-xs sm:text-sm text-[#111827] focus:outline-hidden font-medium placeholder:text-[#9CA3AF]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Consultation Payment Notice */}
+                  <div className="bg-[#E6F4F1] border border-[#B2E2D9] rounded-2xl p-4 flex items-start gap-3 text-xs text-[#284E46]">
+                    <ShieldCheck className="w-5 h-5 text-[#008B74] mt-0.5 shrink-0" />
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-[#008B74] block">{t('booking.zeroUpfrontPayment')}</span>
+                      <p className="leading-relaxed">
+                        {t('booking.zeroUpfrontDesc')}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Terms Checkbox */}
+                  <div className="flex items-start gap-2.5 pt-1">
+                    <input
+                      type="checkbox"
+                      id="termsCheckbox"
+                      checked={termsAccepted}
+                      onChange={(e) => setTermsAccepted(e.target.checked)}
+                      className="mt-0.5 rounded-sm border-[#E5DFCD] text-[#008B74] focus:ring-[#008B74] cursor-pointer"
+                    />
+                    <label htmlFor="termsCheckbox" className="text-xs text-[#4B5563] cursor-pointer leading-snug">
+                      {t('booking.termsText')}
+                    </label>
+                  </div>
+
+                  {/* Guest notice */}
+                  {!isAuthenticated && isFormValid && !isStaff && (
+                    <div className="flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-2xl">
+                      <LogIn className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                      <p className="text-[11px] text-amber-800 leading-snug">
+                        {t('booking.signInRequiredNotice')}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Step 3 Actions */}
+                  <div className="pt-4 border-t border-[#E5DFCD] flex items-center justify-between gap-3 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentStep(2);
+                        window.scrollTo({ top: 160, behavior: 'smooth' });
+                      }}
+                      className="py-3 px-5 rounded-2xl text-xs sm:text-sm font-bold border border-[#E5DFCD] bg-[#FAF9F5] hover:bg-white text-[#111827] transition-all flex items-center gap-2 cursor-pointer"
+                    >
+                      <ChevronLeft className="w-4 h-4 rtl:rotate-180" />
+                      <span>{isArabic ? 'رجوع' : 'Back'}</span>
+                    </button>
+
+                    <div className="flex-1 sm:flex-initial">
+                      {isStaff ? (
+                        <div className="space-y-2">
+                          <Link
+                            to={staffDashboardPath}
+                            className="py-3.5 px-6 bg-[#008B74] hover:bg-[#007461] text-white text-xs sm:text-sm font-bold rounded-2xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            <LayoutDashboard className="w-4 h-4" />
+                            <span>{staffDashboardName}</span>
+                          </Link>
+                        </div>
+                      ) : (
+                        <button
+                          type="submit"
+                          disabled={!isFormValid || isSubmitting}
+                          className={`w-full sm:w-auto py-3.5 px-8 text-xs sm:text-sm font-bold rounded-2xl flex items-center justify-center gap-2 transition-all duration-200 ${
+                            !isFormValid
+                              ? 'bg-[#8D9B7B] text-white/80 cursor-not-allowed opacity-75 shadow-none'
+                              : 'bg-[#008B74] hover:bg-[#007461] active:scale-[0.99] text-white cursor-pointer shadow-md hover:shadow-lg shadow-[#008B74]/20'
+                          }`}
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              <span>{t('booking.confirmingWithHospital')}</span>
+                            </>
+                          ) : !isAuthenticated && isFormValid ? (
+                            <>
+                              <LogIn className="w-4 h-4" />
+                              <span>{t('booking.signInAndBook')}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>{t('booking.confirmAndBook')}</span>
+                              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {!isFormValid && (
+                    <p className="text-center text-[11px] text-[#6B7280]">
+                      {t('booking.fillRequiredNotice')}
+                    </p>
+                  )}
+                </div>
+              )}
             </form>
           </div>
-        )}
+        </div>
+      )}
 
       </div>
 

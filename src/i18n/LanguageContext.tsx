@@ -98,9 +98,19 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         val = getNestedValue(dictionaries.en, path);
       }
 
-      // 3. Fallback to the raw path if not in English
+      // 3. Fallback to clean human-readable text if missing
       if (!val) {
-        val = path;
+        if (path && path.includes('.')) {
+          const parts = path.split('.');
+          const lastPart = parts[parts.length - 1];
+          val = lastPart
+            .replace(/([A-Z])/g, ' $1')
+            .replace(/^./, (s) => s.toUpperCase())
+            .replace(/\bBtn\b/i, '')
+            .trim();
+        } else {
+          val = path;
+        }
       }
 
       // 4. Interpolate parameters like {count}, {name}

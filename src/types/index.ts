@@ -30,6 +30,7 @@ export interface Doctor {
   availableDays: string[];
   availableSlots: string[];
   consultationFee?: number;
+  status?: 'Active' | 'Deactivated';
 }
 
 export interface Hospital {
@@ -46,6 +47,7 @@ export interface Hospital {
   phone: string;
   operatingHours: string;
   about: string;
+  status?: 'Active' | 'Deactivated';
 }
 
 export interface Clinic {
@@ -61,6 +63,7 @@ export interface Clinic {
   phone: string;
   operatingHours: string;
   about: string;
+  status?: 'Active' | 'Deactivated';
 }
 
 export interface Patient {
@@ -100,6 +103,7 @@ export interface Appointment {
   clinicId?: string;
   providerName: string;
   facilityName?: string;
+  hospitalName?: string;
   specialty: string;
   location: string;
   date: string; // YYYY-MM-DD

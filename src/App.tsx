@@ -1,7 +1,7 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { LanguageProvider } from './i18n';
-import { AuthProvider } from './context/AuthContext';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, Link } from 'react-router-dom';
+import { LanguageProvider, useTranslation } from './i18n';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { Header } from './components/layouts/Header';
 import { Footer } from './components/layouts/Footer';
@@ -61,14 +61,50 @@ import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminDoctors } from './pages/admin/AdminDoctors';
 import { AdminProviders } from './pages/admin/AdminProviders';
 import { AdminBookings } from './pages/admin/AdminBookings';
-import { AdminWaitlist } from './pages/admin/AdminWaitlist';
 import { AdminRequests } from './pages/admin/AdminRequests';
 import { AdminReports } from './pages/admin/AdminReports';
 
 // Public Layout Wrapper with Header and Footer
 const PublicLayout: React.FC = () => {
+  const { user } = useAuth();
+  const { isArabic } = useTranslation();
+  const isNonPatientStaff = user && user.role !== 'patient';
+
+  const getDashboardPath = (role: string) => {
+    if (role === 'doctor') return '/doctor/dashboard';
+    if (role === 'hospital') return '/hospital/dashboard';
+    if (role === 'admin') return '/admin/dashboard';
+    return '/';
+  };
+
+  const getRoleName = (role: string) => {
+    if (role === 'doctor') return isArabic ? 'الطبيب' : 'Doctor';
+    if (role === 'hospital') return isArabic ? 'المستشفى' : 'Hospital';
+    if (role === 'admin') return isArabic ? 'الإدارة' : 'Admin';
+    return role;
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-sky-100 selection:text-sky-900 font-sans overflow-x-clip w-full max-w-full">
+      {/* If an admin, hospital, or doctor visits the public site, show site in guest view mode with a return bar */}
+      {isNonPatientStaff && (
+        <div className="bg-slate-900 text-slate-200 text-xs px-4 py-2 flex items-center justify-between border-b border-slate-800 z-50">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-medium">
+              {isArabic
+                ? `تصفح الموقع العام كزائر (${getRoleName(user.role)}) · الحجز متاح للمرضى فقط`
+                : `Browsing public website as Guest (${getRoleName(user.role)}) · Viewing mode (bookings reserved for patients)`}
+            </span>
+          </div>
+          <Link
+            to={getDashboardPath(user.role)}
+            className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-600 hover:bg-teal-500 text-white rounded-lg font-bold text-[11px] transition-colors"
+          >
+            <span>{isArabic ? 'العودة إلى لوحة التحكم' : `Back to ${getRoleName(user.role)} Portal`}</span>
+          </Link>
+        </div>
+      )}
       <Header />
       <main className="flex-1 overflow-x-clip w-full max-w-full">
         <Outlet />
@@ -185,7 +221,6 @@ export default function App() {
               <Route path="doctors" element={<AdminDoctors />} />
               <Route path="providers" element={<AdminProviders />} />
               <Route path="bookings" element={<AdminBookings />} />
-              <Route path="waitlist" element={<AdminWaitlist />} />
               <Route path="requests" element={<AdminRequests />} />
               <Route path="reports" element={<AdminReports />} />
             </Route>

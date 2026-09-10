@@ -18,7 +18,15 @@ import {
   RefreshCw,
   FileText,
   X,
+  TrendingUp,
+  Activity,
+  Heart,
+  ShieldCheck,
 } from 'lucide-react';
+import {
+  AreaChart, Area, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+} from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useTranslation } from '../../i18n';
@@ -26,6 +34,25 @@ import { bookingService } from '../../services/bookingService';
 import { Appointment } from '../../types';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { CancelModal } from '../../components/common/CancelModal';
+
+// ── Patient Chart Tooltip ───────────────────────────────────────────────────
+const PatientChartTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-slate-900/95 backdrop-blur-md text-white rounded-xl px-4 py-3 shadow-2xl text-xs space-y-1.5 border border-slate-700">
+      <p className="font-bold text-slate-300 pb-1 border-b border-slate-800">{label}</p>
+      {payload.map((p: any) => (
+        <div key={p.name} className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: p.color || p.fill }} />
+            <span className="text-slate-400 capitalize">{p.name}:</span>
+          </div>
+          <span className="font-black text-white">{p.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 // ─── Rate & Review Modal ────────────────────────────────────────────────────
 interface ReviewModalProps {
@@ -148,6 +175,74 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
   );
 };
 
+// ─── Timestamp & Countdown Helpers for Upcoming Appointments ─────────────────
+export const getAppointmentTimestamp = (
+  appt: Appointment | { date?: string; time?: string; timeSlot?: string }
+): number => {
+  if (!appt?.date) return 0;
+  const timeStr = (appt.timeSlot || appt.time || '09:00 AM').trim();
+  let hours = 9;
+  let minutes = 0;
+  const match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+  if (match) {
+    hours = parseInt(match[1], 10);
+    minutes = parseInt(match[2], 10);
+    const meridiem = match[3]?.toUpperCase();
+    if (meridiem === 'PM' && hours < 12) hours += 12;
+    if (meridiem === 'AM' && hours === 12) hours = 0;
+  }
+  const dateParts = appt.date.split('-');
+  if (dateParts.length === 3) {
+    const year = parseInt(dateParts[0], 10);
+    const month = parseInt(dateParts[1], 10) - 1;
+    const day = parseInt(dateParts[2], 10);
+    return new Date(year, month, day, hours, minutes, 0).getTime();
+  }
+  const d = new Date(`${appt.date} ${timeStr}`);
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+};
+
+export const formatCountdown = (
+  appt: Appointment,
+  now: number,
+  isArabic: boolean
+): string => {
+  const target = getAppointmentTimestamp(appt);
+  if (!target) return '';
+  const diff = target - now;
+
+  if (diff <= 0) {
+    if (diff > -2 * 60 * 60 * 1000) {
+      return isArabic ? 'جارٍ الآن' : 'In progress';
+    }
+    return isArabic ? 'انتهى' : 'Passed';
+  }
+
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (isArabic) {
+    if (days > 0) {
+      return `متبقي ${days}ي ${hours}س ${minutes}د ${seconds}ث`;
+    }
+    if (hours > 0) {
+      return `متبقي ${hours}س ${minutes}د ${seconds}ث`;
+    }
+    return `متبقي ${minutes}د ${seconds}ث`;
+  }
+
+  if (days > 0) {
+    return `in ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+  if (hours > 0) {
+    return `in ${hours}h ${minutes}m ${seconds}s`;
+  }
+  return `in ${minutes}m ${seconds}s`;
+};
+
 // ─── Main Component ─────────────────────────────────────────────────────────
 export const PatientDashboard: React.FC = () => {
   const { user, login } = useAuth();
@@ -156,7 +251,8 @@ export const PatientDashboard: React.FC = () => {
   const { t, translateSpecialty, translateLocation, isRTL, isArabic } = useTranslation();
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [activeTab, setActiveTab] = useState<'my_bookings' | 'confirmed' | 'cancelled'>('my_bookings');
+  const [activeTab, setActiveTab] = useState<'confirmed' | 'my_bookings' | 'cancelled'>('confirmed');
+  const [now, setNow] = useState<number>(Date.now());
   const [cancellingAppt, setCancellingAppt] = useState<Appointment | null>(null);
   const [reviewingAppt, setReviewingAppt] = useState<Appointment | null>(null);
   const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set());
@@ -180,6 +276,14 @@ export const PatientDashboard: React.FC = () => {
   };
 
   useEffect(() => { loadData(); }, [user]);
+
+  // Live real-time ticker for appointment countdowns
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleCancelConfirm = async (reason: string) => {
     if (!cancellingAppt) return;
@@ -236,13 +340,85 @@ export const PatientDashboard: React.FC = () => {
     setOtpCode('');
   };
 
-  // Tab filtering
-  const confirmed = useMemo(() => appointments.filter((a) => a.status === 'confirmed'), [appointments]);
-  const cancelled = useMemo(() => appointments.filter((a) => a.status === 'cancelled'), [appointments]);
-  const myBookings = appointments;
+  // Tab filtering & sorting in strict chronological order
+  // Confirmed / upcoming appointments sorted earliest first (in order)
+  const confirmed = useMemo(
+    () =>
+      appointments
+        .filter((a) => a.status?.toLowerCase() === 'confirmed')
+        .sort((a, b) => getAppointmentTimestamp(a) - getAppointmentTimestamp(b)),
+    [appointments]
+  );
+  const cancelled = useMemo(
+    () =>
+      appointments
+        .filter((a) => a.status?.toLowerCase() === 'cancelled')
+        .sort((a, b) => getAppointmentTimestamp(b) - getAppointmentTimestamp(a)),
+    [appointments]
+  );
+  const completed = useMemo(
+    () =>
+      appointments
+        .filter((a) => a.status?.toLowerCase() === 'completed')
+        .sort((a, b) => getAppointmentTimestamp(b) - getAppointmentTimestamp(a)),
+    [appointments]
+  );
+  // All bookings with confirmed upcoming placed first in order
+  const myBookings = useMemo(
+    () =>
+      [...appointments].sort((a, b) => {
+        const aIsConfirmed = a.status?.toLowerCase() === 'confirmed';
+        const bIsConfirmed = b.status?.toLowerCase() === 'confirmed';
+        if (aIsConfirmed && bIsConfirmed) {
+          return getAppointmentTimestamp(a) - getAppointmentTimestamp(b);
+        }
+        if (aIsConfirmed) return -1;
+        if (bIsConfirmed) return 1;
+        return getAppointmentTimestamp(b) - getAppointmentTimestamp(a);
+      }),
+    [appointments]
+  );
 
   const displayedAppointments =
     activeTab === 'my_bookings' ? myBookings : activeTab === 'confirmed' ? confirmed : cancelled;
+
+  // The very next upcoming visit (earliest future or current visit)
+  const nextAppt = useMemo(() => {
+    if (confirmed.length === 0) return null;
+    const future = confirmed.find((a) => getAppointmentTimestamp(a) >= now - 2 * 3600 * 1000);
+    return future || confirmed[0];
+  }, [confirmed, now]);
+
+  // Chart data: Monthly Health Consultations & Reviews
+  const healthActivityData = useMemo(() => {
+    const monthsEn = ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+    const monthsAr = ['مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر'];
+    return monthsEn.map((m, i) => ({
+      month: isArabic ? monthsAr[i] : m,
+      [isArabic ? 'الاستشارات' : 'Consultations']: [1, 2, 1, 3, 2, appointments.length || 2][i],
+      [isArabic ? 'المتابعات' : 'Follow-ups']: [1, 1, 2, 1, 2, 2][i],
+    }));
+  }, [appointments.length, isArabic]);
+
+  // Chart data: Specialty Distribution
+  const specialtyDistribution = useMemo(() => {
+    const map: Record<string, number> = {};
+    appointments.forEach((a) => {
+      const spec = a.specialty || 'General Practice';
+      map[spec] = (map[spec] || 0) + 1;
+    });
+    if (Object.keys(map).length === 0) {
+      map['Cardiology'] = 2;
+      map['Dermatology'] = 1;
+    }
+    const colors = ['#0d9488', '#6366f1', '#f59e0b', '#10b981', '#ef4444'];
+    return Object.entries(map).map(([name, val], i) => ({
+      name,
+      translatedName: translateSpecialty(name),
+      value: val,
+      color: colors[i % colors.length],
+    }));
+  }, [appointments, translateSpecialty]);
 
   const nearbyHospitals = [
     { id: 'cmc_dubai', name: isArabic ? 'مستشفى كليمنصو الطبي دبي' : 'CMC (Clemenceau Medical Center Hospital Dubai)', location: isArabic ? 'مدينة دبي الطبية المرحلة 2 - الجداف' : 'Dubai Healthcare City Phase 2 - Al Jaddaf', distance: isArabic ? '1.8 كم' : '1.8 km', specialties: isArabic ? ['أمراض القلب', 'طب الأعصاب', 'جراحة العظام'] : ['Cardiology', 'Neurology', 'Orthopedics'] },
@@ -253,130 +429,240 @@ export const PatientDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* ── QUICK STATS ROW ── */}
+
+      {/* ── Quick Stats Row ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100">
-            <Calendar className="w-5 h-5" />
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 border border-teal-100">
+            <Calendar className="w-6 h-6" />
           </div>
           <div>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('patientPortal.activeBookings')}</p>
-            <p className="text-xl font-black text-slate-900">{confirmed.length}</p>
+            <p className="text-2xl font-black text-slate-900 mt-0.5">{confirmed.length}</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-100">
-            <FileText className="w-5 h-5" />
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-100">
+            <FileText className="w-6 h-6" />
           </div>
           <div>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('patientPortal.digitalRx')}</p>
-            <p className="text-xl font-black text-slate-900">{isArabic ? '1 جاهزة' : '1 Ready'}</p>
+            <p className="text-2xl font-black text-slate-900 mt-0.5">{isArabic ? '1 جاهزة' : '1 Ready'}</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
-            <CheckCircle2 className="w-5 h-5" />
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
+            <CheckCircle2 className="w-6 h-6" />
           </div>
           <div>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{isArabic ? 'التأمين' : 'Insurance'}</p>
-            <p className="text-xs font-black text-emerald-700 truncate">{isArabic ? 'ضمان نشط' : 'Daman Active'}</p>
+            <p className="text-xs sm:text-sm font-black text-emerald-700 truncate mt-0.5">{isArabic ? 'ضمان نشط' : 'Daman Active'}</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0 border border-purple-100">
-            <User className="w-5 h-5" />
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0 border border-purple-100">
+            <User className="w-6 h-6" />
           </div>
           <div>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('patientPortal.dependentsCount')}</p>
-            <p className="text-xl font-black text-slate-900">{isArabic ? '2 تابعين' : '2 Dependents'}</p>
+            <p className="text-2xl font-black text-slate-900 mt-0.5">{isArabic ? '2 تابعين' : '2 Dependents'}</p>
           </div>
         </div>
       </div>
 
-      {/* ── NEXT UPCOMING APPOINTMENT (If any) ── */}
-      {confirmed.length > 0 && (
+      {/* ── Health Analytics & Outpatient Visits Section (Recharts) ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {/* Health Consultations Activity Area Chart */}
+        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+            <div>
+              <h3 className="text-base font-bold text-slate-900">
+                {isArabic ? 'سجل النشاط الصحي والاستشارات' : 'Consultation History & Care Cadence'}
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {isArabic ? 'تتبع زيارات العيادات والفحوصات الدورية خلال الـ 6 أشهر الماضية' : 'Outpatient consultations and medical reviews across past 6 months'}
+              </p>
+            </div>
+            <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full flex items-center gap-1 w-fit">
+              <TrendingUp className="w-3.5 h-3.5" />
+              {isArabic ? 'سجل الرعاية منتظم' : 'Care on Schedule'}
+            </span>
+          </div>
+
+          <ResponsiveContainer width="100%" height={230}>
+            <AreaChart data={healthActivityData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+              <defs>
+                <linearGradient id="patConsultGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#0d9488" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#0d9488" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="patFollowGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+              <Tooltip content={<PatientChartTooltip />} />
+              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
+              <Area
+                type="monotone"
+                dataKey={isArabic ? 'الاستشارات' : 'Consultations'}
+                stroke="#0d9488"
+                strokeWidth={2.5}
+                fill="url(#patConsultGrad)"
+                dot={{ fill: '#0d9488', r: 3 }}
+              />
+              <Area
+                type="monotone"
+                dataKey={isArabic ? 'المتابعات' : 'Follow-ups'}
+                stroke="#6366f1"
+                strokeWidth={2}
+                fill="url(#patFollowGrad)"
+                dot={{ fill: '#6366f1', r: 3 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Specialty Care Breakdown Donut Chart */}
+        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+          <div>
+            <h3 className="text-base font-bold text-slate-900 mb-1">
+              {isArabic ? 'توزيع الرعاية التخصصية' : 'Specialty Care Distribution'}
+            </h3>
+            <p className="text-xs text-slate-500 mb-4">
+              {isArabic ? 'العيادات الطبية التي قمت بزيارتها' : 'Specialized clinics attended for treatment'}
+            </p>
+
+            <ResponsiveContainer width="100%" height={160}>
+              <PieChart>
+                <Pie
+                  data={specialtyDistribution}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={46}
+                  outerRadius={68}
+                  paddingAngle={4}
+                  dataKey="value"
+                  strokeWidth={0}
+                >
+                  {specialtyDistribution.map((entry, i) => (
+                    <Cell key={i} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<PatientChartTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="space-y-2 mt-3 pt-3 border-t border-slate-100">
+            {specialtyDistribution.map((s) => (
+              <div key={s.name} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: s.color }} />
+                  <span className="text-slate-700 font-semibold">{s.translatedName || s.name}</span>
+                </div>
+                <span className="font-mono font-bold text-slate-900">{s.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── NEXT UPCOMING APPOINTMENT (In order with side countdown) ── */}
+      {nextAppt && (
         <div className="bg-white rounded-3xl border-2 border-teal-600/30 p-5 sm:p-6 shadow-xs relative overflow-hidden">
-          <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+          <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800">
                 {isArabic ? 'الموعد القادم المحدد' : 'Next Scheduled Visit'}
               </h3>
             </div>
-            <Link
-              to="/patient/bookings"
-              className="text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-1"
-            >
-              <span>{t('patientBookings.pageTitle')}</span>
-              <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
-            </Link>
+            <div className="flex items-center gap-2.5">
+              {/* Small side countdown with low opacity */}
+              <span className="text-[10px] sm:text-[11px] font-mono text-slate-500 opacity-60 flex items-center gap-1 bg-slate-100/80 px-2.5 py-1 rounded-lg">
+                <Clock className="w-3 h-3 text-slate-400 shrink-0" />
+                <span>{formatCountdown(nextAppt, now, isArabic)}</span>
+              </span>
+              <Link
+                to="/patient/bookings"
+                className="text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-1"
+              >
+                <span>{t('patientBookings.pageTitle')}</span>
+                <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+              </Link>
+            </div>
           </div>
 
-          {(() => {
-            const nextAppt = confirmed[0];
-            return (
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-start gap-4">
-                  <img
-                    src={nextAppt.doctorPhoto || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150'}
-                    alt={nextAppt.doctorName}
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-slate-200 shrink-0 shadow-xs"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="space-y-1">
-                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 text-[11px] font-bold border border-teal-200">
-                      {translateSpecialty(nextAppt.specialty)}
-                    </span>
-                    <h4 className="text-base sm:text-lg font-black text-slate-900">{nextAppt.doctorName}</h4>
-                    <p className="text-xs text-slate-600 flex items-center gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{nextAppt.facilityName || nextAppt.hospitalName || 'CMC Hospital Dubai'}</span>
-                    </p>
-                    <p className="text-xs font-bold text-teal-800 flex items-center gap-2 pt-1">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-teal-600" />
-                        {nextAppt.date}
-                      </span>
-                      <span className="text-slate-300">•</span>
-                      <span className="flex items-center gap-1 font-mono">
-                        <Clock className="w-3.5 h-3.5 text-teal-600" />
-                        {nextAppt.timeSlot}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
-                  <a
-                    href="https://maps.google.com/maps?q=Clemenceau+Medical+Center+Hospital+Dubai"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors"
-                  >
-                    <MapPin className="w-3.5 h-3.5 text-teal-600" />
-                    <span>{t('patientPortal.directions')}</span>
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => handleRebook(nextAppt)}
-                    className="px-3.5 py-2 rounded-xl bg-teal-50 border border-teal-200 text-xs font-bold text-teal-700 hover:bg-teal-100 transition-colors cursor-pointer"
-                  >
-                    {t('patientPortal.reschedule')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCancellingAppt(nextAppt)}
-                    className="px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                  >
-                    {t('patientPortal.cancel')}
-                  </button>
-                </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <img
+                src={nextAppt.doctorPhoto || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150'}
+                alt={nextAppt.doctorName}
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-slate-200 shrink-0 shadow-xs"
+                referrerPolicy="no-referrer"
+              />
+              <div className="space-y-1">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 text-[11px] font-bold border border-teal-200">
+                  {translateSpecialty(nextAppt.specialty)}
+                </span>
+                <h4 className="text-base sm:text-lg font-black text-slate-900">{nextAppt.doctorName}</h4>
+                <p className="text-xs text-slate-600 flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                  <span>{nextAppt.facilityName || nextAppt.hospitalName || 'CMC Hospital Dubai'}</span>
+                </p>
+                <p className="text-xs font-bold text-teal-800 flex items-center gap-2 pt-1 flex-wrap">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5 text-teal-600" />
+                    {nextAppt.date}
+                  </span>
+                  <span className="text-slate-300">•</span>
+                  <span className="flex items-center gap-1 font-mono">
+                    <Clock className="w-3.5 h-3.5 text-teal-600" />
+                    {nextAppt.timeSlot}
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-500 opacity-60 flex items-center gap-1">
+                    <span>•</span>
+                    <Clock className="w-3 h-3 text-slate-400" />
+                    <span>{formatCountdown(nextAppt, now, isArabic)}</span>
+                  </span>
+                </p>
               </div>
-            );
-          })()}
+            </div>
+
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
+              <a
+                href="https://maps.google.com/maps?q=Clemenceau+Medical+Center+Hospital+Dubai"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors"
+              >
+                <MapPin className="w-3.5 h-3.5 text-teal-600" />
+                <span>{t('patientPortal.directions')}</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => handleRebook(nextAppt)}
+                className="px-3.5 py-2 rounded-xl bg-teal-50 border border-teal-200 text-xs font-bold text-teal-700 hover:bg-teal-100 transition-colors cursor-pointer"
+              >
+                {t('patientPortal.reschedule')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setCancellingAppt(nextAppt)}
+                className="px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+              >
+                {t('patientPortal.cancel')}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -385,8 +671,8 @@ export const PatientDashboard: React.FC = () => {
         <div className="flex items-center justify-between border-b border-slate-200 pb-4">
           <div className="flex items-center gap-2 flex-wrap">
             {([
+              { key: 'confirmed', label: isArabic ? 'المواعيد القادمة' : 'Upcoming Visits', count: confirmed.length },
               { key: 'my_bookings', label: t('patientPortal.allAppointments'), count: myBookings.length },
-              { key: 'confirmed', label: t('patientPortal.confirmedVisits'), count: confirmed.length },
               { key: 'cancelled', label: t('patientPortal.cancelledVisits'), count: cancelled.length },
             ] as const).map((tab) => (
               <button
@@ -424,6 +710,10 @@ export const PatientDashboard: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {displayedAppointments.map((appt) => {
               const isReviewed = reviewedIds.has(appt.id);
+              const isConfirmed = appt.status?.toLowerCase() === 'confirmed';
+              const isCancelled = appt.status?.toLowerCase() === 'cancelled';
+              const isCompleted = appt.status?.toLowerCase() === 'completed';
+
               return (
                 <div
                   key={appt.id}
@@ -444,26 +734,41 @@ export const PatientDashboard: React.FC = () => {
                           <p className="text-[11px] text-slate-500 truncate">{appt.facilityName || appt.hospitalName || 'CMC Hospital Dubai'}</p>
                         </div>
                       </div>
-                      <StatusBadge status={appt.status} />
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        <StatusBadge status={appt.status} />
+                        {isConfirmed && (
+                          <span className="text-[10px] font-mono text-slate-400 opacity-70 flex items-center gap-1">
+                            {formatCountdown(appt, now, isArabic)}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     {/* Date & Time Strip */}
-                    <div className="mt-3 bg-slate-50 rounded-xl p-2.5 border border-slate-200 flex items-center justify-between text-xs">
+                    <div className="mt-3 bg-slate-50 rounded-xl p-2.5 border border-slate-200 flex items-center justify-between text-xs gap-2 flex-wrap">
                       <span className="font-semibold text-slate-800 flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5 text-teal-600" />
                         {appt.date}
                       </span>
-                      <span className="font-mono font-bold text-teal-700 bg-white px-2 py-0.5 rounded-md border border-slate-200 flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {appt.timeSlot}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        {isConfirmed && (
+                          <span className="text-[10px] font-mono text-slate-500 opacity-60 flex items-center gap-1 shrink-0">
+                            <Clock className="w-3 h-3 text-slate-400" />
+                            <span>{formatCountdown(appt, now, isArabic)}</span>
+                          </span>
+                        )}
+                        <span className="font-mono font-bold text-teal-700 bg-white px-2 py-0.5 rounded-md border border-slate-200 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {appt.timeSlot}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
                   {/* Card Actions — Step 10 & 11 from PDF */}
                   <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap text-xs">
                     <a
-                      href="https://maps.google.com/maps?q=Clemenceau+Medical+Center+Hospital+Dubai"
+                      href={`https://maps.google.com/maps?q=${encodeURIComponent(appt.facilityName || appt.hospitalName || 'Clemenceau Medical Center Hospital Dubai')}`}
                       target="_blank"
                       rel="noreferrer"
                       className="text-teal-700 font-bold hover:underline flex items-center gap-1"
@@ -474,48 +779,68 @@ export const PatientDashboard: React.FC = () => {
                     </a>
 
                     <div className="flex items-center gap-2">
-                      {/* Rebook — on cancelled or as quick action */}
-                      {(appt.status === 'cancelled' || appt.status === 'confirmed') && (
+                      {/* Rebook — on cancelled */}
+                      {isCancelled && (
                         <button
                           type="button"
                           onClick={() => handleRebook(appt)}
-                          className={`flex items-center gap-1 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer ${
-                            appt.status === 'cancelled'
-                              ? 'bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200'
-                              : 'text-slate-500 hover:text-slate-700'
-                          }`}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200"
                         >
                           <RefreshCw className="w-3 h-3" />
-                          {appt.status === 'cancelled' ? t('patientPortal.rebook') : t('patientPortal.reschedule')}
+                          {t('patientPortal.rebook')}
                         </button>
                       )}
 
-                      {/* Rate & Review — for confirmed visits (Step 11) */}
-                      {appt.status === 'confirmed' && !isReviewed && (
+                      {/* Reschedule — on confirmed */}
+                      {isConfirmed && (
+                        <button
+                          type="button"
+                          onClick={() => handleRebook(appt)}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer text-slate-500 hover:text-slate-700 hover:bg-slate-100"
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                          {t('patientPortal.reschedule')}
+                        </button>
+                      )}
+
+                      {/* Prescription download — ONLY for completed visits */}
+                      {isCompleted && (
+                        <button
+                          type="button"
+                          onClick={() => showToast(isArabic ? 'الوصفة الطبية جاهزة للاستلام من صيدلية المركز الطبي.' : 'Prescription is ready for pickup at clinic pharmacy.', 'info')}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-teal-200 bg-teal-50/50 text-teal-800 hover:bg-teal-100 font-bold transition-colors cursor-pointer"
+                        >
+                          <FileText className="w-3 h-3 text-teal-600" />
+                          {t('patientPortal.prescription')}
+                        </button>
+                      )}
+
+                      {/* Rate & Review — ONLY for completed visits (Step 11: Post-Visit Review) */}
+                      {isCompleted && !isReviewed && (
                         <button
                           type="button"
                           onClick={() => setReviewingAppt(appt)}
                           className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 font-bold transition-colors cursor-pointer"
                         >
-                          <Star className="w-3 h-3" />
+                          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                           {t('patientPortal.rateVisit')}
                         </button>
                       )}
 
-                      {/* Reviewed badge */}
-                      {isReviewed && (
+                      {/* Reviewed badge — only for completed visits */}
+                      {isCompleted && isReviewed && (
                         <span className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-teal-50 text-teal-700 font-bold text-[11px]">
                           <CheckCircle2 className="w-3 h-3" />
                           {t('patientPortal.reviewed')}
                         </span>
                       )}
 
-                      {/* Cancel */}
-                      {appt.status === 'confirmed' && (
+                      {/* Cancel — on confirmed */}
+                      {isConfirmed && (
                         <button
                           type="button"
                           onClick={() => setCancellingAppt(appt)}
-                          className="text-xs font-semibold text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                          className="text-xs font-semibold text-slate-400 hover:text-red-600 transition-colors cursor-pointer px-2 py-1"
                         >
                           {t('patientPortal.cancel')}
                         </button>
