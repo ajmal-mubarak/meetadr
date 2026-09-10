@@ -4,9 +4,9 @@ import { Mail, Phone, MapPin, Stethoscope, ArrowRight } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <div id="main-hospital-footer">
+    <div id="main-hospital-footer" className="overflow-x-clip w-full max-w-full">
       {/* Above-Footer Client Mission Callout (PDF Page 5) */}
-      <section className="bg-slate-50 py-12 border-t border-slate-200 text-center">
+      <section className="bg-slate-50 py-12 border-t border-slate-200 text-center overflow-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2">
           <div className="w-10 h-1 bg-teal-600 mx-auto rounded-full mb-3" />
           <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
@@ -19,7 +19,7 @@ export const Footer: React.FC = () => {
       </section>
 
       {/* Main Dark Footer (Client PDF Page 5) */}
-      <footer className="bg-slate-950 text-white pt-16 pb-12 border-t border-slate-800">
+      <footer className="bg-slate-950 text-white pt-16 pb-12 border-t border-slate-800 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
             

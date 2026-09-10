@@ -18,6 +18,11 @@
     --hospital-muted: #64748B;
   }
 
+  html, body {
+    overflow-x: clip;
+    max-width: 100%;
+  }
+
   html {
     background-color: #F8FAFC;
     color: #0F172A;
@@ -29,6 +34,12 @@
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    position: relative;
+  }
+  #root {
+    overflow-x: clip;
+    width: 100%;
+    min-height: 100vh;
   }
 }
 

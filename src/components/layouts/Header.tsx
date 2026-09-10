@@ -134,7 +134,7 @@ export const Header: React.FC = () => {
   return (
     <header
       id="main-hospital-header"
-      className={`sticky top-0 z-50 transition-all duration-200 ${
+      className={`sticky top-0 z-50 transition-all duration-200 w-full max-w-full overflow-x-clip ${
         isScrolled
           ? 'bg-white/95 backdrop-blur-md shadow-xs border-b border-slate-200'
           : 'bg-white border-b border-slate-200'

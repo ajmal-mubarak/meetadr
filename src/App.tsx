@@ -67,9 +67,9 @@ import { AdminReports } from './pages/admin/AdminReports';
 // Public Layout Wrapper with Header and Footer
 const PublicLayout: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-sky-100 selection:text-sky-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-sky-100 selection:text-sky-900 font-sans overflow-x-clip w-full max-w-full">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 overflow-x-clip w-full max-w-full">
         <Outlet />
       </main>
       <Footer />

@@ -48,7 +48,7 @@ export const PatientLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-teal-100 selection:text-teal-900">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-teal-100 selection:text-teal-900 overflow-x-clip w-full max-w-full">
       {/* 1. Website Navbar is ALWAYS visible */}
       <Header />
 

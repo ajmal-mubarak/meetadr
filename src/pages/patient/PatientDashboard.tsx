@@ -232,46 +232,6 @@ export const PatientDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* ── TOP HERO BANNER ── */}
-      <div className="bg-gradient-to-r from-teal-900 via-teal-800 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
-        {/* Background decorative glows */}
-        <div className="absolute -right-16 -top-16 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute right-32 -bottom-20 w-52 h-52 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-400/30 text-xs font-bold text-teal-300">
-              <User className="w-3.5 h-3.5" />
-              <span>Patient Health Portal</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-              Welcome back, {user?.name || 'Sarah Jenkins'}
-            </h2>
-            <p className="text-xs sm:text-sm text-teal-100/80 leading-relaxed">
-              Manage your upcoming hospital appointments, digital prescriptions, and insurance details from one place.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <button
-              type="button"
-              onClick={() => setShowOtpModal(true)}
-              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-2 cursor-pointer backdrop-blur-xs"
-            >
-              <Smartphone className="w-4 h-4 text-teal-300" />
-              <span>Mobile OTP Access</span>
-            </button>
-            <Link
-              to="/doctors"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl text-xs font-black shadow-md transition-all cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Book Appointment</span>
-            </Link>
-          </div>
-        </div>
-      </div>
-
       {/* ── QUICK STATS ROW ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs flex items-center gap-3.5">

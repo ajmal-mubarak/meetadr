@@ -153,9 +153,11 @@ export const Home: React.FC = () => {
       {/* ========================================================================= */}
       {/* 1. HERO & UNIFIED SEARCH CONSOLE WITH SMART AUTOCOMPLETE                   */}
       {/* ========================================================================= */}
-      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-24 bg-gradient-to-b from-teal-50/40 via-white to-slate-50 border-b border-slate-200/80 overflow-visible">
-        {/* Subtle background blur accents */}
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-teal-400/10 blur-[120px] pointer-events-none rounded-full" />
+      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-24 bg-gradient-to-b from-teal-50/40 via-white to-slate-50 border-b border-slate-200/80 overflow-x-clip">
+        {/* Subtle background blur accents clipped to section bounds */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-teal-400/10 blur-[120px] rounded-full" />
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
           <div className="text-center max-w-3xl mx-auto">
@@ -164,10 +166,10 @@ export const Home: React.FC = () => {
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-100/70 border border-teal-300/60 text-xs font-bold text-teal-800 mb-6 shadow-2xs"
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-teal-100/70 border border-teal-300/60 text-[11px] sm:text-xs font-bold text-teal-800 mb-6 shadow-2xs max-w-full"
             >
-              <span className="w-2 h-2 rounded-full bg-teal-600 animate-pulse" />
-              <span>Direct In-Person Appointments • Verified UAE Hospital Network</span>
+              <span className="w-2 h-2 rounded-full bg-teal-600 animate-pulse shrink-0" />
+              <span className="truncate sm:whitespace-normal">Direct Appointments • Verified UAE Hospital Network</span>
             </motion.div>
 
             {/* Master Heading */}
@@ -175,7 +177,7 @@ export const Home: React.FC = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.12]"
+              className="text-2xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.15] sm:leading-[1.12]"
             >
               Book accredited hospital doctors in a single click.
             </motion.h1>
@@ -196,14 +198,14 @@ export const Home: React.FC = () => {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15 }}
-            className="max-w-4xl mx-auto mt-8 sm:mt-10 relative z-30"
+            className="max-w-4xl mx-auto mt-8 sm:mt-10 relative z-30 w-full"
           >
             <form
               onSubmit={handleSearchSubmit}
-              className="bg-white rounded-2xl sm:rounded-full border-2 border-slate-200/90 hover:border-teal-400 p-2 sm:p-2.5 shadow-lg shadow-teal-900/5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 transition-all relative"
+              className="bg-white rounded-2xl sm:rounded-full border-2 border-slate-200/90 hover:border-teal-400 p-2 sm:p-2.5 shadow-lg shadow-teal-900/5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 transition-all relative w-full"
             >
               {/* Field 1: Doctor / Specialty with Autocomplete */}
-              <div className="flex-1 relative" ref={specialtyRef}>
+              <div className="flex-1 relative min-w-0" ref={specialtyRef}>
                 <div className="flex items-center px-4 py-3 sm:py-2.5 bg-slate-50 sm:bg-transparent rounded-xl sm:rounded-none">
                   <Search className="w-4 h-4 text-teal-600 mr-3 shrink-0" />
                   <input
@@ -215,7 +217,7 @@ export const Home: React.FC = () => {
                       setShowSpecialtyDropdown(true);
                     }}
                     placeholder="Doctor, specialty, or clinic..."
-                    className="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden font-medium"
+                    className="w-full min-w-0 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden font-medium"
                   />
                 </div>
 
@@ -270,7 +272,7 @@ export const Home: React.FC = () => {
               <div className="hidden sm:block w-px h-8 bg-slate-200" />
 
               {/* Field 2: Location with Autocomplete */}
-              <div className="flex-1 relative" ref={locationRef}>
+              <div className="flex-1 relative min-w-0" ref={locationRef}>
                 <div className="flex items-center px-4 py-3 sm:py-2.5 bg-slate-50 sm:bg-transparent rounded-xl sm:rounded-none">
                   <MapPin className="w-4 h-4 text-teal-600 mr-3 shrink-0" />
                   <input
@@ -282,7 +284,7 @@ export const Home: React.FC = () => {
                       setShowLocationDropdown(true);
                     }}
                     placeholder="Area (e.g. Al Jaddaf, DHCC)"
-                    className="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden font-medium"
+                    className="w-full min-w-0 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden font-medium"
                   />
                 </div>
 
@@ -294,7 +296,7 @@ export const Home: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 right-0 sm:right-auto sm:w-80 mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-left"
+                      className="absolute left-0 right-0 sm:right-auto sm:w-80 mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-left max-w-[calc(100vw-32px)]"
                     >
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-2">
                         Popular Clinic Hubs
@@ -335,7 +337,7 @@ export const Home: React.FC = () => {
               <div className="hidden sm:block w-px h-8 bg-slate-200" />
 
               {/* Field 3: Emirate */}
-              <div className="flex items-center px-3 py-3 sm:py-2.5 bg-slate-50 sm:bg-transparent rounded-xl sm:rounded-none sm:w-36">
+              <div className="flex items-center px-3 py-3 sm:py-2.5 bg-slate-50 sm:bg-transparent rounded-xl sm:rounded-none sm:w-36 min-w-0">
                 <select
                   value={selectedEmirate}
                   onChange={(e) => setSelectedEmirate(e.target.value)}
@@ -352,7 +354,7 @@ export const Home: React.FC = () => {
               {/* Action CTA Button */}
               <button
                 type="submit"
-                className="px-8 py-3.5 sm:py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl sm:rounded-full font-bold text-sm transition-all shadow-md shadow-teal-600/25 flex items-center justify-center gap-2 cursor-pointer shrink-0"
+                className="w-full sm:w-auto px-8 py-3.5 sm:py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl sm:rounded-full font-bold text-sm transition-all shadow-md shadow-teal-600/25 flex items-center justify-center gap-2 cursor-pointer shrink-0"
               >
                 <span>Find Doctors</span>
                 <ArrowRight className="w-4 h-4" />
@@ -781,22 +783,22 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Stats Strip */}
-        <div className="bg-gradient-to-r from-teal-800 via-teal-700 to-slate-900 text-white rounded-3xl p-8 sm:p-10 shadow-xl grid grid-cols-2 md:grid-cols-4 gap-6 text-center mb-14">
+        <div className="bg-gradient-to-r from-teal-800 via-teal-700 to-slate-900 text-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-xl grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center mb-14">
           <div>
-            <span className="text-3xl sm:text-4xl font-black block">3 steps</span>
-            <span className="text-xs text-teal-200 font-medium mt-1 block">to book any appointment</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl font-black block">3 steps</span>
+            <span className="text-[11px] sm:text-xs text-teal-200 font-medium mt-1 block">to book any visit</span>
           </div>
           <div>
-            <span className="text-3xl sm:text-4xl font-black block">&lt; 60 sec</span>
-            <span className="text-xs text-teal-200 font-medium mt-1 block">average booking time</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl font-black block">&lt; 60 sec</span>
+            <span className="text-[11px] sm:text-xs text-teal-200 font-medium mt-1 block">avg booking time</span>
           </div>
           <div>
-            <span className="text-3xl sm:text-4xl font-black block">500+</span>
-            <span className="text-xs text-teal-200 font-medium mt-1 block">specialists on the platform</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl font-black block">500+</span>
+            <span className="text-[11px] sm:text-xs text-teal-200 font-medium mt-1 block">specialists online</span>
           </div>
           <div>
-            <span className="text-3xl sm:text-4xl font-black block">100%</span>
-            <span className="text-xs text-teal-200 font-medium mt-1 block">guaranteed outpatient slots</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl font-black block">100%</span>
+            <span className="text-[11px] sm:text-xs text-teal-200 font-medium mt-1 block">guaranteed slots</span>
           </div>
         </div>
 

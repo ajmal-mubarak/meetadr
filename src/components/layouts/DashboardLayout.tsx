@@ -93,7 +93,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const navItems = getNavItems();
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row selection:bg-teal-100 selection:text-teal-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row selection:bg-teal-100 selection:text-teal-900 overflow-x-clip w-full max-w-full">
       {/* ── SIDEBAR NAVIGATION ── */}
       <aside className="w-full md:w-64 bg-white border-r border-slate-200 shrink-0 flex flex-col">
         {/* User Card */}
