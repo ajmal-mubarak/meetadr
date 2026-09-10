@@ -160,7 +160,7 @@ export const AdminDashboard: React.FC = () => {
   }, [isArabic]);
 
   return (
-    <div className="space-y-6 bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8">
+    <div className="space-y-6 w-full max-w-full">
 
       {/* ── Header Banner ── */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-950 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">

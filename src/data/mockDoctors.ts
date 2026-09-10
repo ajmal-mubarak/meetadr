@@ -38,7 +38,7 @@ export const INITIAL_DOCTORS: Doctor[] = [
   {
     id: 'doc_priya_sharma',
     name: 'Dr. Priya Sharma',
-    photo: 'https://images.unsplash.com/photo-1594824813576-9c4c795bb5d2?w=400&auto=format&fit=crop&q=80',
+    photo: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&auto=format&fit=crop&q=80',
     specialty: 'Dermatologist',
     experience: '10 years experience',
     rating: 4.9,

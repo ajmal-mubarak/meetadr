@@ -283,19 +283,19 @@ export const HospitalDashboard: React.FC = () => {
         </div>
 
         {/* Hospital Login Credentials Bar (Client PDF Page 8) + Sign Out */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
-            <div>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 sm:gap-3 bg-slate-50 p-2 sm:p-2.5 rounded-xl border border-slate-200 text-xs w-full sm:w-auto">
+            <div className="min-w-0">
               <span className="text-[10px] uppercase font-bold text-slate-400 block">{isArabic ? 'البريد الإلكتروني' : 'Email'}</span>
-              <span className="font-semibold text-slate-800" dir="ltr">{hospitalEmail}</span>
+              <span className="font-semibold text-slate-800 text-[11px] sm:text-xs truncate block max-w-[200px]" dir="ltr">{hospitalEmail}</span>
             </div>
-            <div className="w-px h-6 bg-slate-200" />
+            <div className="hidden sm:block w-px h-6 bg-slate-200" />
             <div>
               <span className="text-[10px] uppercase font-bold text-slate-400 block">{isArabic ? 'كلمة المرور' : 'Password'}</span>
-              <span className="font-mono text-slate-600 tracking-wider">{hospitalPassword}</span>
+              <span className="font-mono text-slate-600 tracking-wider text-[11px] sm:text-xs">{hospitalPassword}</span>
             </div>
-            <div className="w-px h-6 bg-slate-200" />
-            <span className="px-2 py-0.5 rounded-md bg-teal-100 text-teal-800 font-bold text-[10px]">
+            <div className="hidden sm:block w-px h-6 bg-slate-200" />
+            <span className="px-2 py-0.5 rounded-md bg-teal-100 text-teal-800 font-bold text-[10px] shrink-0">
               {t('hospitalPortal.activeSession')}
             </span>
           </div>
@@ -307,7 +307,7 @@ export const HospitalDashboard: React.FC = () => {
               showToast(isArabic ? 'تم تسجيل الخروج بنجاح.' : 'Signed out successfully.', 'info');
               navigate('/login');
             }}
-            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-all cursor-pointer shadow-2xs"
           >
             <LogOut className="w-3.5 h-3.5 rtl:rotate-180" />
             <span>{t('common.logout')}</span>
@@ -318,7 +318,7 @@ export const HospitalDashboard: React.FC = () => {
       {/* ========================================================================= */}
       {/* 4 PRIMARY TABS: Appointments | Doctors | Patients | Reports (PDF Page 8)  */}
       {/* ========================================================================= */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-3 overflow-x-auto no-scrollbar -mx-3 sm:mx-0 px-3 sm:px-0">
         <button
           type="button"
           onClick={() => setActiveTab('appointments')}
