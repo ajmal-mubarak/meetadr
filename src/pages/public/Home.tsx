@@ -27,6 +27,7 @@ import {
   Users,
   Compass,
   CheckCircle,
+  X,
 } from 'lucide-react';
 import { INITIAL_DOCTORS } from '../../data/mockDoctors';
 import { INITIAL_HOSPITALS } from '../../data/mockHospitals';
@@ -61,12 +62,12 @@ export const Home: React.FC = () => {
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedCondition, setSelectedCondition] = useState('');
   const [selectedEmirate, setSelectedEmirate] = useState('Dxb');
 
   // Autocomplete dropdown visibility
   const [showSpecialtyDropdown, setShowSpecialtyDropdown] = useState(false);
-  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [showConditionDropdown, setShowConditionDropdown] = useState(false);
 
   // Recommendation location filter for the recommended section
   const [recommendedFilter, setRecommendedFilter] = useState('All');
@@ -78,7 +79,7 @@ export const Home: React.FC = () => {
   const [doctorCategory, setDoctorCategory] = useState('All');
 
   const specialtyRef = useRef<HTMLDivElement>(null);
-  const locationRef = useRef<HTMLDivElement>(null);
+  const conditionRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -87,8 +88,8 @@ export const Home: React.FC = () => {
       if (specialtyRef.current && !specialtyRef.current.contains(target)) {
         setShowSpecialtyDropdown(false);
       }
-      if (locationRef.current && !locationRef.current.contains(target)) {
-        setShowLocationDropdown(false);
+      if (conditionRef.current && !conditionRef.current.contains(target)) {
+        setShowConditionDropdown(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -100,7 +101,21 @@ export const Home: React.FC = () => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (searchQuery.trim()) params.append('q', searchQuery.trim());
-    if (selectedLocation) params.append('location', selectedLocation);
+    if (selectedCondition.trim()) {
+      const matched = HEALTH_CONDITIONS.find(
+        (c) => c.name.toLowerCase() === selectedCondition.trim().toLowerCase()
+      );
+      if (matched) {
+        params.append('specialty', matched.specialtyQuery);
+        if (!searchQuery.trim()) {
+          params.append('q', matched.name);
+        }
+      } else {
+        if (!searchQuery.trim()) {
+          params.append('q', selectedCondition.trim());
+        }
+      }
+    }
     if (selectedEmirate) params.append('emirate', selectedEmirate);
     navigate(`/search?${params.toString()}`);
   };
@@ -139,6 +154,29 @@ export const Home: React.FC = () => {
     }
     return true;
   }).slice(0, 6);
+
+  // Filtered hospitals for hero search input
+  const filteredHospitals = INITIAL_HOSPITALS.filter((h) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      h.name.toLowerCase().includes(q) ||
+      h.location.toLowerCase().includes(q) ||
+      h.address.toLowerCase().includes(q) ||
+      (h.specialties && h.specialties.some((sp) => sp.toLowerCase().includes(q)))
+    );
+  }).slice(0, 5);
+
+  // Filtered doctors for hero search input (active when user types)
+  const matchingSearchDoctors = searchQuery.trim()
+    ? INITIAL_DOCTORS.filter((d) => {
+        const q = searchQuery.toLowerCase();
+        return (
+          d.name.toLowerCase().includes(q) ||
+          (d.hospitalName && d.hospitalName.toLowerCase().includes(q))
+        );
+      }).slice(0, 3)
+    : [];
 
   // Recommended doctors filtered by location
   const recommendedDoctors = INITIAL_DOCTORS.filter((doc) => {
@@ -221,9 +259,18 @@ export const Home: React.FC = () => {
                     placeholder={t('home.doctorPlaceholder')}
                     className="w-full min-w-0 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden font-medium"
                   />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer ml-1 rtl:ml-0 rtl:mr-1"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
 
-                {/* Specialty Dropdown Suggestions */}
+                {/* Doctor & Hospital Dropdown Suggestions */}
                 <AnimatePresence>
                   {showSpecialtyDropdown && (
                     <motion.div
@@ -231,41 +278,114 @@ export const Home: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 right-0 sm:right-auto rtl:sm:right-0 rtl:sm:left-auto sm:w-80 mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-left rtl:text-right"
+                      className="absolute left-0 right-0 sm:right-auto rtl:sm:right-0 rtl:sm:left-auto sm:w-96 mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-left rtl:text-right max-w-[calc(100vw-32px)] max-h-96 overflow-y-auto divide-y divide-slate-100"
                     >
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-2">
-                        {t('home.suggestedSpecialtiesTitle')}
-                      </p>
-                      <div className="space-y-1">
-                        {SUGGESTED_SPECIALTIES.filter((s) =>
-                          s.name.toLowerCase().includes(searchQuery.toLowerCase())
-                        ).map((spec) => {
-                          const Icon = spec.icon;
-                          return (
-                            <button
-                              key={spec.name}
-                              type="button"
-                              onClick={() => {
-                                setSearchQuery(spec.name);
-                                setShowSpecialtyDropdown(false);
-                              }}
-                              className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-teal-50 text-left rtl:text-right transition-colors cursor-pointer group"
+                      {/* Section: Matching Doctors (active when user types) */}
+                      {matchingSearchDoctors.length > 0 && (
+                        <div className="pb-2.5">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-2 flex items-center gap-1.5">
+                            <Stethoscope className="w-3 h-3 text-teal-600" />
+                            {t('common.doctors')}
+                          </p>
+                          <div className="space-y-1">
+                            {matchingSearchDoctors.map((doc) => (
+                              <button
+                                key={doc.id}
+                                type="button"
+                                onClick={() => {
+                                  setSearchQuery(doc.name);
+                                  setShowSpecialtyDropdown(false);
+                                }}
+                                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-teal-50 text-left rtl:text-right transition-colors cursor-pointer group"
+                              >
+                                <img
+                                  src={doc.photo}
+                                  alt={doc.name}
+                                  className="w-8 h-8 rounded-full object-cover shrink-0 border border-teal-100"
+                                />
+                                <div className="truncate flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-1.5">
+                                    <span className="text-xs font-bold text-slate-900 group-hover:text-teal-700 block truncate">
+                                      {doc.name}
+                                    </span>
+                                    <span className="text-[9px] font-bold text-teal-700 bg-teal-50 border border-teal-200/80 px-1.5 py-0.5 rounded-full shrink-0">
+                                      ★ {doc.rating}
+                                    </span>
+                                  </div>
+                                  <span className="text-[10px] text-slate-500 block truncate">
+                                    {doc.hospitalName || doc.location}
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Section: Suggested / Matching Hospitals */}
+                      {filteredHospitals.length > 0 && (
+                        <div className={matchingSearchDoctors.length > 0 ? "pt-2.5" : ""}>
+                          <div className="flex items-center justify-between px-2 mb-2">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                              <Building2 className="w-3 h-3 text-teal-600" />
+                              {t('home.suggestedHospitalsTitle')}
+                            </p>
+                            <Link
+                              to="/hospitals"
+                              onClick={() => setShowSpecialtyDropdown(false)}
+                              className="text-[10px] font-bold text-teal-600 hover:text-teal-700 transition-colors"
                             >
-                              <div className="w-7 h-7 rounded-lg bg-teal-50 group-hover:bg-teal-100 text-teal-700 flex items-center justify-center shrink-0">
-                                <Icon className="w-3.5 h-3.5" />
-                              </div>
-                              <div className="truncate">
-                                <span className="text-xs font-bold text-slate-900 group-hover:text-teal-700 block">
-                                  {translateSpecialty(spec.name)}
-                                </span>
-                                <span className="text-[10px] text-slate-500 block truncate">
-                                  {spec.desc}
-                                </span>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
+                              {t('common.viewAll')} →
+                            </Link>
+                          </div>
+                          <div className="space-y-1">
+                            {filteredHospitals.map((hosp) => (
+                              <button
+                                key={hosp.id}
+                                type="button"
+                                onClick={() => {
+                                  setSearchQuery(hosp.name);
+                                  setShowSpecialtyDropdown(false);
+                                }}
+                                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-teal-50 text-left rtl:text-right transition-colors cursor-pointer group"
+                              >
+                                <div className="w-8 h-8 rounded-lg bg-teal-50 group-hover:bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 overflow-hidden border border-teal-100/60">
+                                  {hosp.photo ? (
+                                    <img
+                                      src={hosp.photo}
+                                      alt={hosp.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <Building2 className="w-3.5 h-3.5" />
+                                  )}
+                                </div>
+                                <div className="truncate flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-1.5">
+                                    <span className="text-xs font-bold text-slate-900 group-hover:text-teal-700 block truncate">
+                                      {hosp.name}
+                                    </span>
+                                    <span className="text-[9px] font-bold text-teal-700 bg-teal-50 border border-teal-200/80 px-1.5 py-0.5 rounded-full shrink-0">
+                                      {hosp.doctorCount} {t('common.doctors')}
+                                    </span>
+                                  </div>
+                                  <span className="text-[10px] text-slate-500 block truncate">
+                                    {translateLocation(hosp.location)}
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Empty state if neither doctors nor hospitals match */}
+                      {matchingSearchDoctors.length === 0 && filteredHospitals.length === 0 && (
+                        <div className="p-4 text-center">
+                          <p className="text-xs font-bold text-slate-700">No doctors or hospitals found</p>
+                          <p className="text-[10px] text-slate-400 mt-0.5">Try searching with another doctor or hospital name</p>
+                        </div>
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -273,59 +393,74 @@ export const Home: React.FC = () => {
 
               <div className="hidden sm:block w-px h-8 bg-slate-200" />
 
-              {/* Field 2: Location with Autocomplete */}
-              <div className="flex-1 relative min-w-0" ref={locationRef}>
+              {/* Field 2: Health Condition with Autocomplete */}
+              <div className="flex-1 relative min-w-0" ref={conditionRef}>
                 <div className="flex items-center px-4 py-3 sm:py-2.5 bg-slate-50 sm:bg-transparent rounded-xl sm:rounded-none">
-                  <MapPin className="w-4 h-4 text-teal-600 mr-3 rtl:mr-0 rtl:ml-3 shrink-0" />
+                  <Activity className="w-4 h-4 text-teal-600 mr-3 rtl:mr-0 rtl:ml-3 shrink-0" />
                   <input
                     type="text"
-                    value={selectedLocation}
-                    onFocus={() => setShowLocationDropdown(true)}
+                    value={selectedCondition}
+                    onFocus={() => setShowConditionDropdown(true)}
                     onChange={(e) => {
-                      setSelectedLocation(e.target.value);
-                      setShowLocationDropdown(true);
+                      setSelectedCondition(e.target.value);
+                      setShowConditionDropdown(true);
                     }}
-                    placeholder={t('home.areaPlaceholder')}
+                    placeholder={t('home.conditionPlaceholder')}
                     className="w-full min-w-0 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden font-medium"
                   />
+                  {selectedCondition && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCondition('')}
+                      className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer ml-1 rtl:ml-0 rtl:mr-1"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
 
-                {/* Location Dropdown Suggestions */}
+                {/* Health Condition Dropdown Suggestions */}
                 <AnimatePresence>
-                  {showLocationDropdown && (
+                  {showConditionDropdown && (
                     <motion.div
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 right-0 sm:right-auto rtl:sm:right-0 rtl:sm:left-auto sm:w-80 mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-left rtl:text-right max-w-[calc(100vw-32px)]"
+                      className="absolute left-0 right-0 sm:right-auto rtl:sm:right-0 rtl:sm:left-auto sm:w-88 mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-left rtl:text-right max-w-[calc(100vw-32px)] max-h-80 overflow-y-auto"
                     >
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-2">
-                        {t('home.popularHubsTitle')}
+                        {t('home.suggestedConditionsTitle')}
                       </p>
                       <div className="space-y-1">
-                        {SUGGESTED_LOCATIONS.filter((loc) =>
-                          loc.name.toLowerCase().includes(selectedLocation.toLowerCase()) ||
-                          loc.hub.toLowerCase().includes(selectedLocation.toLowerCase())
-                        ).map((loc) => (
+                        {HEALTH_CONDITIONS.filter((c) =>
+                          c.name.toLowerCase().includes(selectedCondition.toLowerCase()) ||
+                          c.specialist.toLowerCase().includes(selectedCondition.toLowerCase()) ||
+                          c.description.toLowerCase().includes(selectedCondition.toLowerCase())
+                        ).map((cond) => (
                           <button
-                            key={loc.name}
+                            key={cond.name}
                             type="button"
                             onClick={() => {
-                              setSelectedLocation(loc.name);
-                              setShowLocationDropdown(false);
+                              setSelectedCondition(cond.name);
+                              setShowConditionDropdown(false);
                             }}
-                            className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-teal-50 text-left rtl:text-right transition-colors cursor-pointer group"
+                            className="w-full flex items-start gap-2.5 p-2 rounded-xl hover:bg-teal-50 text-left rtl:text-right transition-colors cursor-pointer group"
                           >
-                            <div className="w-7 h-7 rounded-lg bg-teal-50 group-hover:bg-teal-100 text-teal-700 flex items-center justify-center shrink-0">
-                              <MapPin className="w-3.5 h-3.5" />
+                            <div className="w-7 h-7 rounded-lg bg-teal-50 group-hover:bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 mt-0.5">
+                              <HeartPulse className="w-3.5 h-3.5" />
                             </div>
-                            <div className="truncate">
-                              <span className="text-xs font-bold text-slate-900 group-hover:text-teal-700 block">
-                                {translateLocation(loc.name)}
-                              </span>
+                            <div className="truncate flex-1">
+                              <div className="flex items-center justify-between gap-1">
+                                <span className="text-xs font-bold text-slate-900 group-hover:text-teal-700 block truncate">
+                                  {cond.name}
+                                </span>
+                                <span className="text-[9px] font-bold text-teal-700 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded-full shrink-0">
+                                  {cond.specialist.split('/')[0].trim()}
+                                </span>
+                              </div>
                               <span className="text-[10px] text-slate-500 block truncate">
-                                {loc.hub}
+                                {cond.description}
                               </span>
                             </div>
                           </button>

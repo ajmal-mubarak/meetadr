@@ -133,6 +133,7 @@ export const Header: React.FC = () => {
   const infoLinks = [
     ...companyLinks,
     { name: t('navigation.contactUs'), path: '/contact' },
+    { name: t('navigation.joinWithUs'), path: '/join' },
   ];
 
   return (
@@ -249,6 +250,18 @@ export const Header: React.FC = () => {
               }`}
             >
               {t('navigation.contactUs')}
+            </Link>
+
+            {/* Join With Us link */}
+            <Link
+              to="/join"
+              className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+                location.pathname === '/join'
+                  ? 'text-teal-700 bg-teal-50'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              {t('navigation.joinWithUs')}
             </Link>
           </nav>
 

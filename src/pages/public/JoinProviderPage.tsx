@@ -1,376 +1,1041 @@
-import React, { useState } from 'react';
-import { Building2, CheckCircle2, Phone, Mail, ShieldCheck, ArrowRight } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Building2,
+  Hospital,
+  Users,
+  Calendar,
+  Award,
+  LayoutDashboard,
+  ShieldCheck,
+  CheckCircle2,
+  ArrowRight,
+  ArrowLeft,
+  Phone,
+  Mail,
+  MapPin,
+  ChevronDown,
+  Sparkles,
+  FileCheck,
+  ClipboardList,
+  Send,
+} from 'lucide-react';
 import { providerService } from '../../services/providerService';
 import { useToast } from '../../context/ToastContext';
 import { useTranslation } from '../../i18n';
 
+type ProviderType = 'hospital' | 'clinic';
+
+interface WizardData {
+  providerType: ProviderType;
+  facilityName: string;
+  contactPerson: string;
+  countryCode: string;
+  contactNumber: string;
+  email: string;
+  location: string;
+  country: string;
+  website: string;
+  notes: string;
+}
+
+const INITIAL_DATA: WizardData = {
+  providerType: 'hospital',
+  facilityName: '',
+  contactPerson: '',
+  countryCode: '+971',
+  contactNumber: '',
+  email: '',
+  location: '',
+  country: 'United Arab Emirates',
+  website: '',
+  notes: '',
+};
+
+const STEPS = [
+  { id: 1, label: 'Provider Type', icon: Building2 },
+  { id: 2, label: 'Organization Details', icon: ClipboardList },
+  { id: 3, label: 'Review & Submit', icon: Send },
+];
+
 export const JoinProviderPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, isRTL } = useTranslation();
   const { showToast } = useToast();
 
-  // Multi-type selection from Page 7 (Hospital, Clinic, Doctor)
-  const [isHospital, setIsHospital] = useState(true);
-  const [isClinic, setIsClinic] = useState(false);
-  const [isDoctor, setIsDoctor] = useState(false);
+  // Wizard state
+  const [currentStep, setCurrentStep] = useState(1);
+  const [wizardData, setWizardData] = useState<WizardData>(INITIAL_DATA);
 
-  // Form Fields
-  const [applicantName, setApplicantName] = useState('');
-  const [entityName, setEntityName] = useState('');
-  const [countryCode, setCountryCode] = useState('+965');
-  const [contactNumber, setContactNumber] = useState('');
-  const [email, setEmail] = useState('');
-  const [country, setCountry] = useState('United Arab Emirates');
-  const [location, setLocation] = useState('Dubai');
-
+  // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [submittedReference, setSubmittedReference] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!applicantName || !contactNumber || !email) {
-      showToast(t('forms.fillRequiredFields'), 'error');
-      return;
+  // FAQ state
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+
+  // Refs
+  const wizardRef = useRef<HTMLDivElement>(null);
+  const howItWorksRef = useRef<HTMLDivElement>(null);
+
+  const scrollToWizard = (type?: ProviderType) => {
+    if (type) setWizardData((d) => ({ ...d, providerType: type }));
+    if (wizardRef.current) {
+      wizardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  };
 
-    if (!isHospital && !isClinic && !isDoctor) {
-      showToast('Please select at least one entity type (Hospital, Clinic, or Doctor).', 'error');
-      return;
+  const scrollToHowItWorks = () => {
+    if (howItWorksRef.current) {
+      howItWorksRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  };
 
+  const update = (field: keyof WizardData, value: string) => {
+    setWizardData((d) => ({ ...d, [field]: value }));
+  };
+
+  const validateStep2 = (): boolean => {
+    if (!wizardData.facilityName.trim()) {
+      showToast('Please enter your facility name.', 'error');
+      return false;
+    }
+    if (!wizardData.contactPerson.trim()) {
+      showToast('Please enter the contact person name.', 'error');
+      return false;
+    }
+    if (!wizardData.email.trim() || !wizardData.email.includes('@')) {
+      showToast('Please provide a valid email address.', 'error');
+      return false;
+    }
+    if (!wizardData.contactNumber.trim()) {
+      showToast('Please enter a valid contact phone number.', 'error');
+      return false;
+    }
+    if (!wizardData.location.trim()) {
+      showToast('Please specify your city or emirate.', 'error');
+      return false;
+    }
+    return true;
+  };
+
+  const goNext = () => {
+    if (currentStep === 2 && !validateStep2()) return;
+    setCurrentStep((s) => Math.min(s + 1, 3));
+    if (wizardRef.current) {
+      wizardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const goBack = () => {
+    setCurrentStep((s) => Math.max(s - 1, 1));
+    if (wizardRef.current) {
+      wizardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const selectedTypes: string[] = [];
-      if (isHospital) selectedTypes.push('hospital');
-      if (isClinic) selectedTypes.push('clinic');
-      if (isDoctor) selectedTypes.push('doctor');
-
-      await providerService.submitJoinRequest({
-        providerType: (selectedTypes[0] as any) || 'hospital',
-        name: entityName || applicantName,
-        contactNumber: `${countryCode} ${contactNumber}`,
-        email,
-        country,
-        location,
+      const result = await providerService.submitJoinRequest({
+        providerType: wizardData.providerType,
+        name: wizardData.facilityName.trim(),
+        contactNumber: `${wizardData.countryCode} ${wizardData.contactNumber.trim()}`,
+        email: wizardData.email.trim(),
+        country: wizardData.country,
+        location: wizardData.location.trim(),
       });
-
+      setSubmittedReference(result.id);
       setIsSuccess(true);
-      showToast(t('joinProvider.appReceived'), 'success');
+      showToast('Application submitted successfully!', 'success');
     } catch (err: any) {
-      showToast(err.message || 'Failed to submit application.', 'error');
+      showToast(err.message || 'Failed to submit application. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // 15 Partner Hospital Badges from Client PDF Page 7
-  const partnerHospitalsList = [
-    { id: 1, name: 'Christian Medical College', location: 'Vellore' },
-    { id: 2, name: 'Apollo Hospitals', location: 'Chennai' },
-    { id: 3, name: 'Medanta - The Medicity', location: 'Gurugram' },
-    { id: 4, name: 'Indraprastha Apollo Hospitals', location: 'Delhi' },
-    { id: 5, name: 'Kokilaben Dhirubhai Ambani Hospital', location: 'Mumbai' },
-    { id: 6, name: 'Sir Ganga Ram Hospital', location: 'Delhi' },
-    { id: 7, name: 'Apollo Health City', location: 'Hyderabad' },
-    { id: 8, name: 'Manipal Hospital, HAL Airport Rd', location: 'Bengaluru' },
-    { id: 9, name: 'P.D. Hinduja Hospital', location: 'Mumbai' },
-    { id: 10, name: 'Max Super Speciality Hospital', location: 'Delhi' },
-    { id: 11, name: 'Amrita Institute of Medical Science', location: 'Kochi' },
-    { id: 12, name: 'Lilavati Hospital & Research', location: 'Mumbai' },
-    { id: 13, name: 'Jaslok Hospital & Research', location: 'Mumbai' },
-    { id: 14, name: 'Deenanath Mangeshkar Hospital', location: 'Pune' },
-    { id: 15, name: 'Aster Medcity', location: 'Kochi' },
+  const resetWizard = () => {
+    setWizardData(INITIAL_DATA);
+    setCurrentStep(1);
+    setIsSuccess(false);
+    setSubmittedReference('');
+  };
+
+  // Static data
+  const benefits = [
+    { icon: Users, title: t('joinProvider.benefit1Title'), desc: t('joinProvider.benefit1Desc') },
+    { icon: Calendar, title: t('joinProvider.benefit2Title'), desc: t('joinProvider.benefit2Desc') },
+    { icon: Award, title: t('joinProvider.benefit3Title'), desc: t('joinProvider.benefit3Desc') },
+    { icon: LayoutDashboard, title: t('joinProvider.benefit4Title'), desc: t('joinProvider.benefit4Desc') },
+  ];
+
+  const howItWorksSteps = [
+    { number: '01', title: 'Register', desc: 'Select Hospital or Clinic and fill in your facility details.' },
+    { number: '02', title: 'Verification', desc: 'Our team reviews your credentials and practice information.' },
+    { number: '03', title: 'Set Up Your Practice', desc: 'Add doctors, departments, consultation hours from your dashboard.' },
+    { number: '04', title: 'Start Connecting', desc: 'Patients discover your facility and book appointments directly.' },
+  ];
+
+  const providerTypes: {
+    type: ProviderType;
+    icon: typeof Hospital;
+    title: string;
+    desc: string;
+    cta: string;
+    features: string[];
+  }[] = [
+    {
+      type: 'clinic',
+      icon: Building2,
+      title: t('joinProvider.typeClinicTitle'),
+      desc: t('joinProvider.typeClinicDesc'),
+      cta: t('joinProvider.typeClinicCta'),
+      features: [
+        t('joinProvider.typeClinicItem1'),
+        t('joinProvider.typeClinicItem2'),
+        t('joinProvider.typeClinicItem3'),
+      ],
+    },
+    {
+      type: 'hospital',
+      icon: Hospital,
+      title: t('joinProvider.typeHospitalTitle'),
+      desc: t('joinProvider.typeHospitalDesc'),
+      cta: t('joinProvider.typeHospitalCta'),
+      features: [
+        t('joinProvider.typeHospitalItem1'),
+        t('joinProvider.typeHospitalItem2'),
+        t('joinProvider.typeHospitalItem3'),
+      ],
+    },
+  ];
+
+  const faqs = [
+    { q: 'Who can join MeetAdr?', a: 'MeetAdr publicly onboards licensed Hospitals and Clinics operating in the UAE. Individual doctors are added by their affiliated Hospital or Clinic after account setup.' },
+    { q: 'How do I register my Hospital or Clinic?', a: 'Select your provider type (Hospital or Clinic), fill in your organization details, review, and submit. Our team will review your application within 1–2 business days.' },
+    { q: 'What about individual doctors?', a: 'Doctors are managed by the Hospital or Clinic they belong to. After your facility account is approved, you can add and manage your doctors directly from your dashboard.' },
+    { q: 'What information do I need to provide?', a: 'You start with your facility name, contact person, official email, phone number, and city. Our team will request licensing credentials during the verification step.' },
+    { q: 'How does provider verification work?', a: 'Our onboarding team verifies all submitted applications against UAE healthcare regulatory standards before activating your facility profile.' },
+    { q: 'Can clinics and hospitals manage multiple doctors?', a: 'Yes. Both Clinics and Hospitals get a dedicated dashboard with full doctor roster management, scheduling tools, and centralized appointment oversight.' },
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* Top Header */}
-        <div className="text-center max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-xs font-bold text-teal-800 mb-2">
-            <Building2 className="w-3.5 h-3.5 text-teal-600" />
-            <span>{t('joinProvider.badge')}</span>
+    <div className="bg-slate-50 min-h-screen text-slate-900 selection:bg-teal-100 selection:text-teal-900">
+
+      {/* ========================================================================= */}
+      {/* 1. HERO SECTION                                                           */}
+      {/* ========================================================================= */}
+      <section className="relative overflow-hidden bg-white border-b border-slate-200/80 pt-12 pb-16 lg:pt-20 lg:pb-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+
+            {/* Left Content */}
+            <div className="lg:col-span-7 space-y-6 text-left rtl:text-right">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-xs font-bold text-teal-800 tracking-wide">
+                <Sparkles className="w-3.5 h-3.5 text-teal-600" />
+                <span>JOIN MEETADR — FOR HOSPITALS & CLINICS</span>
+              </div>
+
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.15]">
+                {t('joinProvider.heroTitle')}
+              </h1>
+
+              <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl font-normal">
+                Register your Hospital or Clinic on MeetAdr. Connect with patients, manage your doctor roster, and streamline appointment scheduling — all from one platform.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => scrollToWizard()}
+                  className="px-6 py-3.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold rounded-xl transition-all shadow-xs hover:shadow-md cursor-pointer flex items-center gap-2"
+                >
+                  <span>Register Your Facility</span>
+                  <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+                </button>
+                <button
+                  type="button"
+                  onClick={scrollToHowItWorks}
+                  className="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold rounded-xl transition-all cursor-pointer"
+                >
+                  How It Works
+                </button>
+              </div>
+
+              {/* Trust highlights */}
+              <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-slate-500 font-medium">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
+                  <span>3-Step Quick Registration</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-teal-600 shrink-0" />
+                  <span>{t('joinProvider.heroVisualBadge')}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Visual */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative mx-auto max-w-md">
+                <div className="relative rounded-3xl overflow-hidden border border-slate-200/90 shadow-md bg-white">
+                  <img
+                    src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=800"
+                    alt="Modern Hospital Facility"
+                    className="w-full h-72 sm:h-80 object-cover object-center"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent" />
+
+                  <div className="absolute top-4 left-4 rtl:left-auto rtl:right-4 bg-white/95 backdrop-blur-xs px-3 py-1.5 rounded-full border border-slate-200/90 shadow-xs flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                    <ShieldCheck className="w-4 h-4 text-teal-600" />
+                    <span>Verified Provider Network</span>
+                  </div>
+
+                  <div className="absolute bottom-4 left-4 right-4 text-white text-left rtl:text-right space-y-1">
+                    <span className="text-[10px] font-bold text-teal-300 uppercase tracking-wider block">
+                      Hospitals & Clinics
+                    </span>
+                    <h3 className="text-base font-black leading-snug">
+                      One Platform for Your Entire Facility
+                    </h3>
+                    <p className="text-xs text-slate-200 leading-relaxed font-normal">
+                      Manage doctors, departments, and appointments across your entire organization.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs space-y-2 text-left rtl:text-right text-xs">
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
+                    <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
+                    <span>Multi-doctor roster management</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
+                    <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
+                    <span>Add doctors after account setup</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
+                    <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
+                    <span>Zero setup fees or complex hardware</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            {t('joinProvider.title')}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 mt-2">
-            {t('joinProvider.subtitle')}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 2. BENEFITS SECTION                                                       */}
+      {/* ========================================================================= */}
+      <section id="benefits" className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+          <span className="text-xs font-bold text-teal-700 tracking-wider uppercase">
+            {t('joinProvider.benefitsEyebrow')}
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            {t('joinProvider.benefitsTitle')}
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600">
+            {t('joinProvider.benefitsSubtitle')}
           </p>
         </div>
 
-        {/* 2-Column Layout matching Client PDF Page 7 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* ========================================================================= */}
-          {/* LEFT COLUMN: Registration Form (PDF Page 7)                               */}
-          {/* ========================================================================= */}
-          <div className="lg:col-span-6 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs">
-            <h2 className="text-xl font-extrabold text-slate-900 mb-1">
-              {t('joinProvider.title')}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {benefits.map((b, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-teal-300 transition-all space-y-4 text-left rtl:text-right"
+            >
+              <div className="w-11 h-11 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 shadow-2xs">
+                <b.icon className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 leading-snug">{b.title}</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">{b.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 3. HOW IT WORKS                                                           */}
+      {/* ========================================================================= */}
+      <section
+        ref={howItWorksRef}
+        id="how-it-works"
+        className="py-16 sm:py-20 bg-white border-y border-slate-200/80"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
+            <span className="text-xs font-bold text-teal-700 tracking-wider uppercase">
+              {t('joinProvider.howItWorksEyebrow')}
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              {t('joinProvider.howItWorksTitle')}
             </h2>
-            <p className="text-xs text-slate-500 mb-6">
-              {t('joinProvider.formSubtitle')}
+            <p className="text-xs sm:text-sm text-slate-600">
+              {t('joinProvider.howItWorksSubtitle')}
             </p>
-
-            {isSuccess ? (
-              <div className="bg-teal-50 border border-teal-200 rounded-2xl p-8 text-center space-y-4">
-                <div className="w-12 h-12 bg-teal-600 text-white rounded-full flex items-center justify-center mx-auto shadow-xs">
-                  <CheckCircle2 className="w-6 h-6" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-900">{t('joinProvider.appReceived')}</h3>
-                <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
-                  {t('joinProvider.appReceivedDesc', { name: applicantName, facility: entityName || 'your facility' })}
-                </p>
-                <button
-                  onClick={() => setIsSuccess(false)}
-                  className="mt-4 px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl cursor-pointer"
-                >
-                  {t('joinProvider.submitAnother')}
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                
-                {/* Checkboxes: Hospital | Clinic | Doctor */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-900 mb-2">
-                    {t('joinProvider.classification')}
-                  </label>
-                  <div className="flex items-center gap-6">
-                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={isHospital}
-                        onChange={(e) => setIsHospital(e.target.checked)}
-                        className="rounded-sm border-slate-300 text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer"
-                      />
-                      <span>{t('joinProvider.hospital')}</span>
-                    </label>
-
-                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={isClinic}
-                        onChange={(e) => setIsClinic(e.target.checked)}
-                        className="rounded-sm border-slate-300 text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer"
-                      />
-                      <span>{t('joinProvider.clinic')}</span>
-                    </label>
-
-                    <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={isDoctor}
-                        onChange={(e) => setIsDoctor(e.target.checked)}
-                        className="rounded-sm border-slate-300 text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer"
-                      />
-                      <span>{t('joinProvider.doctor')}</span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Name */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                    {t('joinProvider.nameLabel')}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder={t('joinProvider.namePlaceholder')}
-                    value={applicantName}
-                    onChange={(e) => setApplicantName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-teal-500 font-medium"
-                  />
-                </div>
-
-                {/* Name (Hospital / Clinic / Dr.) */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                    {t('joinProvider.facilityNameLabel')}
-                  </label>
-                  <input
-                    type="text"
-                    placeholder={t('joinProvider.facilityNamePlaceholder')}
-                    value={entityName}
-                    onChange={(e) => setEntityName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-teal-500 font-medium"
-                  />
-                </div>
-
-                {/* Contact Number with Country Code Dropdown */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                    {t('joinProvider.contactNumberLabel')}
-                  </label>
-                  <div className="flex gap-2">
-                    <select
-                      value={countryCode}
-                      onChange={(e) => setCountryCode(e.target.value)}
-                      className="w-28 bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-xs font-bold text-slate-900 focus:outline-hidden cursor-pointer"
-                    >
-                      <option value="+965">+965 (KWT)</option>
-                      <option value="+971">+971 (UAE)</option>
-                      <option value="+966">+966 (KSA)</option>
-                      <option value="+44">+44 (UK)</option>
-                      <option value="+1">+1 (US)</option>
-                    </select>
-
-                    <div className="flex-1 bg-slate-50 rounded-xl border border-slate-200 px-4 py-3 flex items-center">
-                      <Phone className="w-4 h-4 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
-                      <input
-                        type="tel"
-                        required
-                        placeholder="Mobile / Phone number"
-                        value={contactNumber}
-                        onChange={(e) => setContactNumber(e.target.value)}
-                        className="w-full bg-transparent text-xs text-slate-900 focus:outline-hidden font-medium"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                    {t('joinProvider.emailLabel')}
-                  </label>
-                  <div className="bg-slate-50 rounded-xl border border-slate-200 px-4 py-3 flex items-center">
-                    <Mail className="w-4 h-4 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
-                    <input
-                      type="email"
-                      required
-                      placeholder={t('joinProvider.emailPlaceholder')}
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-transparent text-xs text-slate-900 focus:outline-hidden font-medium"
-                    />
-                  </div>
-                </div>
-
-                {/* Country & Location */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                      {t('joinProvider.countryLabel')}
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder={t('joinProvider.countryLabel')}
-                      value={country}
-                      onChange={(e) => setCountry(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-hidden font-medium"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                      {t('joinProvider.cityLabel')}
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="City / Area (e.g. Al Jaddaf, Dubai)"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-hidden font-medium"
-                    />
-                  </div>
-                </div>
-
-                {/* Send Button */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-3.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  <span>{isSubmitting ? t('joinProvider.submitting') : t('joinProvider.submitBtn')}</span>
-                  <ArrowRight className="w-4 h-4 rtl:rotate-180" />
-                </button>
-
-                <p className="text-center text-xs text-slate-500 font-medium">
-                  {t('joinProvider.formSubtitle')}
-                </p>
-              </form>
-            )}
           </div>
 
-          {/* ========================================================================= */}
-          {/* RIGHT COLUMN: Our Partners (Client PDF Page 7)                            */}
-          {/* ========================================================================= */}
-          <div className="lg:col-span-6 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
-            <div>
-              <h2 className="text-xl font-extrabold text-slate-900">
-                {t('joinProvider.partnerNetworkTitle')}
-              </h2>
-              <p className="text-xs text-slate-500 mt-1">
-                {t('joinProvider.partnerNetworkSubtitle')}
-              </p>
-            </div>
-
-            {/* Featured UAE Hospital Badges (from PDF Page 7) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3 bg-[#9B1D50] text-white rounded-xl text-center flex flex-col items-center justify-center font-bold text-xs">
-                <span>MED</span>
-                <span>CARE</span>
-              </div>
-
-              <div className="p-3 bg-[#112F4E] text-white rounded-xl text-center flex flex-col items-center justify-center font-bold text-[11px] leading-tight">
-                <span className="text-[10px] text-sky-300">CSH</span>
-                <span>Canadian Specialist</span>
-              </div>
-
-              <div className="p-3 bg-[#0A3D62] text-white rounded-xl text-center flex flex-col items-center justify-center font-bold text-[11px] leading-tight">
-                <span>Aster</span>
-                <span className="text-[9px] text-sky-200">HOSPITAL</span>
-              </div>
-
-              <div className="p-3 bg-[#0B2545] text-white rounded-xl text-center flex flex-col items-center justify-center font-bold text-[11px] leading-tight border border-slate-700">
-                <span>HOSPITALS</span>
-                <span className="text-[9px] text-teal-400">IN UAE</span>
-              </div>
-            </div>
-
-            {/* 15 Partner Hospital Badges Grid */}
-            <div className="border-t border-slate-100 pt-5">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-3">
-                15+ Leading Hospital Affiliates:
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-96 overflow-y-auto pr-1 rtl:pr-0 rtl:pl-1">
-                {partnerHospitalsList.map((partner) => (
-                  <div
-                    key={partner.id}
-                    className="p-3 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-teal-400 transition-all flex items-center gap-2.5"
-                  >
-                    <span className="w-6 h-6 rounded-full bg-teal-100 text-teal-800 text-[10px] font-bold flex items-center justify-center shrink-0">
-                      {partner.id}
-                    </span>
-                    <div className="truncate">
-                      <span className="text-xs font-bold text-slate-900 block truncate">
-                        {partner.name}
-                      </span>
-                      <span className="text-[10px] text-slate-500 block truncate">
-                        {partner.location}
-                      </span>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {howItWorksSteps.map((step, idx) => (
+              <div
+                key={idx}
+                className="relative bg-slate-50/70 border border-slate-200 rounded-3xl p-6 sm:p-7 space-y-3 text-left rtl:text-right hover:bg-white hover:shadow-xs transition-all"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-2xl font-black text-teal-600 tracking-tight">
+                    {step.number}
+                  </span>
+                  <div className="w-8 h-8 rounded-full bg-teal-100/70 text-teal-800 flex items-center justify-center text-xs font-bold">
+                    {idx + 1}
                   </div>
-                ))}
+                </div>
+                <h3 className="text-base font-bold text-slate-900">{step.title}</h3>
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">{step.desc}</p>
               </div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-teal-50 border border-teal-200 text-xs text-slate-700 flex items-start gap-2.5">
-              <ShieldCheck className="w-5 h-5 text-teal-600 shrink-0 mt-0.5" />
-              <p className="leading-relaxed">
-                Direct integration with hospital outpatient clinic rosters. Zero setup fees or hardware installations needed.
-              </p>
-            </div>
+            ))}
           </div>
+        </div>
+      </section>
 
+      {/* ========================================================================= */}
+      {/* 4. PROVIDER TYPES (Hospital & Clinic only)                               */}
+      {/* ========================================================================= */}
+      <section id="provider-types" className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+          <span className="text-xs font-bold text-teal-700 tracking-wider uppercase">
+            {t('joinProvider.typesEyebrow')}
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            Who Can Join MeetAdr
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600">
+            MeetAdr onboards Hospitals and Clinics. Your facility manages doctors from the dashboard after registration.
+          </p>
         </div>
 
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          {providerTypes.map((item) => (
+            <div
+              key={item.type}
+              className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs hover:shadow-md hover:border-teal-400 transition-all flex flex-col justify-between text-left rtl:text-right space-y-6"
+            >
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-100 text-teal-700 flex items-center justify-center">
+                  <item.icon className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-slate-900">{item.title}</h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">{item.desc}</p>
+                </div>
+                <div className="pt-2 border-t border-slate-100 space-y-2">
+                  {item.features.map((feat, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs text-slate-700">
+                      <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
+                      <span>{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => scrollToWizard(item.type)}
+                className="w-full py-3 bg-slate-100 hover:bg-teal-600 hover:text-white text-slate-800 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span>{item.cta}</span>
+                <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Doctor note */}
+        <div className="mt-8 max-w-3xl mx-auto bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3">
+          <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+          <div className="text-xs text-blue-800 leading-relaxed">
+            <span className="font-bold block">For Individual Doctors</span>
+            Doctors are added and managed by the Hospital or Clinic they are affiliated with. If you are a doctor, contact your facility administrator to be added to the MeetAdr roster.
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5. 3-STEP WIZARD                                                         */}
+      {/* ========================================================================= */}
+      <section
+        ref={wizardRef}
+        id="join-form"
+        className="py-16 sm:py-20 bg-white border-y border-slate-200/80"
+      >
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Header */}
+          <div className="text-center mb-10 space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-xs font-bold text-teal-800">
+              <FileCheck className="w-3.5 h-3.5 text-teal-600" />
+              <span>PROVIDER ONBOARDING</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Register Your Facility
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto">
+              Complete 3 quick steps to submit your Hospital or Clinic application. Our team will review and connect with you within 1–2 business days.
+            </p>
+          </div>
+
+          {/* Success State */}
+          {isSuccess ? (
+            <div className="bg-white border border-teal-200 rounded-3xl p-8 sm:p-12 text-center space-y-5 shadow-xs">
+              <div className="w-16 h-16 bg-teal-600 text-white rounded-full flex items-center justify-center mx-auto shadow-sm">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black text-slate-900">Application Submitted!</h3>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed mt-2">
+                  Thank you for registering <span className="font-bold text-slate-800">{wizardData.facilityName}</span> on MeetAdr. Our onboarding team will review your application and contact you at <span className="font-semibold">{wizardData.email}</span> within 1–2 business days.
+                </p>
+              </div>
+
+              {submittedReference && (
+                <div className="inline-block px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold font-mono">
+                  Reference: {submittedReference}
+                </div>
+              )}
+
+              <div className="pt-2 p-4 bg-teal-50 rounded-2xl border border-teal-100 text-xs text-teal-800 text-left rtl:text-right space-y-1.5">
+                <p className="font-bold">What happens next?</p>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  <span>Our team reviews your credentials & facility info</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  <span>You receive your dashboard login credentials</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  <span>Add your doctors directly from your dashboard</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={resetWizard}
+                className="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs"
+              >
+                Register Another Facility
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Step Progress Bar */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between relative">
+                  {/* Background connector */}
+                  <div className="absolute top-5 left-0 right-0 h-0.5 bg-slate-200 z-0" />
+                  {/* Active connector */}
+                  <div
+                    className="absolute top-5 left-0 h-0.5 bg-teal-500 z-0 transition-all duration-500"
+                    style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
+                  />
+                  {STEPS.map((step) => {
+                    const isCompleted = currentStep > step.id;
+                    const isActive = currentStep === step.id;
+                    return (
+                      <div key={step.id} className="relative z-10 flex flex-col items-center gap-2">
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center border-2 font-bold text-xs transition-all duration-300 ${
+                            isCompleted
+                              ? 'bg-teal-600 border-teal-600 text-white'
+                              : isActive
+                              ? 'bg-white border-teal-600 text-teal-700 shadow-sm ring-4 ring-teal-100'
+                              : 'bg-white border-slate-300 text-slate-400'
+                          }`}
+                        >
+                          {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : step.id}
+                        </div>
+                        <span
+                          className={`text-[10px] font-bold text-center hidden sm:block ${
+                            isActive ? 'text-teal-700' : isCompleted ? 'text-teal-600' : 'text-slate-400'
+                          }`}
+                        >
+                          {step.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ─── STEP 1: Provider Type ─── */}
+              {currentStep === 1 && (
+                <div className="bg-slate-50/70 rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-xs space-y-6">
+                  <div>
+                    <h3 className="text-lg font-black text-slate-900">Select Provider Type</h3>
+                    <p className="text-xs text-slate-500 mt-1">Choose the type of healthcare facility you are registering.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Clinic Card */}
+                    <button
+                      type="button"
+                      onClick={() => update('providerType', 'clinic')}
+                      className={`p-6 rounded-2xl border-2 text-left rtl:text-right cursor-pointer transition-all space-y-3 ${
+                        wizardData.providerType === 'clinic'
+                          ? 'bg-teal-50 border-teal-500 shadow-sm'
+                          : 'bg-white border-slate-200 hover:border-teal-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                        wizardData.providerType === 'clinic' ? 'bg-teal-600 text-white' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        <Building2 className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-black text-slate-900">Clinic</h4>
+                        <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                          Outpatient clinics, polyclinics, and specialized medical centers.
+                        </p>
+                      </div>
+                      {wizardData.providerType === 'clinic' && (
+                        <div className="flex items-center gap-1 text-teal-700 text-[11px] font-bold">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Selected</span>
+                        </div>
+                      )}
+                    </button>
+
+                    {/* Hospital Card */}
+                    <button
+                      type="button"
+                      onClick={() => update('providerType', 'hospital')}
+                      className={`p-6 rounded-2xl border-2 text-left rtl:text-right cursor-pointer transition-all space-y-3 ${
+                        wizardData.providerType === 'hospital'
+                          ? 'bg-teal-50 border-teal-500 shadow-sm'
+                          : 'bg-white border-slate-200 hover:border-teal-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                        wizardData.providerType === 'hospital' ? 'bg-teal-600 text-white' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        <Hospital className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-black text-slate-900">Hospital</h4>
+                        <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                          Tertiary hospitals and large integrated healthcare organizations.
+                        </p>
+                      </div>
+                      {wizardData.providerType === 'hospital' && (
+                        <div className="flex items-center gap-1 text-teal-700 text-[11px] font-bold">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Selected</span>
+                        </div>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Doctor note */}
+                  <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
+                    <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-amber-800 leading-relaxed">
+                      <span className="font-bold">Individual doctors</span> are not onboarded through this page. They are added by their affiliated Hospital or Clinic after account creation.
+                    </p>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="button"
+                      onClick={goNext}
+                      className="px-7 py-3 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer flex items-center gap-2"
+                    >
+                      <span>Continue</span>
+                      <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* ─── STEP 2: Organization Details ─── */}
+              {currentStep === 2 && (
+                <div className="bg-slate-50/70 rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-xs space-y-6">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-100 text-teal-800 text-[10px] font-bold mb-2">
+                      {wizardData.providerType === 'hospital'
+                        ? <Hospital className="w-3 h-3" />
+                        : <Building2 className="w-3 h-3" />}
+                      <span className="capitalize">{wizardData.providerType} Registration</span>
+                    </div>
+                    <h3 className="text-lg font-black text-slate-900">Organization Details</h3>
+                    <p className="text-xs text-slate-500 mt-1">Provide your facility and contact information.</p>
+                  </div>
+
+                  <div className="space-y-4">
+                    {/* Facility Name */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                        {wizardData.providerType === 'hospital' ? 'Hospital Name' : 'Clinic Name'} *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={wizardData.facilityName}
+                        onChange={(e) => update('facilityName', e.target.value)}
+                        placeholder={wizardData.providerType === 'hospital' ? 'e.g. City Care Hospital' : 'e.g. Green Valley Clinic'}
+                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 font-medium"
+                      />
+                    </div>
+
+                    {/* Contact Person */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                        Contact Person Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={wizardData.contactPerson}
+                        onChange={(e) => update('contactPerson', e.target.value)}
+                        placeholder="e.g. Mohammed Al Rashid or Dr. Sarah Chen"
+                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 font-medium"
+                      />
+                    </div>
+
+                    {/* Phone & Email */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                          Contact Phone *
+                        </label>
+                        <div className="flex gap-2">
+                          <select
+                            value={wizardData.countryCode}
+                            onChange={(e) => update('countryCode', e.target.value)}
+                            className="w-28 bg-white border border-slate-200 rounded-xl px-2.5 py-3 text-xs font-bold text-slate-900 focus:outline-none cursor-pointer"
+                          >
+                            <option value="+971">+971 (UAE)</option>
+                            <option value="+965">+965 (KWT)</option>
+                            <option value="+966">+966 (KSA)</option>
+                            <option value="+974">+974 (QAT)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+1">+1 (US)</option>
+                          </select>
+                          <div className="flex-1 bg-white rounded-xl border border-slate-200 px-3.5 py-3 flex items-center">
+                            <Phone className="w-3.5 h-3.5 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
+                            <input
+                              type="tel"
+                              required
+                              value={wizardData.contactNumber}
+                              onChange={(e) => update('contactNumber', e.target.value)}
+                              placeholder="50 123 4567"
+                              className="w-full bg-transparent text-xs text-slate-900 focus:outline-none font-medium"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                          Official Email *
+                        </label>
+                        <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-3 flex items-center">
+                          <Mail className="w-3.5 h-3.5 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
+                          <input
+                            type="email"
+                            required
+                            value={wizardData.email}
+                            onChange={(e) => update('email', e.target.value)}
+                            placeholder="info@hospital.com"
+                            className="w-full bg-transparent text-xs text-slate-900 focus:outline-none font-medium"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* City & Country */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                          City / Emirate *
+                        </label>
+                        <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-3 flex items-center">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
+                          <input
+                            type="text"
+                            required
+                            value={wizardData.location}
+                            onChange={(e) => update('location', e.target.value)}
+                            placeholder="e.g. Dubai, Abu Dhabi, Sharjah"
+                            className="w-full bg-transparent text-xs text-slate-900 focus:outline-none font-medium"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                          Country
+                        </label>
+                        <input
+                          type="text"
+                          readOnly
+                          value={wizardData.country}
+                          className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-600 cursor-not-allowed font-medium"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Website */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                        Website <span className="font-normal text-slate-400">(Optional)</span>
+                      </label>
+                      <input
+                        type="url"
+                        value={wizardData.website}
+                        onChange={(e) => update('website', e.target.value)}
+                        placeholder="https://yourhospital.com"
+                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 font-medium"
+                      />
+                    </div>
+
+                    {/* Notes */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                        Additional Notes <span className="font-normal text-slate-400">(Optional)</span>
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={wizardData.notes}
+                        onChange={(e) => update('notes', e.target.value)}
+                        placeholder="Briefly describe your facility, departments, or any questions for our team..."
+                        className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 font-medium resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-2">
+                    <button
+                      type="button"
+                      onClick={goBack}
+                      className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                    >
+                      <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
+                      <span>Back</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goNext}
+                      className="px-7 py-3 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer flex items-center gap-2"
+                    >
+                      <span>Review Application</span>
+                      <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* ─── STEP 3: Review & Submit ─── */}
+              {currentStep === 3 && (
+                <div className="bg-slate-50/70 rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-xs space-y-6">
+                  <div>
+                    <h3 className="text-lg font-black text-slate-900">Review Your Application</h3>
+                    <p className="text-xs text-slate-500 mt-1">Please confirm all details before submitting.</p>
+                  </div>
+
+                  {/* Review Card */}
+                  <div className="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100 overflow-hidden">
+                    <div className="p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {wizardData.providerType === 'hospital'
+                          ? <Hospital className="w-5 h-5 text-teal-600" />
+                          : <Building2 className="w-5 h-5 text-teal-600" />}
+                        <div>
+                          <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Provider Type</p>
+                          <p className="text-sm font-bold text-slate-900 capitalize">{wizardData.providerType}</p>
+                        </div>
+                      </div>
+                      <button type="button" onClick={() => setCurrentStep(1)} className="text-[10px] text-teal-600 font-bold hover:underline cursor-pointer">Edit</button>
+                    </div>
+
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">
+                          {wizardData.providerType === 'hospital' ? 'Hospital' : 'Clinic'} Name
+                        </p>
+                        <p className="text-sm font-bold text-slate-900">{wizardData.facilityName}</p>
+                      </div>
+                      <button type="button" onClick={() => setCurrentStep(2)} className="text-[10px] text-teal-600 font-bold hover:underline cursor-pointer">Edit</button>
+                    </div>
+
+                    <div className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Contact Person</p>
+                        <p className="text-sm font-bold text-slate-900">{wizardData.contactPerson}</p>
+                      </div>
+                      <button type="button" onClick={() => setCurrentStep(2)} className="text-[10px] text-teal-600 font-bold hover:underline cursor-pointer">Edit</button>
+                    </div>
+
+                    <div className="p-4">
+                      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Contact Phone</p>
+                      <p className="text-sm font-bold text-slate-900">{wizardData.countryCode} {wizardData.contactNumber}</p>
+                    </div>
+
+                    <div className="p-4">
+                      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Official Email</p>
+                      <p className="text-sm font-bold text-slate-900">{wizardData.email}</p>
+                    </div>
+
+                    <div className="p-4">
+                      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Location</p>
+                      <p className="text-sm font-bold text-slate-900">{wizardData.location}, {wizardData.country}</p>
+                    </div>
+
+                    {wizardData.website && (
+                      <div className="p-4">
+                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Website</p>
+                        <p className="text-sm font-bold text-slate-900">{wizardData.website}</p>
+                      </div>
+                    )}
+
+                    {wizardData.notes && (
+                      <div className="p-4">
+                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Additional Notes</p>
+                        <p className="text-xs text-slate-700 leading-relaxed mt-0.5">{wizardData.notes}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Security Notice */}
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200/90 text-xs text-slate-600 flex items-start gap-3">
+                    <ShieldCheck className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-slate-900 block">{t('joinProvider.trustSecurityTitle')}</span>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
+                        {t('joinProvider.trustSecurityDesc')}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-2">
+                    <button
+                      type="button"
+                      onClick={goBack}
+                      className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                    >
+                      <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
+                      <span>Back</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSubmit}
+                      disabled={isSubmitting}
+                      className="px-7 py-3 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer disabled:opacity-50 flex items-center gap-2"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Submitting...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Submit Application</span>
+                          <Send className="w-3.5 h-3.5" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 6. FAQ SECTION                                                            */}
+      {/* ========================================================================= */}
+      <section id="faq" className="py-16 sm:py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 space-y-3">
+          <span className="text-xs font-bold text-teal-700 tracking-wider uppercase">
+            {t('joinProvider.faqEyebrow')}
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            {t('joinProvider.faqTitle')}
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600">
+            {t('joinProvider.faqSubtitle')}
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {faqs.map((faq, idx) => {
+            const isOpen = activeFaq === idx;
+            return (
+              <div
+                key={idx}
+                className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs transition-all"
+              >
+                <button
+                  type="button"
+                  onClick={() => setActiveFaq((prev) => (prev === idx ? null : idx))}
+                  className="w-full p-5 text-left rtl:text-right flex items-center justify-between gap-4 cursor-pointer hover:bg-slate-50/50 transition-colors"
+                  aria-expanded={isOpen}
+                >
+                  <span className="text-xs sm:text-sm font-bold text-slate-900">{faq.q}</span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ${
+                      isOpen ? 'rotate-180 text-teal-600' : ''
+                    }`}
+                  />
+                </button>
+                {isOpen && (
+                  <div className="px-5 pb-5 pt-1 text-xs text-slate-600 leading-relaxed border-t border-slate-100 font-normal">
+                    {faq.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 7. FINAL CTA                                                              */}
+      {/* ========================================================================= */}
+      <section className="py-12 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-r from-teal-700 to-teal-800 rounded-3xl p-8 sm:p-12 text-center text-white shadow-md relative overflow-hidden">
+          <div className="max-w-2xl mx-auto space-y-4 relative z-10">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
+              {t('joinProvider.finalCtaTitle')}
+            </h2>
+            <p className="text-xs sm:text-sm text-teal-100 leading-relaxed font-normal">
+              {t('joinProvider.finalCtaSubtitle')}
+            </p>
+            <div className="pt-3 flex flex-wrap justify-center items-center gap-3">
+              <button
+                type="button"
+                onClick={() => scrollToWizard()}
+                className="px-6 py-3 bg-white text-teal-800 hover:bg-teal-50 text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer flex items-center gap-2"
+              >
+                <span>Register Your Facility</span>
+                <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+              </button>
+              <Link
+                to="/contact"
+                className="px-6 py-3 bg-teal-800/80 hover:bg-teal-800 text-white text-xs font-semibold rounded-xl border border-teal-600/60 transition-all cursor-pointer"
+              >
+                {t('joinProvider.finalCtaSecondary')}
+              </Link>
+            </div>
+          </div>
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-48 h-48 bg-white/5 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-48 h-48 bg-white/5 rounded-full blur-2xl pointer-events-none" />
+        </div>
+      </section>
+
     </div>
   );
 };
+

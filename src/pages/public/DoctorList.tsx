@@ -52,14 +52,6 @@ export const DoctorList: React.FC = () => {
     'Neurology',
   ];
 
-  const popularLocationSuggestions = [
-    { id: 'All', label: 'All UAE' },
-    { id: 'Al Jaddaf', label: 'Al Jaddaf' },
-    { id: 'Healthcare City', label: 'Healthcare City' },
-    { id: 'Downtown', label: 'Downtown' },
-    { id: 'Jumeirah', label: 'Jumeirah' },
-    { id: 'Deira', label: 'Deira' },
-  ];
 
   const filtered = useMemo(() => {
     return doctors.filter((doc) => {
@@ -158,7 +150,7 @@ export const DoctorList: React.FC = () => {
           </div>
 
           {/* Quick Suggested Filter Badges */}
-          <div className="pt-2 border-t border-slate-100 space-y-2">
+          <div className="pt-2 border-t border-slate-100">
             {/* Suggested Specialties */}
             <div className="flex items-center gap-1.5 flex-wrap text-xs">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 rtl:mr-0 rtl:ml-1">
@@ -176,27 +168,6 @@ export const DoctorList: React.FC = () => {
                   }`}
                 >
                   {spec === 'All' ? t('common.all') : translateSpecialty(spec)}
-                </button>
-              ))}
-            </div>
-
-            {/* Suggested Locations */}
-            <div className="flex items-center gap-1.5 flex-wrap text-xs">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 rtl:mr-0 rtl:ml-1">
-                {t('doctors.areaFilterLabel')}
-              </span>
-              {popularLocationSuggestions.map((loc) => (
-                <button
-                  key={loc.id}
-                  type="button"
-                  onClick={() => setLocation(loc.id)}
-                  className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                    location === loc.id
-                      ? 'bg-teal-600 text-white shadow-2xs font-bold'
-                      : 'bg-slate-100/80 text-slate-700 hover:bg-slate-200/80'
-                  }`}
-                >
-                  {loc.id === 'All' ? t('home.allUae') : translateLocation(loc.label)}
                 </button>
               ))}
             </div>
