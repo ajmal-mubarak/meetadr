@@ -752,15 +752,15 @@ const generateFullScheduleSlots = (doctorSlots: string[]): string[] => {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-[#E5DFCD] flex items-center justify-between text-xs">
+              <div className="pt-3 border-t border-[#E5DFCD] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs">
                 <div className="flex items-center gap-1.5 text-[#4B5563]">
                   <MapPin className="w-4 h-4 text-[#008B74] shrink-0" />
-                  <span className="truncate">Dubai Healthcare City Phase 2 - Al Jaddaf</span>
+                  <span>Dubai Healthcare City Phase 2 - Al Jaddaf</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowMapModal(true)}
-                  className="font-bold text-[#008B74] hover:underline flex items-center gap-1 shrink-0 cursor-pointer"
+                  className="font-bold text-[#008B74] hover:underline flex items-center gap-1 shrink-0 cursor-pointer self-start sm:self-auto ms-5 sm:ms-0"
                 >
                   <span>{t('booking.viewMap')}</span>
                   <ExternalLink className="w-3 h-3 rtl:mr-1" />
@@ -1143,80 +1143,66 @@ const generateFullScheduleSlots = (doctorSlots: string[]): string[] => {
                       )}
                     </div>
 
-                    {/* Status Indicator Legend */}
-                    <div className="flex items-center gap-3.5 text-[11px] text-slate-500 mb-3 pb-2 border-b border-[#E5DFCD]/60 flex-wrap">
-                      <span className="flex items-center gap-1.5 font-medium">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#008B74]" />
-                        <span>{isArabic ? 'متاح' : 'Available'}</span>
-                      </span>
-                      <span className="flex items-center gap-1.5 font-medium">
-                        <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
-                        <span>{isArabic ? 'غير متاح' : 'Not Available'}</span>
-                      </span>
-                      <span className="flex items-center gap-1.5 font-medium">
-                        <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
-                        <span>{isArabic ? 'محجوز' : 'Booked'}</span>
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                    <div
+                      role="group"
+                      aria-label={isArabic ? 'اختر وقت الموعد' : 'Select appointment time'}
+                      className="grid grid-cols-4 sm:grid-cols-5 gap-1.5"
+                    >
                       {fullScheduleSlots.map((slot) => {
                         const isConfiguredAvailable = (doctor.availableSlots || []).includes(slot);
                         const isBooked = bookedSlotsForDate.has(slot);
                         const isAvailable = isConfiguredAvailable && !isBooked;
                         const isSelected = selectedSlot === slot && isAvailable;
 
+                        // ── BOOKED ────────────────────────────────────────────
                         if (isBooked) {
                           return (
                             <div
                               key={slot}
+                              aria-label={isArabic ? `${slot} - محجوز` : `${slot} - Booked`}
                               title={isArabic ? 'تم حجز هذا الموعد مسبقاً' : 'This slot is already booked'}
-                              className="py-2.5 px-2 text-center rounded-xl border border-slate-200 bg-slate-100/90 text-slate-400 cursor-not-allowed select-none transition-all flex flex-col items-center justify-center min-h-[54px]"
+                              className="py-2 px-1 text-center rounded-xl border border-slate-200 bg-slate-100 cursor-not-allowed select-none flex items-center justify-center min-h-[38px] relative overflow-hidden"
                             >
-                              <span className="text-xs font-mono font-medium line-through text-slate-400">
-                                {slot}
-                              </span>
-                              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight mt-0.5">
-                                {isArabic ? 'محجوز' : 'Booked'}
-                              </span>
+                              <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'repeating-linear-gradient(-45deg,currentColor 0,currentColor 1px,transparent 0,transparent 50%)', backgroundSize: '6px 6px' }} aria-hidden="true" />
+                              <span className="text-[11px] font-mono font-medium line-through text-slate-400 leading-none relative z-10">{slot}</span>
                             </div>
                           );
                         }
 
+                        // ── NOT AVAILABLE ─────────────────────────────────────
                         if (!isConfiguredAvailable) {
                           return (
                             <div
                               key={slot}
+                              aria-label={isArabic ? `${slot} - غير متاح` : `${slot} - Not available`}
                               title={isArabic ? 'هذا الموعد غير متاح في جدول الطبيب' : 'Doctor is not available at this time'}
-                              className="py-2.5 px-2 text-center rounded-xl border border-slate-200 bg-slate-100/60 text-slate-400 cursor-not-allowed select-none transition-all flex flex-col items-center justify-center min-h-[54px]"
+                              className="py-2 px-1 text-center rounded-xl border border-slate-100 bg-slate-50 cursor-not-allowed select-none flex items-center justify-center min-h-[38px]"
                             >
-                              <span className="text-xs font-mono font-medium text-slate-400">
-                                {slot}
-                              </span>
-                              <span className="text-[9px] font-medium text-slate-400 uppercase tracking-tight mt-0.5">
-                                {isArabic ? 'غير متاح' : 'Not Available'}
-                              </span>
+                              <span className="text-[11px] font-mono font-medium text-slate-300 leading-none">{slot}</span>
                             </div>
                           );
                         }
 
+                        // ── AVAILABLE / SELECTED ──────────────────────────────
                         return (
                           <button
                             key={slot}
                             type="button"
+                            aria-label={isSelected ? (isArabic ? `${slot} - محدد` : `${slot} - Selected`) : (isArabic ? `${slot} - متاح` : `${slot} - Available`)}
+                            aria-pressed={isSelected}
                             onClick={() => setSelectedSlot(slot)}
-                            className={`py-2.5 px-2 text-center rounded-xl border text-xs font-mono transition-all cursor-pointer flex flex-col items-center justify-center min-h-[54px] ${
+                            className={`py-2 px-1 text-center rounded-xl border text-[11px] font-mono font-semibold transition-all cursor-pointer flex items-center justify-center min-h-[38px] relative focus:outline-none focus-visible:ring-2 focus-visible:ring-[#008B74] focus-visible:ring-offset-1 active:scale-[0.97] ${
                               isSelected
-                                ? 'bg-[#008B74] text-white border-[#008B74] font-bold shadow-xs scale-[1.02]'
-                                : 'bg-[#FAF9F5] hover:bg-white text-[#1F2937] border-[#E5DFCD] hover:border-[#008B74] hover:shadow-2xs'
+                                ? 'bg-[#008B74] text-white border-[#008B74] shadow-sm ring-2 ring-[#008B74]/25 ring-offset-1 scale-[1.02]'
+                                : 'bg-[#FAF9F5] hover:bg-white text-[#1F2937] border-[#E5DFCD] hover:border-[#008B74]/60 hover:shadow-sm'
                             }`}
                           >
-                            <span className={`text-xs font-mono font-bold ${isSelected ? 'text-white' : 'text-[#1F2937]'}`}>
-                              {slot}
-                            </span>
-                            <span className={`text-[9px] font-bold uppercase tracking-tight mt-0.5 ${isSelected ? 'text-teal-100' : 'text-[#008B74]'}`}>
-                              {isSelected ? (isArabic ? 'محدد' : 'Selected') : (isArabic ? 'متاح' : 'Available')}
-                            </span>
+                            {isSelected && (
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="none" className="absolute top-1 right-1 w-2.5 h-2.5 text-white/70" aria-hidden="true">
+                                <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            )}
+                            <span className="leading-none">{slot}</span>
                           </button>
                         );
                       })}

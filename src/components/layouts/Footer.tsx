@@ -107,11 +107,6 @@ export const Footer: React.FC = () => {
               </h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
                 <li>
-                  <Link to="/waitlist" className="hover:text-white transition-colors">
-                    {t('common.waitlist')}
-                  </Link>
-                </li>
-                <li>
                   <Link to="/join" className="hover:text-white transition-colors">
                     {t('footer.doctorRegistration')}
                   </Link>

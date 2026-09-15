@@ -1,5 +1,15 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Outlet, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, Link, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+
+// Scroll to top on every route change
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname]);
+  return null;
+};
 import { LanguageProvider, useTranslation } from './i18n';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
@@ -18,7 +28,7 @@ import { HospitalList } from './pages/public/HospitalList';
 import { HospitalDetails } from './pages/public/HospitalDetails';
 import { ClinicList } from './pages/public/ClinicList';
 import { ClinicDetails } from './pages/public/ClinicDetails';
-import { WaitlistPage } from './pages/public/WaitlistPage';
+
 import { JoinProviderPage } from './pages/public/JoinProviderPage';
 import {
   AboutPage,
@@ -120,6 +130,7 @@ export default function App() {
       <ToastProvider>
         <AuthProvider>
           <BrowserRouter>
+            <ScrollToTop />
           <Routes>
             {/* PUBLIC & MARKETING ROUTES */}
             <Route element={<PublicLayout />}>
@@ -131,7 +142,7 @@ export default function App() {
               <Route path="/hospitals/:id" element={<HospitalDetails />} />
               <Route path="/clinics" element={<ClinicList />} />
               <Route path="/clinics/:id" element={<ClinicDetails />} />
-              <Route path="/waitlist" element={<WaitlistPage />} />
+              <Route path="/waitlist" element={<Navigate to="/" replace />} />
               <Route path="/join" element={<JoinProviderPage />} />
               <Route path="/become-a-partner" element={<JoinProviderPage />} />
               <Route path="/provider-register" element={<JoinProviderPage />} />
