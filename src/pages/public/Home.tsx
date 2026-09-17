@@ -92,8 +92,6 @@ export const Home: React.FC = () => {
   // Recommendation location filter for the recommended section
   const [recommendedFilter, setRecommendedFilter] = useState('All');
 
-  // Condition search input state for quick lookup
-  const [conditionSearchInput, setConditionSearchInput] = useState('');
 
   // Category filter state for doctors
   const [doctorCategory, setDoctorCategory] = useState('All');
@@ -1359,101 +1357,32 @@ export const Home: React.FC = () => {
       {/* ========================================================================= */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0]">
         <div className="bg-white rounded-3xl border border-[#E2EBF0] p-6 sm:p-10 lg:p-12 text-slate-900 shadow-sm">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Left Column: Find Diseases & Conditions By Alphabet */}
-            <div className="lg:col-span-7">
-              <div className="inline-block px-3 py-1 bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-xs font-semibold rounded-full mb-3">
-                {t('home.symptomIndex')}
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-3">
-                {isArabic ? 'ابحث عن الأمراض والحالات حسب الحرف' : 'Find Diseases & Conditions By Alphabet'}
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-600 mb-6 max-w-xl leading-relaxed">
-                {isArabic
-                  ? 'انقر على أي حرف أبجدي للانتقال فوراً إلى الدليل السريري المخصص واستعراض الأسباب والأعراض وحجز الأطباء المعتمدين.'
-                  : 'Click any alphabet letter to open our dedicated clinical directory with verified causes, symptoms, and specialist bookings.'}
-              </p>
-
-              {/* Alphabet circular buttons (A-Z) */}
-              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 max-w-xl">
-                {ALPHABET_LETTERS.map((letter) => (
-                  <button
-                    key={letter}
-                    type="button"
-                    onClick={() => navigate(`/conditions?letter=${letter}`)}
-                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-[#E2EBF0] bg-[#F8FAFC] hover:bg-[#2DA7B5] hover:text-white hover:border-[#2DA7B5] text-slate-700 font-bold text-sm flex items-center justify-center transition-all cursor-pointer transform hover:-translate-y-0.5 active:scale-95 shadow-xs"
-                    title={`Browse conditions starting with ${letter}`}
-                  >
-                    {letter}
-                  </button>
-                ))}
-              </div>
+          <div className="max-w-4xl">
+            <div className="inline-block px-3 py-1 bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-xs font-semibold rounded-full mb-3">
+              {t('home.symptomIndex')}
             </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-3">
+              {isArabic ? 'ابحث عن الأمراض والحالات' : 'Find Diseases & Conditions'}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 mb-6 max-w-2xl leading-relaxed">
+              {isArabic
+                ? 'انقر على أي حرف أبجدي للانتقال فوراً إلى الدليل السريري المخصص واستعراض الأسباب والأعراض وحجز الأطباء المعتمدين.'
+                : 'Click any alphabet letter to open our dedicated clinical directory with verified causes, symptoms, and specialist bookings.'}
+            </p>
 
-            {/* Right Column: Search Diseases and Conditions */}
-            <div className="lg:col-span-5 lg:border-l lg:border-[#E2EBF0] lg:pl-10 rtl:lg:border-l-0 rtl:lg:border-r rtl:lg:border-[#E2EBF0] rtl:lg:pl-0 rtl:lg:pr-10">
-              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-3">
-                {isArabic ? 'البحث عن الأمراض والحالات' : 'Search Diseases and Conditions'}
-              </h3>
-
-              {/* Search input field with search button */}
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (conditionSearchInput.trim()) {
-                    navigate(`/conditions?search=${encodeURIComponent(conditionSearchInput.trim())}`);
-                  } else {
-                    navigate('/conditions');
-                  }
-                }}
-                className="mb-4"
-              >
-                <div className="relative flex items-center">
-                  <input
-                    type="text"
-                    value={conditionSearchInput}
-                    onChange={(e) => setConditionSearchInput(e.target.value)}
-                    placeholder={isArabic ? 'ابحث عن مرض أو عَرَض...' : 'Search (e.g. Migraine, Asthma, Diabetes)...'}
-                    className="w-full py-3.5 pl-4 pr-14 text-sm bg-[#F8FAFC] border border-[#E2EBF0] rounded-2xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#2DA7B5] focus:bg-white transition-all rtl:pl-14 rtl:pr-4"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#2DA7B5] hover:bg-[#23929F] text-white rounded-xl flex items-center justify-center transition-colors cursor-pointer rtl:right-auto rtl:left-1.5 shadow-xs"
-                    title="Search conditions"
-                  >
-                    <Search className="w-4 h-4" />
-                  </button>
-                </div>
-              </form>
-
-              {/* Explanatory description text */}
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-5">
-                {isArabic
-                  ? 'اعثر سريعًا على المعلومات التي تحتاجها. ابحث في قاعدة بياناتنا لاستكشاف معلومات مفصلة عن مختلف الأمراض والحالات الصحية، بما في ذلك الأعراض والأسباب وخيارات العلاج.'
-                  : 'Quickly find the information you need. Search our database to explore detailed information on various diseases and conditions, including symptoms, causes, and treatment options.'}
-              </p>
-
-              {/* Quick Popular Condition Shortcuts */}
-              <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-[#E2EBF0]">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mr-1">
-                  {isArabic ? 'شائع:' : 'Popular:'}
-                </span>
-                {[
-                  { name: isArabic ? 'الصداع النصفي' : 'Migraine', q: 'Migraine' },
-                  { name: isArabic ? 'السكري' : 'Diabetes', q: 'Diabetes' },
-                  { name: isArabic ? 'آلام الظهر' : 'Back Pain', q: 'Back Pain' },
-                  { name: isArabic ? 'الربو' : 'Asthma', q: 'Asthma' },
-                ].map((item) => (
-                  <button
-                    key={item.q}
-                    type="button"
-                    onClick={() => navigate(`/conditions?search=${encodeURIComponent(item.q)}`)}
-                    className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F8FAFC] hover:bg-[#E8F6F8] hover:text-[#0E7490] hover:border-[#CDEBF0] text-slate-700 border border-[#E2EBF0] transition-colors cursor-pointer"
-                  >
-                    {item.name}
-                  </button>
-                ))}
-              </div>
+            {/* Alphabet circular buttons (A-Z) */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+              {ALPHABET_LETTERS.map((letter) => (
+                <button
+                  key={letter}
+                  type="button"
+                  onClick={() => navigate(`/conditions?letter=${letter}`)}
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-[#E2EBF0] bg-[#F8FAFC] hover:bg-[#2DA7B5] hover:text-white hover:border-[#2DA7B5] text-slate-700 font-bold text-sm flex items-center justify-center transition-all cursor-pointer transform hover:-translate-y-0.5 active:scale-95 shadow-xs"
+                  title={`Browse conditions starting with ${letter}`}
+                >
+                  {letter}
+                </button>
+              ))}
             </div>
           </div>
         </div>
