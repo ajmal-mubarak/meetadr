@@ -36,6 +36,7 @@ import { INITIAL_DOCTORS } from '../../data/mockDoctors';
 import { INITIAL_HOSPITALS } from '../../data/mockHospitals';
 import { HEALTH_CONDITIONS, CONDITION_LETTERS, ALPHABET_LETTERS } from '../../data/mockConditions';
 import { useToast } from '../../context/ToastContext';
+import { HospitalBrandLogo } from '../../components/common/HospitalLogos';
 
 // Helper for displaying hospital names in one single word
 const getOneWordHospitalName = (hosp: { id: string; name: string }): string => {
@@ -99,6 +100,50 @@ export const Home: React.FC = () => {
 
   const specialtyRef = useRef<HTMLDivElement>(null);
   const conditionRef = useRef<HTMLDivElement>(null);
+
+  const getSpecialtyName = (spec: { name: string; specialtyQuery: string }) => {
+    if (!isArabic) return spec.name;
+    const arNames: Record<string, string> = {
+      'Cardiology': 'أمراض وجراحة القلب',
+      'Orthopedics': 'جراحة العظام والمفاصل',
+      'Pediatrics': 'طب الأطفال وحديثي الولادة',
+      'General Practice': 'الطب العام وطب الأسرة',
+      'Neurology': 'المخ والأعصاب',
+      'Ophthalmology': 'طب وجراحة العيون',
+      'Skin Care': 'الأمراض الجلدية والتجميل',
+      'Dental': 'طب وجراحة الأسنان',
+      'ENT': 'الأنف والأذن والحنجرة',
+      'Physiotherapy': 'العلاج الطبيعي والتأهيل',
+      'Radiology': 'الأشعة التشخيصية',
+      'Laboratory': 'المختبرات والتحاليل الطبية',
+    };
+    return arNames[spec.specialtyQuery] || translateSpecialty(spec.specialtyQuery) || spec.name;
+  };
+
+  const getSpecialtyCount = (countStr: string) => {
+    if (!isArabic) return countStr;
+    const num = countStr.split(' ')[0] || '';
+    return `${num} استشاري معتمد`;
+  };
+
+  const getSpecialtyDesc = (spec: { desc: string; specialtyQuery: string }) => {
+    if (!isArabic) return spec.desc;
+    const arDescs: Record<string, string> = {
+      'Cardiology': 'رعاية القلب والشرايين والقسطرة',
+      'Orthopedics': 'المفاصل والعمود الفقري والعظام',
+      'Pediatrics': 'رعاية الأطفال وحديثي الولادة',
+      'General Practice': 'طب الأسرة والفحوصات الشاملة',
+      'Neurology': 'الدماغ والأعصاب والعمود الفقري',
+      'Ophthalmology': 'رعاية العيون وجراحة الليزك',
+      'Skin Care': 'علاج الأمراض الجلدية والعناية التجميلية',
+      'Dental': 'صحة الفم وتقويم وجراحة الأسنان',
+      'ENT': 'الجيوب الأنفية والسمع وجراحة الحنجرة',
+      'Physiotherapy': 'استعادة الحركة والتأهيل الرياضي',
+      'Radiology': 'أشعة الرنين المغناطيسي والمقطعية والسونار',
+      'Laboratory': 'الفحوصات السريرية والتشخيص الدقيق',
+    };
+    return arDescs[spec.specialtyQuery] || spec.desc;
+  };
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -208,6 +253,18 @@ export const Home: React.FC = () => {
       {/* 1. HERO & UNIFIED SEARCH CONSOLE WITH SMART AUTOCOMPLETE                   */}
       {/* ========================================================================= */}
       <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-24 bg-[#081217] border-b border-slate-800 overflow-x-clip">
+        {/* Surgical Theater Background with Increased Opacity */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
+          <img
+            src="/images/hero-surgery-bg.png"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-center opacity-[0.20] sm:opacity-[0.25] scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#081217]/90 via-[#081217]/40 to-[#081217]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#081217]/80 via-transparent to-[#081217]/80" />
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left: Text Content */}
@@ -570,22 +627,19 @@ export const Home: React.FC = () => {
               </span>
             </div>
 
-            <div className="relative overflow-hidden py-2">
+            <div className="relative overflow-hidden py-2 marquee-track-container" dir="ltr">
               {/* Subtle edge fade overlays */}
               <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-24 bg-gradient-to-r from-[#081217] via-[#081217]/70 to-transparent z-10" />
               <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-24 bg-gradient-to-l from-[#081217] via-[#081217]/70 to-transparent z-10" />
 
-              <div className="animate-slide-left gap-8 sm:gap-12 items-center" dir="ltr">
+              <div className="animate-slide-left gap-3 sm:gap-4 items-center" dir="ltr">
                 {[...INITIAL_HOSPITALS, ...INITIAL_HOSPITALS].map((hosp, idx) => (
                   <Link
                     to={`/hospitals/${hosp.id}`}
                     key={`partner-ticker-${hosp.id}-${idx}`}
-                    className="inline-flex flex-col items-center justify-center gap-1.5 px-4 sm:px-6 py-1 shrink-0 group cursor-pointer transition-transform duration-200 hover:-translate-y-0.5"
+                    className="inline-flex items-center justify-center px-1.5 sm:px-2 py-1 shrink-0 group cursor-pointer transition-all duration-200 hover:scale-105 opacity-80 hover:opacity-100"
                   >
-                    <Hospital className="w-6 h-6 sm:w-7 sm:h-7 text-slate-400 group-hover:text-white group-hover:scale-110 transition-all duration-200" />
-                    <span className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors whitespace-nowrap tracking-tight">
-                      {getOneWordHospitalName(hosp)}
-                    </span>
+                    <HospitalBrandLogo hospitalId={hosp.id} className="h-8 sm:h-9 w-auto" />
                   </Link>
                 ))}
               </div>
@@ -620,13 +674,13 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Two-line infinite auto-sliding marquee: First line slides right, Second line slides left */}
-        <div className="relative overflow-hidden space-y-4 sm:space-y-5 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2">
+        <div className="relative overflow-hidden space-y-4 sm:space-y-5 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 marquee-track-container" dir="ltr">
           {/* Subtle edge fade overlays */}
           <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-24 bg-gradient-to-r from-[#081217] via-[#081217]/70 to-transparent z-10" />
           <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-24 bg-gradient-to-l from-[#081217] via-[#081217]/70 to-transparent z-10" />
 
           {/* First Line: Slides to the RIGHT */}
-          <div className="overflow-hidden w-full">
+          <div className="overflow-hidden w-full marquee-track-container" dir="ltr">
             <div className="animate-slide-right gap-4 sm:gap-5" dir="ltr">
               {[
                 {
@@ -732,6 +786,7 @@ export const Home: React.FC = () => {
                   <button
                     key={`line1-${spec.name}-${idx}`}
                     type="button"
+                    dir={isRTL ? 'rtl' : 'ltr'}
                     onClick={() => handleQuickSpecialty(spec.specialtyQuery)}
                     className="group relative rounded-2xl overflow-hidden w-64 sm:w-72 md:w-80 h-38 sm:h-44 shrink-0 transition-all duration-300 hover:scale-[1.02] border border-slate-800 hover:border-slate-700 text-left rtl:text-right cursor-pointer"
                   >
@@ -749,21 +804,21 @@ export const Home: React.FC = () => {
                     {/* Top badge: Specialists Count */}
                     <div className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#0C1A22] text-[10px] font-semibold text-slate-200 border border-slate-800">
-                        {spec.doctorCount}
+                        {getSpecialtyCount(spec.doctorCount)}
                       </span>
                     </div>
 
                     {/* Content */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-3.5 sm:p-4">
+                    <div className="absolute inset-0 flex flex-col justify-end p-3.5 sm:p-4 text-left rtl:text-right">
                       <div className="flex items-center gap-2 mb-1">
                         <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white/20 backdrop-blur-sm text-white flex items-center justify-center border border-white/20 shrink-0">
                           <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                         </div>
                         <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-slate-100 transition-colors truncate">
-                          {spec.name}
+                          {getSpecialtyName(spec)}
                         </h3>
                       </div>
-                      <p className="text-[10px] text-white/70 font-medium truncate">{spec.desc}</p>
+                      <p className="text-[10px] text-white/70 font-medium truncate">{getSpecialtyDesc(spec)}</p>
                     </div>
                   </button>
                 );
@@ -772,7 +827,7 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Second Line: Slides to the LEFT */}
-          <div className="overflow-hidden w-full">
+          <div className="overflow-hidden w-full marquee-track-container" dir="ltr">
             <div className="animate-slide-left gap-4 sm:gap-5" dir="ltr">
               {[
                 {
@@ -878,6 +933,7 @@ export const Home: React.FC = () => {
                   <button
                     key={`line2-${spec.name}-${idx}`}
                     type="button"
+                    dir={isRTL ? 'rtl' : 'ltr'}
                     onClick={() => handleQuickSpecialty(spec.specialtyQuery)}
                     className="group relative rounded-2xl overflow-hidden w-64 sm:w-72 md:w-80 h-38 sm:h-44 shrink-0 transition-all duration-300 hover:scale-[1.02] border border-slate-800 hover:border-slate-700 text-left rtl:text-right cursor-pointer"
                   >
@@ -895,21 +951,21 @@ export const Home: React.FC = () => {
                     {/* Top badge: Specialists Count */}
                     <div className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#0C1A22] text-[10px] font-semibold text-slate-200 border border-slate-800">
-                        {spec.doctorCount}
+                        {getSpecialtyCount(spec.doctorCount)}
                       </span>
                     </div>
 
                     {/* Content */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-3.5 sm:p-4">
+                    <div className="absolute inset-0 flex flex-col justify-end p-3.5 sm:p-4 text-left rtl:text-right">
                       <div className="flex items-center gap-2 mb-1">
                         <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white/20 backdrop-blur-sm text-white flex items-center justify-center border border-white/20 shrink-0">
                           <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                         </div>
                         <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-slate-100 transition-colors truncate">
-                          {spec.name}
+                          {getSpecialtyName(spec)}
                         </h3>
                       </div>
-                      <p className="text-[10px] text-white/70 font-medium truncate">{spec.desc}</p>
+                      <p className="text-[10px] text-white/70 font-medium truncate">{getSpecialtyDesc(spec)}</p>
                     </div>
                   </button>
                 );

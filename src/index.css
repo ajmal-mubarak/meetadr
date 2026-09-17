@@ -146,3 +146,9 @@
 .animate-slide-left:hover {
   animation-play-state: paused;
 }
+
+/* Ensure marquee wrappers maintain strict LTR coordinate space to prevent RTL offset issues */
+.marquee-track-container {
+  direction: ltr !important;
+  text-align: left !important;
+}
