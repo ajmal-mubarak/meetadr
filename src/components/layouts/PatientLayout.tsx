@@ -50,17 +50,17 @@ export const PatientLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-teal-100 selection:text-slate-800 overflow-x-clip w-full max-w-full">
+    <div className="min-h-screen flex flex-col bg-[#F4F7F9] text-slate-900 font-sans selection:bg-teal-100 selection:text-slate-800 overflow-x-clip w-full max-w-full">
       {/* 1. Website Navbar is ALWAYS visible */}
       <Header />
 
       {/* 2. Patient Account Hero Header */}
-      <div className="bg-white border-b border-slate-200">
+      <div className="bg-white border-b border-[#E2EBF0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Patient identity */}
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-800 text-white flex items-center justify-center font-black text-lg shadow-sm shadow-teal-700/20 ring-4 ring-teal-50 shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#2DA7B5] to-[#1F7A85] text-white flex items-center justify-center font-black text-lg shadow-sm shadow-teal-700/20 ring-4 ring-teal-50 shrink-0">
                 {user?.name?.charAt(0) || 'P'}
               </div>
               <div>
@@ -68,8 +68,8 @@ export const PatientLayout: React.FC = () => {
                   <h1 className="text-lg sm:text-xl font-bold text-slate-900 leading-tight">
                     {user?.name || (isArabic ? 'سارة جنكينز' : 'Sarah Jenkins')}
                   </h1>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    <ShieldCheck className="w-3 h-3 text-emerald-600 shrink-0" />
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0]">
+                    <ShieldCheck className="w-3 h-3 text-[#2DA7B5] shrink-0" />
                     <span>{t('patient.verifiedPatient')}</span>
                   </span>
                 </div>
@@ -83,7 +83,7 @@ export const PatientLayout: React.FC = () => {
             <div className="flex items-center gap-2.5">
               <NavLink
                 to="/doctors"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl transition-all shadow-xs shadow-teal-700/20 cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#2DA7B5] hover:bg-[#23929F] text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>{t('patient.bookNewDoctor')}</span>
@@ -92,7 +92,7 @@ export const PatientLayout: React.FC = () => {
           </div>
 
           {/* 3. Patient Navigation Tabs: Overview | Personal/Profile | Bookings | Sign Out */}
-          <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-1 flex-wrap gap-2">
+          <div className="mt-6 flex items-center justify-between border-t border-[#E2EBF0] pt-1 flex-wrap gap-2">
             <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-1">
               {navTabs.map((tab) => {
                 const Icon = tab.icon;
@@ -102,7 +102,7 @@ export const PatientLayout: React.FC = () => {
                     to={tab.path}
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
                       tab.isActive
-                        ? 'bg-[#007B8A] text-white font-bold'
+                        ? 'bg-[#2DA7B5] text-white font-bold shadow-xs'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
                     }`}
                   >

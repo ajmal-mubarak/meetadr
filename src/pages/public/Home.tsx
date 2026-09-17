@@ -247,22 +247,22 @@ export const Home: React.FC = () => {
   const partnerHospitals = INITIAL_HOSPITALS.slice(0, 4);
 
   return (
-    <div className="bg-[#081217] text-slate-100 min-h-screen selection:bg-slate-700 selection:text-white">
+    <div className="bg-[#F4F7F9] text-slate-900 min-h-screen selection:bg-teal-100 selection:text-teal-950">
 
       {/* ========================================================================= */}
       {/* 1. HERO & UNIFIED SEARCH CONSOLE WITH SMART AUTOCOMPLETE                   */}
       {/* ========================================================================= */}
-      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-24 bg-[#081217] border-b border-slate-800 overflow-x-clip">
-        {/* Surgical Theater Background with Increased Opacity */}
+      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-24 bg-[#F4F7F9] border-b border-[#E2EBF0] overflow-x-clip">
+        {/* Subtle Surgical Theater Background with Low Light Opacity */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
           <img
             src="/images/hero-surgery-bg.png"
             alt=""
             aria-hidden="true"
-            className="w-full h-full object-cover object-center opacity-[0.20] sm:opacity-[0.25] scale-105"
+            className="w-full h-full object-cover object-center opacity-[0.06] sm:opacity-[0.08] mix-blend-multiply scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#081217]/90 via-[#081217]/40 to-[#081217]" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#081217]/80 via-transparent to-[#081217]/80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#F4F7F9]/80 via-transparent to-[#F4F7F9]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#F4F7F9]/70 via-transparent to-[#F4F7F9]/70" />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
@@ -274,9 +274,9 @@ export const Home: React.FC = () => {
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#0C1A22] border border-slate-800 text-[11px] sm:text-xs font-semibold text-slate-200 mb-6 max-w-full"
+                className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white border border-[#E2EBF0] text-[11px] sm:text-xs font-semibold text-slate-700 mb-6 max-w-full shadow-2xs"
               >
-                <span className="w-2 h-2 rounded-full bg-slate-400 shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-[#2DA7B5] shrink-0" />
                 <span className="truncate sm:whitespace-normal">{t('home.trustPill')}</span>
               </motion.div>
 
@@ -285,7 +285,7 @@ export const Home: React.FC = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-[1.15] sm:leading-[1.12]"
+                className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15] sm:leading-[1.12]"
               >
                 {t('home.heroAccreditedTitle')}
               </motion.h1>
@@ -295,7 +295,7 @@ export const Home: React.FC = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
-                className="text-sm sm:text-base lg:text-lg text-slate-300 mt-4 max-w-xl leading-relaxed"
+                className="text-sm sm:text-base lg:text-lg text-slate-600 mt-4 max-w-xl leading-relaxed"
               >
                 {t('home.heroAccreditedSubtitle')}
               </motion.p>
@@ -309,7 +309,7 @@ export const Home: React.FC = () => {
               className="hidden lg:flex justify-center lg:justify-end relative"
             >
               <div className="relative">
-                <div className="w-[380px] h-[440px] rounded-3xl overflow-hidden border border-slate-800">
+                <div className="w-[380px] h-[440px] rounded-3xl overflow-hidden border border-[#E2EBF0] shadow-md">
                   <img
                     src="/images/hero-doctor.jpg"
                     alt="Professional doctor"
@@ -317,19 +317,19 @@ export const Home: React.FC = () => {
                   />
                 </div>
                 {/* Floating trust badge */}
-                <div className="absolute -bottom-4 -left-6 rtl:-left-auto rtl:-right-6 bg-[#0C1A22] rounded-2xl border border-slate-800 px-4 py-3 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#081217] text-slate-200 flex items-center justify-center border border-slate-800">
+                <div className="absolute -bottom-4 -left-6 rtl:-left-auto rtl:-right-6 bg-white rounded-2xl border border-[#E2EBF0] px-4 py-3 flex items-center gap-3 shadow-sm">
+                  <div className="w-10 h-10 rounded-xl bg-[#E8F6F8] text-[#0E7490] flex items-center justify-center border border-[#CDEBF0]">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-white">500+ Verified</p>
-                    <p className="text-[10px] text-slate-400">Licensed Specialists</p>
+                    <p className="text-xs font-bold text-slate-900">500+ Verified</p>
+                    <p className="text-[10px] text-slate-500">Licensed Specialists</p>
                   </div>
                 </div>
                 {/* Floating availability badge */}
-                <div className="absolute -top-3 -right-4 rtl:-right-auto rtl:-left-4 bg-[#0C1A22] rounded-xl border border-slate-800 px-3 py-2 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <span className="text-[11px] font-bold text-slate-200">Available Today</span>
+                <div className="absolute -top-3 -right-4 rtl:-right-auto rtl:-left-4 bg-white rounded-xl border border-[#E2EBF0] px-3 py-2 flex items-center gap-2 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="text-[11px] font-bold text-slate-800">Available Today</span>
                 </div>
               </div>
             </motion.div>
@@ -344,11 +344,11 @@ export const Home: React.FC = () => {
           >
             <form
               onSubmit={handleSearchSubmit}
-              className="bg-[#0C1A22] rounded-2xl sm:rounded-full border border-slate-800 hover:border-slate-700 p-2 sm:p-2.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 transition-all relative w-full"
+              className="bg-white rounded-2xl sm:rounded-full border border-[#E2EBF0] hover:border-[#CBD5E1] p-2 sm:p-2.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 transition-all relative w-full shadow-xs"
             >
               {/* Field 1: Doctor / Specialty with Autocomplete */}
               <div className="flex-1 relative min-w-0" ref={specialtyRef}>
-                <div className="flex items-center px-4 py-3 sm:py-2.5 bg-[#081217] sm:bg-transparent rounded-xl sm:rounded-none">
+                <div className="flex items-center px-4 py-3 sm:py-2.5 bg-[#F8FAFC] sm:bg-transparent rounded-xl sm:rounded-none">
                   <Search className="w-4 h-4 text-slate-400 mr-3 rtl:mr-0 rtl:ml-3 shrink-0" />
                   <input
                     type="text"
@@ -358,8 +358,8 @@ export const Home: React.FC = () => {
                       setSearchQuery(e.target.value);
                       setShowSpecialtyDropdown(true);
                     }}
-                    placeholder={t('home.doctorPlaceholder')}
-                    className="w-full min-w-0 bg-transparent text-sm text-white placeholder-slate-400 focus:outline-hidden font-medium"
+                    placeholder={t('home.searchPlaceholder')}
+                    className="w-full min-w-0 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden font-medium"
                   />
                   {searchQuery && (
                     <button
@@ -380,13 +380,13 @@ export const Home: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 right-0 sm:right-auto rtl:sm:right-0 rtl:sm:left-auto sm:w-96 mt-2 bg-[#0E1522] rounded-2xl shadow-2xl border border-slate-800 p-3 z-50 text-left rtl:text-right divide-y divide-slate-800/60 max-w-[calc(100vw-32px)] max-h-96 overflow-y-auto backdrop-blur-xl"
+                      className="absolute left-0 right-0 sm:right-auto rtl:sm:right-0 rtl:sm:left-auto sm:w-96 mt-2 bg-white rounded-2xl shadow-2xl border border-[#E2EBF0] p-3 z-50 text-left rtl:text-right divide-y divide-slate-100 max-w-[calc(100vw-32px)] max-h-96 overflow-y-auto backdrop-blur-xl text-slate-900"
                     >
                       {/* Section: Matching Doctors (active when user types) */}
                       {matchingSearchDoctors.length > 0 && (
                         <div className="pb-2.5">
-                          <p className="text-[10px] font-bold text-sky-400 uppercase tracking-wider px-2 mb-2 flex items-center gap-1.5">
-                            <Stethoscope className="w-3 h-3 text-sky-400" />
+                          <p className="text-[10px] font-bold text-[#0E7490] uppercase tracking-wider px-2 mb-2 flex items-center gap-1.5">
+                            <Stethoscope className="w-3 h-3 text-[#2DA7B5]" />
                             {t('common.doctors')}
                           </p>
                           <div className="space-y-1">
@@ -398,23 +398,23 @@ export const Home: React.FC = () => {
                                   setSearchQuery(doc.name);
                                   setShowSpecialtyDropdown(false);
                                 }}
-                                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-white/[0.06] text-left rtl:text-right transition-colors cursor-pointer group"
+                                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 text-left rtl:text-right transition-colors cursor-pointer group"
                               >
                                 <img
                                   src={doc.photo}
                                   alt={doc.name}
-                                  className="w-8 h-8 rounded-full object-cover shrink-0 border border-slate-700"
+                                  className="w-8 h-8 rounded-full object-cover shrink-0 border border-[#E2EBF0]"
                                 />
                                 <div className="truncate flex-1 min-w-0">
                                   <div className="flex items-center justify-between gap-1.5">
-                                    <span className="text-xs font-bold text-white group-hover:text-sky-300 block truncate">
+                                    <span className="text-xs font-bold text-slate-900 group-hover:text-[#0E7490] block truncate">
                                       {doc.name}
                                     </span>
-                                    <span className="text-[9px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded-full shrink-0">
+                                    <span className="text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full shrink-0">
                                       ★ {doc.rating}
                                     </span>
                                   </div>
-                                  <span className="text-[10px] text-slate-400 block truncate">
+                                  <span className="text-[10px] text-slate-500 block truncate">
                                     {doc.hospitalName || doc.location}
                                   </span>
                                 </div>
@@ -428,14 +428,14 @@ export const Home: React.FC = () => {
                       {filteredHospitals.length > 0 && (
                         <div className={matchingSearchDoctors.length > 0 ? "pt-2.5" : ""}>
                           <div className="flex items-center justify-between px-2 mb-2">
-                            <p className="text-[10px] font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
-                              <Building2 className="w-3 h-3 text-sky-400" />
+                            <p className="text-[10px] font-bold text-[#0E7490] uppercase tracking-wider flex items-center gap-1.5">
+                              <Building2 className="w-3 h-3 text-[#2DA7B5]" />
                               {t('home.suggestedHospitalsTitle')}
                             </p>
                             <Link
                               to="/hospitals"
                               onClick={() => setShowSpecialtyDropdown(false)}
-                              className="text-[10px] font-bold text-sky-400 hover:text-sky-300 transition-colors"
+                              className="text-[10px] font-bold text-[#0E7490] hover:text-[#08596F] transition-colors"
                             >
                               {t('common.viewAll')} →
                             </Link>
@@ -449,9 +449,9 @@ export const Home: React.FC = () => {
                                   setSearchQuery(hosp.name);
                                   setShowSpecialtyDropdown(false);
                                 }}
-                                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-white/[0.06] text-left rtl:text-right transition-colors cursor-pointer group"
+                                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 text-left rtl:text-right transition-colors cursor-pointer group"
                               >
-                                <div className="w-8 h-8 rounded-lg bg-sky-500/10 group-hover:bg-sky-500/20 text-sky-300 flex items-center justify-center shrink-0 overflow-hidden border border-sky-500/20">
+                                <div className="w-8 h-8 rounded-lg bg-[#E8F6F8] text-[#0E7490] flex items-center justify-center shrink-0 overflow-hidden border border-[#CDEBF0]">
                                   {hosp.photo ? (
                                     <img
                                       src={hosp.photo}
@@ -464,14 +464,14 @@ export const Home: React.FC = () => {
                                 </div>
                                 <div className="truncate flex-1 min-w-0">
                                   <div className="flex items-center justify-between gap-1.5">
-                                    <span className="text-xs font-bold text-white group-hover:text-sky-300 block truncate">
+                                    <span className="text-xs font-bold text-slate-900 group-hover:text-[#0E7490] block truncate">
                                       {hosp.name}
                                     </span>
-                                    <span className="text-[9px] font-bold text-sky-300 bg-sky-500/15 border border-sky-500/25 px-1.5 py-0.5 rounded-full shrink-0">
+                                    <span className="text-[9px] font-bold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-1.5 py-0.5 rounded-full shrink-0">
                                       {hosp.doctorCount} {t('common.doctors')}
                                     </span>
                                   </div>
-                                  <span className="text-[10px] text-slate-400 block truncate">
+                                  <span className="text-[10px] text-slate-500 block truncate">
                                     {translateLocation(hosp.location)}
                                   </span>
                                 </div>
@@ -484,8 +484,8 @@ export const Home: React.FC = () => {
                       {/* Empty state if neither doctors nor hospitals match */}
                       {matchingSearchDoctors.length === 0 && filteredHospitals.length === 0 && (
                         <div className="p-4 text-center">
-                          <p className="text-xs font-bold text-slate-200">No doctors or hospitals found</p>
-                          <p className="text-[10px] text-slate-400 mt-0.5">Try searching with another doctor or hospital name</p>
+                          <p className="text-xs font-bold text-slate-800">No doctors or hospitals found</p>
+                          <p className="text-[10px] text-slate-500 mt-0.5">Try searching with another doctor or hospital name</p>
                         </div>
                       )}
                     </motion.div>
@@ -493,12 +493,12 @@ export const Home: React.FC = () => {
                 </AnimatePresence>
               </div>
 
-              <div className="hidden sm:block w-px h-8 bg-slate-800" />
+              <div className="hidden sm:block w-px h-8 bg-[#E2EBF0]" />
 
               {/* Field 2: Health Condition with Autocomplete */}
               <div className="flex-1 relative min-w-0" ref={conditionRef}>
-                <div className="flex items-center px-4 py-3 sm:py-2.5 bg-[#080D15] sm:bg-transparent rounded-xl sm:rounded-none">
-                  <Activity className="w-4 h-4 text-sky-400 mr-3 rtl:mr-0 rtl:ml-3 shrink-0" />
+                <div className="flex items-center px-4 py-3 sm:py-2.5 bg-[#F8FAFC] sm:bg-transparent rounded-xl sm:rounded-none">
+                  <Activity className="w-4 h-4 text-[#2DA7B5] mr-3 rtl:mr-0 rtl:ml-3 shrink-0" />
                   <input
                     type="text"
                     value={selectedCondition}
@@ -508,13 +508,13 @@ export const Home: React.FC = () => {
                       setShowConditionDropdown(true);
                     }}
                     placeholder={t('home.conditionPlaceholder')}
-                    className="w-full min-w-0 bg-transparent text-sm text-white placeholder-slate-400 focus:outline-hidden font-medium"
+                    className="w-full min-w-0 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden font-medium"
                   />
                   {selectedCondition && (
                     <button
                       type="button"
                       onClick={() => setSelectedCondition('')}
-                      className="text-slate-400 hover:text-white p-0.5 cursor-pointer ml-1 rtl:ml-0 rtl:mr-1"
+                      className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer ml-1 rtl:ml-0 rtl:mr-1"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -529,9 +529,9 @@ export const Home: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 right-0 sm:right-auto rtl:sm:right-0 rtl:sm:left-auto sm:w-88 mt-2 bg-[#0E1522] rounded-2xl shadow-2xl border border-slate-800 p-3 z-50 text-left rtl:text-right max-w-[calc(100vw-32px)] max-h-80 overflow-y-auto backdrop-blur-xl"
+                      className="absolute left-0 right-0 sm:right-auto rtl:sm:right-0 rtl:sm:left-auto sm:w-88 mt-2 bg-white rounded-2xl shadow-2xl border border-[#E2EBF0] p-3 z-50 text-left rtl:text-right max-w-[calc(100vw-32px)] max-h-80 overflow-y-auto backdrop-blur-xl text-slate-900"
                     >
-                      <p className="text-[10px] font-bold text-sky-400 uppercase tracking-wider px-2 mb-2">
+                      <p className="text-[10px] font-bold text-[#0E7490] uppercase tracking-wider px-2 mb-2">
                         {t('home.suggestedConditionsTitle')}
                       </p>
                       <div className="space-y-1">
@@ -547,21 +547,21 @@ export const Home: React.FC = () => {
                               setSelectedCondition(cond.name);
                               setShowConditionDropdown(false);
                             }}
-                            className="w-full flex items-start gap-2.5 p-2 rounded-xl hover:bg-white/[0.06] text-left rtl:text-right transition-colors cursor-pointer group"
+                            className="w-full flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 text-left rtl:text-right transition-colors cursor-pointer group"
                           >
-                            <div className="w-7 h-7 rounded-lg bg-sky-500/10 group-hover:bg-sky-500/20 text-sky-300 flex items-center justify-center shrink-0 mt-0.5 border border-sky-500/20">
+                            <div className="w-7 h-7 rounded-lg bg-[#E8F6F8] group-hover:bg-[#D4EFF3] text-[#0E7490] flex items-center justify-center shrink-0 mt-0.5 border border-[#CDEBF0]">
                               <HeartPulse className="w-3.5 h-3.5" />
                             </div>
                             <div className="truncate flex-1">
                               <div className="flex items-center justify-between gap-1">
-                                <span className="text-xs font-bold text-white group-hover:text-sky-300 block truncate">
+                                <span className="text-xs font-bold text-slate-900 group-hover:text-[#0E7490] block truncate">
                                   {cond.name}
                                 </span>
-                                <span className="text-[9px] font-bold text-sky-300 bg-sky-500/15 border border-sky-500/25 px-1.5 py-0.5 rounded-full shrink-0">
+                                <span className="text-[9px] font-bold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-1.5 py-0.5 rounded-full shrink-0">
                                   {cond.specialist.split('/')[0].trim()}
                                 </span>
                               </div>
-                              <span className="text-[10px] text-slate-400 block truncate">
+                              <span className="text-[10px] text-slate-500 block truncate">
                                 {cond.description}
                               </span>
                             </div>
@@ -573,14 +573,14 @@ export const Home: React.FC = () => {
                 </AnimatePresence>
               </div>
 
-              <div className="hidden sm:block w-px h-8 bg-slate-800" />
+              <div className="hidden sm:block w-px h-8 bg-[#E2EBF0]" />
 
               {/* Field 3: Emirate */}
-              <div className="flex items-center px-3 py-3 sm:py-2.5 bg-[#080D15] sm:bg-transparent rounded-xl sm:rounded-none sm:w-36 min-w-0">
+              <div className="flex items-center px-3 py-3 sm:py-2.5 bg-[#F8FAFC] sm:bg-transparent rounded-xl sm:rounded-none sm:w-36 min-w-0">
                 <select
                   value={selectedEmirate}
                   onChange={(e) => setSelectedEmirate(e.target.value)}
-                  className="w-full bg-transparent text-xs font-bold text-white focus:outline-hidden cursor-pointer [&>option]:bg-[#0E1522] [&>option]:text-white"
+                  className="w-full bg-transparent text-xs font-bold text-slate-900 focus:outline-hidden cursor-pointer [&>option]:bg-white [&>option]:text-slate-900"
                 >
                   <option value="Dxb">{t('emirates.dubai')} (Dxb)</option>
                   <option value="Abu Dhabi">{t('emirates.abuDhabi')}</option>
@@ -593,7 +593,7 @@ export const Home: React.FC = () => {
               {/* Action CTA Button */}
               <button
                 type="submit"
-                className="w-full sm:w-auto px-8 py-3.5 sm:py-3 palette-btn-primary rounded-xl sm:rounded-full font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 active:scale-95"
+                className="w-full sm:w-auto px-8 py-3.5 sm:py-3 bg-[#2DA7B5] hover:bg-[#23929F] text-white rounded-xl sm:rounded-full font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 active:scale-95 shadow-xs"
               >
                 <span>{t('home.searchButton')}</span>
                 <ArrowRight className="w-4 h-4 rtl:rotate-180" />
@@ -602,7 +602,7 @@ export const Home: React.FC = () => {
 
             {/* Quick Specialty Shortcut Badges */}
             <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs">
-              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px] mr-1 rtl:mr-0 rtl:ml-1">
+              <span className="text-slate-500 font-semibold uppercase tracking-wider text-[10px] mr-1 rtl:mr-0 rtl:ml-1">
                 {t('home.suggestedLabel')}
               </span>
               {['Cardiology', 'Dermatology', 'Orthopedics', 'Pediatrics', 'Neurology', 'General Practice'].map((spec) => (
@@ -610,7 +610,7 @@ export const Home: React.FC = () => {
                   key={spec}
                   type="button"
                   onClick={() => handleQuickSpecialty(spec)}
-                  className="px-3 py-1 rounded-full bg-[#0E1522] border border-slate-800 text-slate-300 font-medium hover:border-slate-700 hover:text-white hover:bg-slate-800 transition-all cursor-pointer shadow-xs"
+                  className="px-3 py-1 rounded-full bg-white border border-[#E2EBF0] text-slate-700 font-medium hover:border-[#2DA7B5] hover:text-[#0E7490] hover:bg-[#E8F6F8] transition-all cursor-pointer shadow-2xs"
                 >
                   {translateSpecialty(spec)}
                 </button>
@@ -621,25 +621,25 @@ export const Home: React.FC = () => {
           {/* Partner Hospitals Auto-Sliding Marquee Ticker */}
           <div className="mt-16 sm:mt-24 lg:mt-28 max-w-6xl mx-auto relative z-10">
             <div className="flex items-center justify-center gap-2 mb-5 sm:mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#2DA7B5]" />
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 {isArabic ? 'المستشفيات والمراكز الطبية المعتمدة الشريكة' : 'Accredited Hospital Network & Clinic Partners'}
               </span>
             </div>
 
-            <div className="relative overflow-hidden py-2 marquee-track-container" dir="ltr">
+            <div className="relative overflow-hidden py-3 bg-white border border-[#E2EBF0] rounded-2xl shadow-xs marquee-track-container" dir="ltr">
               {/* Subtle edge fade overlays */}
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-24 bg-gradient-to-r from-[#081217] via-[#081217]/70 to-transparent z-10" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-24 bg-gradient-to-l from-[#081217] via-[#081217]/70 to-transparent z-10" />
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-24 bg-gradient-to-r from-white via-white/80 to-transparent z-10" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-24 bg-gradient-to-l from-white via-white/80 to-transparent z-10" />
 
               <div className="animate-slide-left gap-3 sm:gap-4 items-center" dir="ltr">
                 {[...INITIAL_HOSPITALS, ...INITIAL_HOSPITALS].map((hosp, idx) => (
                   <Link
                     to={`/hospitals/${hosp.id}`}
                     key={`partner-ticker-${hosp.id}-${idx}`}
-                    className="inline-flex items-center justify-center px-1.5 sm:px-2 py-1 shrink-0 group cursor-pointer transition-all duration-200 hover:scale-105 opacity-80 hover:opacity-100"
+                    className="inline-flex items-center justify-center px-1.5 sm:px-2 py-1 shrink-0 group cursor-pointer transition-all duration-200 hover:scale-105 opacity-90 hover:opacity-100"
                   >
-                    <HospitalBrandLogo hospitalId={hosp.id} className="h-8 sm:h-9 w-auto" />
+                    <HospitalBrandLogo hospitalId={hosp.id} className="h-8 sm:h-9 w-auto" theme="light" />
                   </Link>
                 ))}
               </div>
@@ -654,19 +654,19 @@ export const Home: React.FC = () => {
       <section className="py-14 sm:py-18 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
           <div>
-            <div className="inline-block px-3 py-1 bg-[#0C1A22] border border-slate-800 text-slate-200 text-xs font-semibold rounded-full mb-2">
+            <div className="inline-block px-3 py-1 bg-white border border-[#E2EBF0] text-slate-700 text-xs font-semibold rounded-full mb-2 shadow-2xs">
               {t('home.specializedCare')}
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Top Specialties & Clinical Disciplines
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            <p className="text-xs sm:text-sm text-slate-600 mt-1">
               {t('home.exploreSpecialtiesDesc')}
             </p>
           </div>
           <Link
             to="/specialties"
-            className="text-xs sm:text-sm font-semibold text-slate-200 hover:text-white flex items-center gap-1.5 shrink-0 bg-[#0C1A22] hover:bg-slate-800 px-3.5 py-2 rounded-xl transition-all border border-slate-800"
+            className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-900 flex items-center gap-1.5 shrink-0 bg-white hover:bg-slate-50 px-3.5 py-2 rounded-xl transition-all border border-[#E2EBF0] shadow-xs"
           >
             <span>{t('home.viewAllSpecialties')}</span>
             <ChevronRight className="w-4 h-4 rtl:rotate-180" />
@@ -676,8 +676,8 @@ export const Home: React.FC = () => {
         {/* Two-line infinite auto-sliding marquee: First line slides right, Second line slides left */}
         <div className="relative overflow-hidden space-y-4 sm:space-y-5 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 marquee-track-container" dir="ltr">
           {/* Subtle edge fade overlays */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-24 bg-gradient-to-r from-[#081217] via-[#081217]/70 to-transparent z-10" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-24 bg-gradient-to-l from-[#081217] via-[#081217]/70 to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-24 bg-gradient-to-r from-[#F4F7F9] via-[#F4F7F9]/80 to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-24 bg-gradient-to-l from-[#F4F7F9] via-[#F4F7F9]/80 to-transparent z-10" />
 
           {/* First Line: Slides to the RIGHT */}
           <div className="overflow-hidden w-full marquee-track-container" dir="ltr">
@@ -935,7 +935,7 @@ export const Home: React.FC = () => {
                     type="button"
                     dir={isRTL ? 'rtl' : 'ltr'}
                     onClick={() => handleQuickSpecialty(spec.specialtyQuery)}
-                    className="group relative rounded-2xl overflow-hidden w-64 sm:w-72 md:w-80 h-38 sm:h-44 shrink-0 transition-all duration-300 hover:scale-[1.02] border border-slate-800 hover:border-slate-700 text-left rtl:text-right cursor-pointer"
+                    className="group relative rounded-2xl overflow-hidden w-64 sm:w-72 md:w-80 h-38 sm:h-44 shrink-0 transition-all duration-300 hover:scale-[1.02] border border-[#E2EBF0] hover:border-[#2DA7B5] text-left rtl:text-right cursor-pointer shadow-xs"
                   >
                     {/* Background image */}
                     <img
@@ -946,11 +946,11 @@ export const Home: React.FC = () => {
                       loading="lazy"
                     />
                     {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#081217] via-[#081217]/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent" />
 
                     {/* Top badge: Specialists Count */}
                     <div className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#0C1A22] text-[10px] font-semibold text-slate-200 border border-slate-800">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-white/95 text-[10px] font-semibold text-slate-800 border border-[#E2EBF0] shadow-xs">
                         {getSpecialtyCount(spec.doctorCount)}
                       </span>
                     </div>
@@ -965,7 +965,7 @@ export const Home: React.FC = () => {
                           {getSpecialtyName(spec)}
                         </h3>
                       </div>
-                      <p className="text-[10px] text-white/70 font-medium truncate">{getSpecialtyDesc(spec)}</p>
+                      <p className="text-[10px] text-white/80 font-medium truncate">{getSpecialtyDesc(spec)}</p>
                     </div>
                   </button>
                 );
@@ -978,7 +978,7 @@ export const Home: React.FC = () => {
         <div className="mt-8 text-center">
           <Link
             to="/specialties"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#0C1A22] border border-slate-800 text-slate-200 text-xs sm:text-sm font-semibold hover:bg-slate-800 hover:border-slate-700 hover:text-white transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-[#E2EBF0] text-slate-700 text-xs sm:text-sm font-semibold hover:bg-slate-50 hover:text-slate-900 transition-all shadow-xs"
           >
             <span>{t('home.viewAllSpecialties')}</span>
             <ArrowRight className="w-4 h-4 text-slate-400 rtl:rotate-180" />
@@ -989,22 +989,22 @@ export const Home: React.FC = () => {
       {/* ========================================================================= */}
       {/* 3. MEET OUR DOCTORS: Doctor Cards with Direct Booking (PDF Page 2)        */}
       {/* ========================================================================= */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80 bg-[#081217]">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0] bg-[#F4F7F9]">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="inline-block px-3 py-1 bg-[#0C1A22] border border-slate-800 text-slate-200 text-xs font-semibold rounded-full mb-2">
+            <div className="inline-block px-3 py-1 bg-white border border-[#E2EBF0] text-slate-700 text-xs font-semibold rounded-full mb-2 shadow-2xs">
               {t('home.verifiedPhysicians')}
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               {t('home.featuredSpecialistsTitle')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl">
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl">
               {t('home.featuredSpecialistsDesc')}
             </p>
           </div>
 
           {/* Specialty Filter Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5 bg-[#0C1A22] p-1.5 rounded-xl border border-slate-800">
+          <div className="flex flex-wrap items-center gap-1.5 bg-white p-1.5 rounded-xl border border-[#E2EBF0] shadow-2xs">
             {['All', 'Cardiology', 'Dermatology', 'Orthopedics', 'General Practice'].map((cat) => (
               <button
                 key={cat}
@@ -1012,8 +1012,8 @@ export const Home: React.FC = () => {
                 onClick={() => setDoctorCategory(cat)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   doctorCategory === cat
-                    ? 'bg-[#007B8A] text-white'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-[#2DA7B5] text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >
                 {cat === 'All' ? t('common.all') : translateSpecialty(cat)}
@@ -1027,23 +1027,23 @@ export const Home: React.FC = () => {
           {filteredDoctors.map((doc) => (
             <div
               key={doc.id}
-              className="bg-[#0C1A22] rounded-3xl border border-slate-800 overflow-hidden hover:border-slate-700 transition-all flex flex-col justify-between group"
+              className="bg-white rounded-3xl border border-[#E2EBF0] overflow-hidden hover:border-[#2DA7B5] transition-all flex flex-col justify-between group shadow-xs"
             >
               <div>
                 {/* Doctor Photo & Rating */}
-                <div className="relative aspect-16/10 overflow-hidden bg-[#060D11]">
+                <div className="relative aspect-16/10 overflow-hidden bg-slate-100">
                   <img
                     src={doc.photo}
                     alt={doc.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute top-3 right-3 rtl:right-auto rtl:left-3 bg-[#0C1A22] px-2.5 py-1 rounded-full text-xs font-bold text-white flex items-center gap-1 border border-slate-800">
+                  <div className="absolute top-3 right-3 rtl:right-auto rtl:left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-slate-900 flex items-center gap-1 border border-[#E2EBF0] shadow-xs">
                     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     <span>{doc.rating}</span>
                   </div>
-                  <div className="absolute bottom-3 left-3 rtl:left-auto rtl:right-3 bg-[#081217] px-2.5 py-1 rounded-full text-[10px] font-semibold text-slate-300 flex items-center gap-1 border border-slate-800">
-                    <Clock className="w-3 h-3 text-slate-400" />
+                  <div className="absolute bottom-3 left-3 rtl:left-auto rtl:right-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-semibold text-slate-700 flex items-center gap-1 border border-[#E2EBF0] shadow-xs">
+                    <Clock className="w-3 h-3 text-slate-500" />
                     <span>{t('home.availableThisWeek')}</span>
                   </div>
                 </div>
@@ -1051,24 +1051,24 @@ export const Home: React.FC = () => {
                 {/* Details */}
                 <div className="p-5 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-slate-300 bg-[#081217] border border-slate-800 px-2.5 py-0.5 rounded-full">
+                    <span className="text-[11px] font-semibold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-2.5 py-0.5 rounded-full">
                       {translateSpecialty(doc.specialty)}
                     </span>
-                    <span className="text-xs text-slate-400 font-medium">
+                    <span className="text-xs text-slate-500 font-medium">
                       {doc.experience}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-black text-white group-hover:text-slate-100 transition-colors leading-snug">
+                  <h3 className="text-base font-black text-slate-900 group-hover:text-[#0E7490] transition-colors leading-snug">
                     {doc.name}
                   </h3>
 
-                  <p className="text-xs text-slate-300 flex items-center gap-1.5 line-clamp-1">
+                  <p className="text-xs text-slate-600 flex items-center gap-1.5 line-clamp-1">
                     <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <span className="truncate">{doc.hospitalName || 'CMC Hospital Dubai'}</span>
                   </p>
 
-                  <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed pt-1">
+                  <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed pt-1">
                     {doc.about}
                   </p>
                 </div>
@@ -1078,7 +1078,7 @@ export const Home: React.FC = () => {
               <div className="p-5 pt-0">
                 <Link
                   to={`/book/doctor/${doc.id}`}
-                  className="w-full py-2.5 palette-btn-primary text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-2.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <span>{t('home.book30MinVisit')}</span>
                   <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -1091,7 +1091,7 @@ export const Home: React.FC = () => {
         <div className="mt-8 text-center">
           <Link
             to="/doctors"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#0C1A22] border border-slate-800 text-slate-200 text-xs font-semibold hover:bg-slate-800 hover:border-slate-700 hover:text-white transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-[#E2EBF0] text-slate-700 text-xs font-semibold hover:bg-slate-50 hover:text-slate-900 transition-all shadow-xs"
           >
             <span>{t('home.exploreAllSpecialists')}</span>
             <ArrowRight className="w-4 h-4 text-slate-400 rtl:rotate-180" />
@@ -1102,25 +1102,25 @@ export const Home: React.FC = () => {
       {/* ========================================================================= */}
       {/* 4. RECOMMENDED DOCTORS BY LOCATION & NEED                                */}
       {/* ========================================================================= */}
-      <section className="py-18 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
-        <div className="bg-[#0C1A22] border border-slate-800 rounded-3xl p-6 sm:p-10 text-white relative overflow-hidden">
+      <section className="py-18 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0]">
+        <div className="bg-white border border-[#E2EBF0] rounded-3xl p-6 sm:p-10 text-slate-900 shadow-sm relative overflow-hidden">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#081217] border border-slate-800 text-xs font-semibold text-slate-200 mb-2">
-                <Compass className="w-3.5 h-3.5 text-slate-400" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-xs font-semibold text-[#0E7490] mb-2">
+                <Compass className="w-3.5 h-3.5 text-[#2DA7B5]" />
                 <span>{t('home.smartMatcher')}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                 {t('home.recommendedNearYou')}
               </h2>
-              <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl">
+              <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
                 {t('home.recommendedDesc')}
               </p>
             </div>
 
             {/* Location Filter Pills */}
-            <div className="flex flex-wrap items-center gap-1.5 bg-[#081217] p-1.5 rounded-2xl border border-slate-800">
+            <div className="flex flex-wrap items-center gap-1.5 bg-[#F8FAFC] p-1.5 rounded-2xl border border-[#E2EBF0]">
               {[
                 { id: 'All', label: t('home.allUae') },
                 { id: 'Al Jaddaf', label: t('home.alJaddafCmc') },
@@ -1133,8 +1133,8 @@ export const Home: React.FC = () => {
                   onClick={() => setRecommendedFilter(loc.id)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     recommendedFilter === loc.id
-                      ? 'bg-[#007B8A] text-white'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                      ? 'bg-[#2DA7B5] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
                   {loc.label}
@@ -1148,52 +1148,52 @@ export const Home: React.FC = () => {
             {recommendedDoctors.map((doc) => (
               <div
                 key={doc.id}
-                className="bg-[#081217] rounded-2xl p-4 text-slate-100 border border-slate-800 flex flex-col justify-between hover:scale-[1.02] hover:border-slate-700 transition-all"
+                className="bg-[#F8FAFC] rounded-2xl p-4 text-slate-900 border border-[#E2EBF0] flex flex-col justify-between hover:scale-[1.02] hover:border-[#2DA7B5] hover:bg-white hover:shadow-md transition-all"
               >
                 <div>
                   <div className="flex items-start gap-3">
                     <img
                       src={doc.photo}
                       alt={doc.name}
-                      className="w-13 h-13 rounded-xl object-cover border border-slate-800 shrink-0"
+                      className="w-13 h-13 rounded-xl object-cover border border-[#E2EBF0] shrink-0"
                       referrerPolicy="no-referrer"
                     />
                     <div className="truncate">
-                      <div className="flex items-center gap-1 text-[11px] font-bold text-amber-400">
-                        <Star className="w-3 h-3 fill-amber-400" />
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-amber-500">
+                        <Star className="w-3 h-3 fill-amber-500" />
                         <span>{doc.rating}</span>
                         <span className="text-slate-400 font-normal">({doc.reviewCount})</span>
                       </div>
-                      <h4 className="text-sm font-black text-white truncate mt-0.5">{doc.name}</h4>
-                      <p className="text-[11px] font-semibold text-slate-300 truncate">{translateSpecialty(doc.specialty)}</p>
+                      <h4 className="text-sm font-black text-slate-900 truncate mt-0.5">{doc.name}</h4>
+                      <p className="text-[11px] font-semibold text-[#0E7490] truncate">{translateSpecialty(doc.specialty)}</p>
                     </div>
                   </div>
 
-                  <p className="text-[11px] text-slate-400 mt-3 flex items-center gap-1 truncate">
+                  <p className="text-[11px] text-slate-500 mt-3 flex items-center gap-1 truncate">
                     <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
                     <span className="truncate">{translateLocation(doc.location)}</span>
                   </p>
 
                   {/* Real-time next available slot */}
-                  <div className="mt-3 bg-[#0C1A22] border border-slate-800 rounded-xl p-2 flex items-center justify-between text-xs">
-                    <span className="text-[10px] font-semibold text-slate-300 flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <div className="mt-3 bg-white border border-[#E2EBF0] rounded-xl p-2 flex items-center justify-between text-xs">
+                    <span className="text-[10px] font-semibold text-slate-600 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
                       {t('home.nextSlotToday')}
                     </span>
-                    <span className="font-mono font-bold text-[11px] text-white">
+                    <span className="font-mono font-bold text-[11px] text-slate-900">
                       10:30 AM
                     </span>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+                <div className="mt-4 pt-3 border-t border-[#E2EBF0] flex items-center justify-between gap-2">
                   <div>
                     <span className="text-[10px] text-slate-400 block font-medium">{t('home.consultation')}</span>
-                    <span className="text-xs font-black text-white">{t('common.aed')} {doc.consultationFee}</span>
+                    <span className="text-xs font-black text-slate-900">{t('common.aed')} {doc.consultationFee}</span>
                   </div>
                   <Link
                     to={`/book/doctor/${doc.id}`}
-                    className="px-3.5 py-1.5 palette-btn-primary text-xs rounded-xl transition-colors flex items-center gap-1"
+                    className="px-3.5 py-1.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1"
                   >
                     <span>{t('home.book')}</span>
                     <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -1204,14 +1204,14 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Concierge Help bar */}
-          <div className="mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-            <div className="flex items-center gap-2.5 text-slate-300">
-              <ShieldCheck className="w-5 h-5 text-slate-400 shrink-0" />
+          <div className="mt-8 pt-6 border-t border-[#E2EBF0] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+            <div className="flex items-center gap-2.5 text-slate-600">
+              <ShieldCheck className="w-5 h-5 text-[#2DA7B5] shrink-0" />
               <span>{t('home.facilityNotice')}</span>
             </div>
             <Link
               to="/doctors"
-              className="text-white font-bold hover:text-slate-200 flex items-center gap-1 shrink-0"
+              className="text-[#2DA7B5] hover:text-[#23929F] font-bold flex items-center gap-1 shrink-0"
             >
               <span>{t('home.exploreByLocation')}</span>
               <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -1223,15 +1223,15 @@ export const Home: React.FC = () => {
       {/* ========================================================================= */}
       {/* 5. ACCREDITED PARTNER HOSPITALS (PDF Page 7 Showcase)                     */}
       {/* ========================================================================= */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0]">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-block px-3 py-1 bg-[#0C1A22] border border-slate-800 text-slate-200 text-xs font-semibold rounded-full mb-2">
+          <div className="inline-block px-3 py-1 bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-xs font-semibold rounded-full mb-2">
             {t('common.hospitalNetwork')}
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             {t('home.partnerFacilitiesTitle')}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1.5">
             {t('home.partnerFacilitiesDesc')}
           </p>
         </div>
@@ -1240,31 +1240,31 @@ export const Home: React.FC = () => {
           {partnerHospitals.map((hosp) => (
             <div
               key={hosp.id}
-              className="bg-[#0C1A22] rounded-3xl border border-slate-800 overflow-hidden hover:border-slate-700 transition-all flex flex-col justify-between group"
+              className="bg-white rounded-3xl border border-[#E2EBF0] overflow-hidden hover:border-[#2DA7B5] hover:shadow-md transition-all flex flex-col justify-between group"
             >
               <div>
-                <div className="relative aspect-16/10 bg-[#060D11] overflow-hidden">
+                <div className="relative aspect-16/10 bg-slate-100 overflow-hidden">
                   <img
                     src={hosp.photo}
                     alt={hosp.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5 bg-[#0C1A22] px-2 py-0.5 rounded-md text-[11px] font-bold text-white flex items-center gap-1 border border-slate-800">
-                    <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                  <div className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-md text-[11px] font-bold text-slate-800 flex items-center gap-1 border border-[#E2EBF0] shadow-xs">
+                    <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
                     <span>{hosp.rating}</span>
                   </div>
                 </div>
 
                 <div className="p-4 space-y-2">
-                  <h4 className="text-sm font-bold text-white group-hover:text-slate-100 transition-colors leading-snug line-clamp-1">
+                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-[#2DA7B5] transition-colors leading-snug line-clamp-1">
                     {hosp.name}
                   </h4>
-                  <p className="text-[11px] text-slate-400 flex items-center gap-1 truncate">
+                  <p className="text-[11px] text-slate-500 flex items-center gap-1 truncate">
                     <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
                     <span className="truncate">{translateLocation(hosp.location)}</span>
                   </p>
-                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
                     {hosp.about}
                   </p>
                 </div>
@@ -1273,7 +1273,7 @@ export const Home: React.FC = () => {
               <div className="p-4 pt-0">
                 <Link
                   to={`/hospitals/${hosp.id}`}
-                  className="w-full py-2 bg-[#081217] hover:bg-slate-800 hover:text-white text-slate-300 rounded-xl text-xs font-semibold border border-slate-800 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                  className="w-full py-2 bg-[#F8FAFC] hover:bg-[#2DA7B5] hover:text-white text-slate-700 rounded-xl text-xs font-semibold border border-[#E2EBF0] hover:border-[#2DA7B5] transition-colors flex items-center justify-center gap-1 cursor-pointer"
                 >
                   <span>{t('home.viewFacilityAndDoctors')}</span>
                   <ChevronRight className="w-3.5 h-3.5 text-slate-400 rtl:rotate-180" />
@@ -1287,67 +1287,67 @@ export const Home: React.FC = () => {
       {/* ========================================================================= */}
       {/* 6. HOW IT WORKS (PDF Page 4)                                              */}
       {/* ========================================================================= */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80 bg-[#081217]">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0]">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-block px-3 py-1 bg-[#0C1A22] border border-slate-800 text-slate-200 text-xs font-semibold rounded-full mb-2">
+          <div className="inline-block px-3 py-1 bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-xs font-semibold rounded-full mb-2">
             {t('home.effortlessFlow')}
           </div>
-          <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+          <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
             {t('home.threeStepsTitle')}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
             {t('home.threeStepsDesc')}
           </p>
         </div>
 
         {/* Stats Strip */}
-        <div className="bg-[#0C1A22] text-white border border-slate-800 rounded-3xl p-5 sm:p-8 md:p-10 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center mb-14">
+        <div className="bg-white text-slate-900 border border-[#E2EBF0] rounded-3xl p-5 sm:p-8 md:p-10 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center mb-14 shadow-sm divide-y sm:divide-y-0 sm:divide-x divide-[#E2EBF0]">
           <div>
-            <span className="text-2xl sm:text-3xl md:text-4xl font-black block text-white">3</span>
-            <span className="text-[11px] sm:text-xs text-slate-300 font-medium mt-1 block">{t('home.statsSteps')}</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl font-black block text-slate-900">3</span>
+            <span className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1 block">{t('home.statsSteps')}</span>
           </div>
           <div>
-            <span className="text-2xl sm:text-3xl md:text-4xl font-black block text-white">&lt; 60 sec</span>
-            <span className="text-[11px] sm:text-xs text-slate-300 font-medium mt-1 block">{t('home.statsAvgTime')}</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl font-black block text-slate-900">&lt; 60 sec</span>
+            <span className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1 block">{t('home.statsAvgTime')}</span>
           </div>
           <div>
-            <span className="text-2xl sm:text-3xl md:text-4xl font-black block text-white">500+</span>
-            <span className="text-[11px] sm:text-xs text-slate-300 font-medium mt-1 block">{t('home.statsSpecialists')}</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl font-black block text-slate-900">500+</span>
+            <span className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1 block">{t('home.statsSpecialists')}</span>
           </div>
           <div>
-            <span className="text-2xl sm:text-3xl md:text-4xl font-black block text-white">100%</span>
-            <span className="text-[11px] sm:text-xs text-slate-300 font-medium mt-1 block">{t('home.statsGuarantee')}</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl font-black block text-slate-900">100%</span>
+            <span className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1 block">{t('home.statsGuarantee')}</span>
           </div>
         </div>
 
         {/* 3 Step Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          <div className="bg-[#0C1A22] rounded-3xl border border-slate-800 p-7 space-y-3 hover:border-slate-700 transition-all">
-            <div className="w-11 h-11 rounded-2xl bg-[#081217] text-white font-black text-sm flex items-center justify-center border border-slate-800">
+          <div className="bg-white rounded-3xl border border-[#E2EBF0] p-7 space-y-3 hover:border-[#2DA7B5] hover:shadow-md transition-all shadow-xs">
+            <div className="w-11 h-11 rounded-2xl bg-[#E8F6F8] text-[#2DA7B5] font-black text-sm flex items-center justify-center border border-[#CDEBF0]">
               1
             </div>
-            <h3 className="text-base font-bold text-white">{t('home.step1Title')}</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-base font-bold text-slate-900">{t('home.step1Title')}</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
               {t('home.step1Desc')}
             </p>
           </div>
 
-          <div className="bg-[#0C1A22] rounded-3xl border border-slate-800 p-7 space-y-3 hover:border-slate-700 transition-all">
-            <div className="w-11 h-11 rounded-2xl bg-[#081217] text-white font-black text-sm flex items-center justify-center border border-slate-800">
+          <div className="bg-white rounded-3xl border border-[#E2EBF0] p-7 space-y-3 hover:border-[#2DA7B5] hover:shadow-md transition-all shadow-xs">
+            <div className="w-11 h-11 rounded-2xl bg-[#E8F6F8] text-[#2DA7B5] font-black text-sm flex items-center justify-center border border-[#CDEBF0]">
               2
             </div>
-            <h3 className="text-base font-bold text-white">{t('home.step2Title')}</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-base font-bold text-slate-900">{t('home.step2Title')}</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
               {t('home.step2Desc')}
             </p>
           </div>
 
-          <div className="bg-[#0C1A22] rounded-3xl border border-slate-800 p-7 space-y-3 hover:border-slate-700 transition-all">
-            <div className="w-11 h-11 rounded-2xl bg-[#081217] text-white font-black text-sm flex items-center justify-center border border-slate-800">
+          <div className="bg-white rounded-3xl border border-[#E2EBF0] p-7 space-y-3 hover:border-[#2DA7B5] hover:shadow-md transition-all shadow-xs">
+            <div className="w-11 h-11 rounded-2xl bg-[#E8F6F8] text-[#2DA7B5] font-black text-sm flex items-center justify-center border border-[#CDEBF0]">
               3
             </div>
-            <h3 className="text-base font-bold text-white">{t('home.step3Title')}</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h3 className="text-base font-bold text-slate-900">{t('home.step3Title')}</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
               {t('home.step3Desc')}
             </p>
           </div>
@@ -1357,18 +1357,18 @@ export const Home: React.FC = () => {
       {/* ========================================================================= */}
       {/* 7. BROWSE BY HEALTH CONDITION: Interactive A-Z Navigator                   */}
       {/* ========================================================================= */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
-        <div className="bg-[#0C1A22] rounded-3xl border border-slate-800 p-6 sm:p-10 lg:p-12 text-white">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0]">
+        <div className="bg-white rounded-3xl border border-[#E2EBF0] p-6 sm:p-10 lg:p-12 text-slate-900 shadow-sm">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Column: Find Diseases & Conditions By Alphabet */}
             <div className="lg:col-span-7">
-              <div className="inline-block px-3 py-1 bg-[#081217] border border-slate-800 text-slate-200 text-xs font-semibold rounded-full mb-3">
+              <div className="inline-block px-3 py-1 bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-xs font-semibold rounded-full mb-3">
                 {t('home.symptomIndex')}
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-3">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-3">
                 {isArabic ? 'ابحث عن الأمراض والحالات حسب الحرف' : 'Find Diseases & Conditions By Alphabet'}
               </h2>
-              <p className="text-xs sm:text-sm text-slate-400 mb-6 max-w-xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 mb-6 max-w-xl leading-relaxed">
                 {isArabic
                   ? 'انقر على أي حرف أبجدي للانتقال فوراً إلى الدليل السريري المخصص واستعراض الأسباب والأعراض وحجز الأطباء المعتمدين.'
                   : 'Click any alphabet letter to open our dedicated clinical directory with verified causes, symptoms, and specialist bookings.'}
@@ -1381,7 +1381,7 @@ export const Home: React.FC = () => {
                     key={letter}
                     type="button"
                     onClick={() => navigate(`/conditions?letter=${letter}`)}
-                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-slate-800 bg-[#081217] hover:bg-[#007B8A] hover:text-white hover:border-[#007B8A] text-slate-200 font-bold text-sm flex items-center justify-center transition-all cursor-pointer transform hover:-translate-y-0.5 active:scale-95"
+                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-[#E2EBF0] bg-[#F8FAFC] hover:bg-[#2DA7B5] hover:text-white hover:border-[#2DA7B5] text-slate-700 font-bold text-sm flex items-center justify-center transition-all cursor-pointer transform hover:-translate-y-0.5 active:scale-95 shadow-xs"
                     title={`Browse conditions starting with ${letter}`}
                   >
                     {letter}
@@ -1391,8 +1391,8 @@ export const Home: React.FC = () => {
             </div>
 
             {/* Right Column: Search Diseases and Conditions */}
-            <div className="lg:col-span-5 lg:border-l lg:border-slate-800 lg:pl-10 rtl:lg:border-l-0 rtl:lg:border-r rtl:lg:pl-0 rtl:lg:pr-10">
-              <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight mb-3">
+            <div className="lg:col-span-5 lg:border-l lg:border-[#E2EBF0] lg:pl-10 rtl:lg:border-l-0 rtl:lg:border-r rtl:lg:border-[#E2EBF0] rtl:lg:pl-0 rtl:lg:pr-10">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-3">
                 {isArabic ? 'البحث عن الأمراض والحالات' : 'Search Diseases and Conditions'}
               </h3>
 
@@ -1414,11 +1414,11 @@ export const Home: React.FC = () => {
                     value={conditionSearchInput}
                     onChange={(e) => setConditionSearchInput(e.target.value)}
                     placeholder={isArabic ? 'ابحث عن مرض أو عَرَض...' : 'Search (e.g. Migraine, Asthma, Diabetes)...'}
-                    className="w-full py-3.5 pl-4 pr-14 text-sm bg-[#081217] border border-slate-800 rounded-2xl text-white placeholder:text-slate-500 focus:outline-none focus:border-slate-600 transition-all rtl:pl-14 rtl:pr-4"
+                    className="w-full py-3.5 pl-4 pr-14 text-sm bg-[#F8FAFC] border border-[#E2EBF0] rounded-2xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#2DA7B5] focus:bg-white transition-all rtl:pl-14 rtl:pr-4"
                   />
                   <button
                     type="submit"
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 w-10 h-10 palette-btn-primary rounded-xl flex items-center justify-center transition-colors cursor-pointer rtl:right-auto rtl:left-1.5"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#2DA7B5] hover:bg-[#23929F] text-white rounded-xl flex items-center justify-center transition-colors cursor-pointer rtl:right-auto rtl:left-1.5 shadow-xs"
                     title="Search conditions"
                   >
                     <Search className="w-4 h-4" />
@@ -1427,15 +1427,15 @@ export const Home: React.FC = () => {
               </form>
 
               {/* Explanatory description text */}
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-5">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-5">
                 {isArabic
                   ? 'اعثر سريعًا على المعلومات التي تحتاجها. ابحث في قاعدة بياناتنا لاستكشاف معلومات مفصلة عن مختلف الأمراض والحالات الصحية، بما في ذلك الأعراض والأسباب وخيارات العلاج.'
                   : 'Quickly find the information you need. Search our database to explore detailed information on various diseases and conditions, including symptoms, causes, and treatment options.'}
               </p>
 
               {/* Quick Popular Condition Shortcuts */}
-              <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-800">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mr-1">
+              <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-[#E2EBF0]">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mr-1">
                   {isArabic ? 'شائع:' : 'Popular:'}
                 </span>
                 {[
@@ -1448,7 +1448,7 @@ export const Home: React.FC = () => {
                     key={item.q}
                     type="button"
                     onClick={() => navigate(`/conditions?search=${encodeURIComponent(item.q)}`)}
-                    className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#081217] hover:bg-slate-800 hover:text-white text-slate-300 border border-slate-800 transition-colors cursor-pointer"
+                    className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-[#F8FAFC] hover:bg-[#E8F6F8] hover:text-[#0E7490] hover:border-[#CDEBF0] text-slate-700 border border-[#E2EBF0] transition-colors cursor-pointer"
                   >
                     {item.name}
                   </button>

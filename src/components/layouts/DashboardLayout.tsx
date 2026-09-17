@@ -78,7 +78,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         { name: t('navigation.doctorDashboard'), path: '/doctor/dashboard', icon: LayoutDashboard },
         { name: t('navigation.weeklySchedule'), path: '/doctor/schedule', icon: Calendar },
         { name: t('navigation.patientDirectory'), path: '/doctor/patients', icon: Users },
-        { name: t('navigation.findDoctor'), path: '/search', icon: Stethoscope },
       ];
     }
 
@@ -108,7 +107,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const navItems = getNavItems();
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row selection:bg-teal-100 selection:text-slate-800 overflow-x-clip w-full max-w-full">
+    <div className="min-h-screen bg-[#F4F7F9] text-slate-900 flex flex-col md:flex-row selection:bg-teal-100 selection:text-slate-800 overflow-x-clip w-full max-w-full">
       
       {/* ── MOBILE SLIDE-OUT DRAWER ── */}
       {isMobileMenuOpen && (
@@ -123,19 +122,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <aside
             className={`fixed top-0 bottom-0 ${
               isRTL ? 'right-0' : 'left-0'
-            } w-72 max-w-[85vw] bg-white shadow-2xl flex flex-col z-50 animate-in ${
+            } w-72 max-w-[85vw] bg-white border-r rtl:border-r-0 rtl:border-l border-[#E2EBF0] shadow-2xl flex flex-col z-50 animate-in ${
               isRTL ? 'slide-in-from-right' : 'slide-in-from-left'
             } duration-200`}
           >
             {/* Drawer Header */}
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+            <div className="p-4 border-b border-[#E2EBF0] flex items-center justify-between bg-[#F8FAFC]">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-[#0C1A22] text-slate-200 flex items-center justify-center font-bold text-base border border-slate-800 shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#E8F6F8] text-[#0E7490] flex items-center justify-center font-bold text-base border border-[#CDEBF0] shrink-0">
                   {user?.name.charAt(0) || 'U'}
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-slate-900 truncate max-w-[150px]">{user?.name}</p>
-                  <span className="inline-block mt-0.5 capitalize text-[10px] font-bold bg-[#0C1A22] text-slate-200 border border-slate-800 px-2 py-0.5 rounded-full truncate">
+                  <span className="inline-block mt-0.5 capitalize text-[10px] font-bold bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0] px-2 py-0.5 rounded-full truncate">
                     {getPortalLabel(user?.role)}
                   </span>
                 </div>
@@ -162,8 +161,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-teal-700 text-white shadow-2xs font-bold'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                        ? 'bg-[#2DA7B5] text-white shadow-xs font-bold'
+                        : 'text-slate-600 hover:bg-[#F4F7F9] hover:text-slate-900'
                     }`}
                   >
                     <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
@@ -175,7 +174,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </nav>
 
             {/* Drawer Footer with Public Site & Sign Out */}
-            <div className="p-3 border-t border-slate-200 space-y-1 bg-slate-50/50">
+            <div className="p-3 border-t border-[#E2EBF0] space-y-1 bg-[#F8FAFC]">
               <Link
                 to="/"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -201,16 +200,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       )}
 
       {/* ── DESKTOP SIDEBAR NAVIGATION (hidden on mobile, sticky on md+) ── */}
-      <aside className="hidden md:flex md:w-64 bg-white border-r rtl:border-r-0 rtl:border-l border-slate-200 shrink-0 flex-col h-screen sticky top-0 z-20">
+      <aside className="hidden md:flex md:w-64 bg-white border-r rtl:border-r-0 rtl:border-l border-[#E2EBF0] shrink-0 flex-col h-screen sticky top-0 z-20">
         {/* User Card */}
-        <div className="p-5 border-b border-slate-200 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#0C1A22] text-slate-200 flex items-center justify-center font-bold text-base border border-slate-800 shrink-0">
+        <div className="p-5 border-b border-[#E2EBF0] flex items-center gap-3 bg-[#F8FAFC]">
+          <div className="w-10 h-10 rounded-xl bg-[#E8F6F8] text-[#0E7490] flex items-center justify-center font-bold text-base border border-[#CDEBF0] shrink-0">
             {user?.name.charAt(0) || 'U'}
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-slate-900 truncate">{user?.name}</p>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="capitalize text-[10px] font-bold bg-[#0C1A22] text-slate-200 border border-slate-800 px-2 py-0.5 rounded-full truncate">
+              <span className="capitalize text-[10px] font-bold bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0] px-2 py-0.5 rounded-full truncate">
                 {getPortalLabel(user?.role)}
               </span>
             </div>
@@ -228,8 +227,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 to={item.path}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#007B8A] text-white font-bold'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-[#2DA7B5] text-white font-bold shadow-xs'
+                    : 'text-slate-600 hover:bg-[#F4F7F9] hover:text-slate-900'
                 }`}
               >
                 <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
@@ -241,10 +240,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </nav>
 
         {/* Sidebar Footer with Sign Out */}
-        <div className="p-3 border-t border-slate-200 space-y-1">
+        <div className="p-3 border-t border-[#E2EBF0] space-y-1 bg-[#F8FAFC]">
           <Link
             to="/"
-            className="flex items-center gap-2.5 w-full px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
+            className="flex items-center gap-2.5 w-full px-3 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white rounded-xl transition-colors cursor-pointer"
           >
             <ExternalLink className="w-3.5 h-3.5 shrink-0 rtl:rotate-180" />
             <span>{t('navigation.publicWebsite')}</span>
@@ -263,7 +262,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* ── MAIN CONTENT AREA ── */}
       <div className="flex-1 min-w-0 flex flex-col w-full max-w-full">
         {/* Top Header Bar with Hamburger Button, Language Switcher & Sign Out */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between shadow-2xs">
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E2EBF0] px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             {/* Mobile Hamburger Toggle */}
             <button
@@ -275,11 +274,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <Menu className="w-5 h-5" />
             </button>
 
-            <Link to="/" className="text-base font-black tracking-tight text-slate-900 hover:text-[#007B8A] transition-colors shrink-0">
-              meet<span className="text-[#007B8A]">Adr</span>
+            <Link to="/" className="text-base font-black tracking-tight text-slate-900 hover:text-[#2DA7B5] transition-colors shrink-0">
+              meet<span className="text-[#2DA7B5]">Adr</span>
             </Link>
             <span className="text-slate-300 shrink-0">/</span>
-            <span className="text-[11px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 rounded-full bg-[#0C1A22] text-slate-200 border border-slate-800 capitalize truncate max-w-[125px] sm:max-w-none">
+            <span className="text-[11px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 rounded-full bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0] capitalize truncate max-w-[125px] sm:max-w-none">
               {getPortalLabel(user?.role)}
             </span>
           </div>
@@ -299,7 +298,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <div className="w-px h-5 bg-slate-200 hidden sm:block" />
 
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#007B8A] text-white flex items-center justify-center font-bold text-xs shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-[#2DA7B5] text-white flex items-center justify-center font-bold text-xs shrink-0">
                 {user?.name.charAt(0) || 'U'}
               </div>
               <span className="text-xs font-bold text-slate-800 hidden lg:block max-w-[120px] truncate">
@@ -307,12 +306,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </span>
             </div>
 
-            {/* TOP RIGHT PROMINENT SIGN OUT BUTTON (Icon on mobile, label on sm+) */}
+            {/* TOP RIGHT PROMINENT SIGN OUT BUTTON */}
             <button
               type="button"
               onClick={handleLogout}
               title={t('navigation.signOut')}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-all shadow-2xs cursor-pointer ml-1 rtl:ml-0 rtl:mr-1 shrink-0"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-all shadow-xs cursor-pointer ml-1 rtl:ml-0 rtl:mr-1 shrink-0"
             >
               <LogOut className="w-3.5 h-3.5 rtl:rotate-180" />
               <span className="hidden sm:inline">{t('navigation.signOut')}</span>
@@ -324,12 +323,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <div className="max-w-7xl mx-auto space-y-6 w-full">
             {/* Optional Header Bar */}
             {title && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-200">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 pb-4 border-b border-[#E2EBF0]">
                 <div>
                   <div className="flex items-center gap-2.5 flex-wrap">
                     <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
                     {badge && (
-                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#0C1A22] text-slate-200 border border-slate-800">
+                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0]">
                         {badge}
                       </span>
                     )}

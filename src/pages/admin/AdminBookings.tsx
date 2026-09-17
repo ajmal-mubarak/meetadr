@@ -72,7 +72,7 @@ export const AdminBookings: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">{t('adminPortal.bookingsTitle')}</h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -81,14 +81,14 @@ export const AdminBookings: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="flex rounded-xl bg-slate-100 p-1 text-xs font-semibold w-full sm:w-auto">
+          <div className="flex rounded-xl bg-[#F1F5F9] p-1 text-xs font-semibold w-full sm:w-auto border border-[#E2EBF0]">
             {['all', 'confirmed', 'completed', 'cancelled'].map((st) => (
               <button
                 key={st}
                 onClick={() => setStatus(st)}
                 className={`px-3 py-1.5 rounded-lg capitalize transition-all cursor-pointer ${
                   status === st
-                    ? 'bg-white text-teal-800 shadow-xs font-bold'
+                    ? 'bg-white text-[#0E7490] shadow-xs font-bold border border-[#E2EBF0]'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -104,16 +104,16 @@ export const AdminBookings: React.FC = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('adminPortal.searchPlaceholder')}
-              className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-xl focus:border-teal-600 focus:outline-none"
+              className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2 text-xs bg-[#F8FAFC] border border-[#E2EBF0] rounded-xl focus:border-[#2DA7B5] focus:bg-white focus:outline-none transition-all"
             />
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left rtl:text-right text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+            <thead className="bg-[#F8FAFC] text-slate-500 font-semibold border-b border-[#E2EBF0]">
               <tr>
                 <th className="px-5 py-3">{t('adminPortal.bookingId')}</th>
                 <th className="px-5 py-3">{t('adminPortal.patientCol')}</th>
@@ -133,20 +133,20 @@ export const AdminBookings: React.FC = () => {
                 </tr>
               ) : (
                 filtered.map((appt) => (
-                  <tr key={appt.id} className="hover:bg-slate-50/50">
-                    <td className="px-5 py-3.5 font-mono text-[11px] text-slate-500 font-bold" dir="ltr">
+                  <tr key={appt.id} className="hover:bg-[#F8FAFC] transition-colors">
+                    <td className="px-5 py-3.5 font-mono text-[11px] text-[#0E7490] font-bold" dir="ltr">
                       #{appt.id}
                     </td>
                     <td className="px-5 py-3.5 text-slate-900 font-medium">
                       <div className="font-bold">{appt.patientName}</div>
                       <div className="text-[11px] text-slate-500 font-mono flex items-center gap-1" dir="ltr">
-                        <Phone className="w-3 h-3 text-teal-700 shrink-0" />
+                        <Phone className="w-3 h-3 text-[#2DA7B5] shrink-0" />
                         <span>{appt.patientPhone}</span>
                       </div>
                     </td>
                     <td className="px-5 py-3.5 text-slate-800">
                       <div className="font-semibold">{appt.doctorName}</div>
-                      <div className="text-[11px] text-teal-700">{translateSpecialty(appt.specialty)}</div>
+                      <div className="text-[11px] text-[#0E7490]">{translateSpecialty(appt.specialty)}</div>
                     </td>
                     <td className="px-5 py-3.5 text-slate-600">{appt.facilityName}</td>
                     <td className="px-5 py-3.5 text-slate-700">

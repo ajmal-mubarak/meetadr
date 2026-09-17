@@ -2,18 +2,18 @@
 
 @layer base {
   :root {
-    /* Pure Solid Dark Healthcare Palette — Deep Teal & Pine, Zero Shadows */
-    --hospital-navy: #081217;
-    --hospital-navy-dark: #04090C;
-    --hospital-primary: #007B8A;
-    --hospital-primary-dark: #005F6B;
-    --hospital-primary-light: #0C1A22;
-    --hospital-accent: #007B8A;
-    --hospital-bg: #081217;
-    --hospital-card: #0C1A22;
-    --hospital-border: #005F6B;
-    --hospital-text: #F1F5F9;
-    --hospital-muted: #94A3B8;
+    /* Clean Off-White & Soft Medical Teal Healthcare Palette */
+    --hospital-navy: #1E293B;
+    --hospital-navy-dark: #0F172A;
+    --hospital-primary: #2DA7B5;
+    --hospital-primary-dark: #248D9A;
+    --hospital-primary-light: #E8F6F8;
+    --hospital-accent: #2DA7B5;
+    --hospital-bg: #F4F7F9;
+    --hospital-card: #FFFFFF;
+    --hospital-border: #E2EBF0;
+    --hospital-text: #1E293B;
+    --hospital-muted: #64748B;
   }
 
   html, body {
@@ -22,17 +22,17 @@
   }
 
   html {
-    background-color: #081217;
-    color: #F1F5F9;
+    background-color: #F4F7F9;
+    color: #1E293B;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color-scheme: dark;
+    color-scheme: light;
   }
   html[lang="ar"], [dir="rtl"] {
     font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Tahoma, Arial, sans-serif;
   }
   body {
-    background-color: #081217;
-    color: #F1F5F9;
+    background-color: #F4F7F9;
+    color: #1E293B;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -42,7 +42,7 @@
     overflow-x: clip;
     width: 100%;
     min-height: 100vh;
-    background-color: #081217;
+    background-color: #F4F7F9;
   }
 }
 

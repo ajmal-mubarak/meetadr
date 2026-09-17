@@ -67,7 +67,7 @@ export const DoctorSchedule: React.FC = () => {
 
   return (
     <div className="max-w-4xl space-y-6">
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Weekly Schedule & Slot Availability</h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -76,7 +76,7 @@ export const DoctorSchedule: React.FC = () => {
         </div>
         <button
           onClick={handleSave}
-          className="px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2"
+          className="px-5 py-2.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
         >
           <Save className="w-4 h-4" />
           <span>Save Changes</span>
@@ -84,8 +84,8 @@ export const DoctorSchedule: React.FC = () => {
       </div>
 
       {/* Days configuration */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-xs text-teal-700">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs space-y-4">
+        <h3 className="text-xs font-bold text-[#0E7490] uppercase tracking-wider">
           Practicing Days
         </h3>
         <p className="text-xs text-slate-500">
@@ -100,10 +100,10 @@ export const DoctorSchedule: React.FC = () => {
                 key={day}
                 type="button"
                 onClick={() => toggleDay(day)}
-                className={`p-3 rounded-xl border text-center text-xs font-semibold transition-all ${
+                className={`p-3 rounded-xl border text-center text-xs font-semibold transition-all cursor-pointer ${
                   isActive
-                    ? 'border-teal-600 bg-teal-50 text-teal-900'
-                    : 'border-slate-200 text-slate-400 hover:bg-slate-50'
+                    ? 'border-[#2DA7B5] bg-[#E8F6F8] text-[#0E7490] font-bold shadow-xs'
+                    : 'border-[#E2EBF0] text-slate-500 hover:bg-[#F8FAFC]'
                 }`}
               >
                 <span>{day.slice(0, 3)}</span>
@@ -117,8 +117,8 @@ export const DoctorSchedule: React.FC = () => {
       </div>
 
       {/* 30-min Slots configuration */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-xs text-teal-700">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs space-y-4">
+        <h3 className="text-xs font-bold text-[#0E7490] uppercase tracking-wider">
           Standard 30-Minute Consultation Slots
         </h3>
         <p className="text-xs text-slate-500">
@@ -133,14 +133,14 @@ export const DoctorSchedule: React.FC = () => {
                 key={slot}
                 type="button"
                 onClick={() => toggleSlot(slot)}
-                className={`py-2 px-3 rounded-xl border text-xs font-mono font-medium transition-all flex items-center justify-between ${
+                className={`py-2 px-3 rounded-xl border text-xs font-mono font-medium transition-all flex items-center justify-between cursor-pointer ${
                   isSelected
-                    ? 'border-teal-600 bg-teal-50 text-teal-900'
-                    : 'border-slate-200 text-slate-400 hover:bg-slate-50'
+                    ? 'border-[#2DA7B5] bg-[#E8F6F8] text-[#0E7490] font-bold shadow-xs'
+                    : 'border-[#E2EBF0] text-slate-500 hover:bg-[#F8FAFC]'
                 }`}
               >
                 <span>{slot}</span>
-                {isSelected && <Check className="w-3.5 h-3.5 text-teal-700" />}
+                {isSelected && <Check className="w-3.5 h-3.5 text-[#2DA7B5]" />}
               </button>
             );
           })}

@@ -42,17 +42,17 @@ export const AdminRequests: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs">
         <h1 className="text-2xl font-bold text-slate-900">{t('adminPortal.requestsTitle')}</h1>
         <p className="text-xs text-slate-500 mt-1">
           {t('adminPortal.requestsSubtitle')}
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left rtl:text-right text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+            <thead className="bg-[#F8FAFC] text-slate-500 font-semibold border-b border-[#E2EBF0]">
               <tr>
                 <th className="px-5 py-3">{t('adminPortal.applicantCol')}</th>
                 <th className="px-5 py-3">{t('adminPortal.categoryCol')}</th>
@@ -72,10 +72,10 @@ export const AdminRequests: React.FC = () => {
                 </tr>
               ) : (
                 requests.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-50/50">
+                  <tr key={r.id} className="hover:bg-[#F8FAFC] transition-colors">
                     <td className="px-5 py-3.5 font-bold text-slate-900">{r.name}</td>
                     <td className="px-5 py-3.5 capitalize">
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-teal-50 text-teal-800">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0]">
                         {r.providerType}
                       </span>
                     </td>

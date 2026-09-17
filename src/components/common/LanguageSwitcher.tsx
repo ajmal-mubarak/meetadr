@@ -25,11 +25,11 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
       <button
         type="button"
         onClick={handleToggle}
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#0C1A22] hover:bg-[#122430] border border-slate-800 text-xs font-bold text-slate-200 hover:text-white transition-all cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 ${className}`}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#F8FAFC] active:bg-[#F1F5F9] border border-[#E2EBF0] hover:border-[#2DA7B5] text-xs font-bold text-slate-700 hover:text-[#0E7490] shadow-2xs transition-all cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-[#2DA7B5] ${className}`}
         aria-label={buttonTitle}
         title={buttonTitle}
       >
-        <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+        <Globe className="w-3.5 h-3.5 text-[#2DA7B5] shrink-0" aria-hidden="true" />
         <span className="font-sans font-bold text-xs">{nextLanguageLabel}</span>
       </button>
     );
@@ -41,11 +41,11 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
       id="site-language-switcher"
       type="button"
       onClick={handleToggle}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0C1A22] hover:bg-[#122430] active:bg-[#162c3a] border border-slate-800 text-xs font-bold text-slate-200 hover:text-white transition-all cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-slate-500 ${className}`}
+      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#F8FAFC] active:bg-[#F1F5F9] border border-[#E2EBF0] hover:border-[#2DA7B5] text-xs font-bold text-slate-700 hover:text-[#0E7490] shadow-2xs transition-all cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-[#2DA7B5] ${className}`}
       aria-label={buttonTitle}
       title={buttonTitle}
     >
-      <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+      <Globe className="w-3.5 h-3.5 text-[#2DA7B5] shrink-0" aria-hidden="true" />
       <span className="font-sans font-bold tracking-tight">{nextLanguageLabel}</span>
     </button>
   );

@@ -137,15 +137,15 @@ export const SearchPage: React.FC = () => {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-[#081217] min-h-screen py-6 sm:py-10 text-slate-100 selection:bg-slate-700 selection:text-white"
+      className="bg-[#F4F7F9] min-h-screen py-6 sm:py-10 text-slate-900 selection:bg-teal-100 selection:text-slate-800"
     >
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
         {/* Search header / filters */}
-        <div className="bg-[#0C1A22] p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 mb-6 sm:mb-8">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#E2EBF0] shadow-sm mb-6 sm:mb-8">
           <form onSubmit={handleApplyFilter} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3">
               <div className="sm:col-span-2 md:col-span-5 relative">
-                <label className="block text-xs font-bold text-slate-300 mb-1">
+                <label className="block text-xs font-bold text-slate-700 mb-1">
                   {t('search.searchKeyword')}
                 </label>
                 <div className="relative">
@@ -155,23 +155,23 @@ export const SearchPage: React.FC = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder={t('search.keywordPlaceholder')}
-                    className="w-full pl-10 rtl:pl-3 rtl:pr-10 pr-3 py-2.5 border border-slate-800 rounded-xl text-xs sm:text-sm text-white focus:border-slate-600 focus:outline-hidden bg-[#081217] placeholder:text-slate-500 transition-all font-medium"
+                    className="w-full pl-10 rtl:pl-3 rtl:pr-10 pr-3 py-2.5 border border-[#E2EBF0] rounded-xl text-xs sm:text-sm text-slate-900 focus:border-[#2DA7B5] focus:outline-hidden bg-[#F8FAFC] focus:bg-white placeholder:text-slate-400 transition-all font-medium"
                   />
                 </div>
               </div>
 
               <div className="sm:col-span-1 md:col-span-3">
-                <label className="block text-xs font-bold text-slate-300 mb-1">
+                <label className="block text-xs font-bold text-slate-700 mb-1">
                   {t('search.specialty')}
                 </label>
                 <select
                   value={specialty}
                   onChange={(e) => setSpecialty(e.target.value)}
-                  className="w-full py-2.5 px-3 border border-slate-800 rounded-xl text-xs sm:text-sm text-white focus:border-slate-600 focus:outline-hidden bg-[#081217] transition-all cursor-pointer font-medium"
+                  className="w-full py-2.5 px-3 border border-[#E2EBF0] rounded-xl text-xs sm:text-sm text-slate-800 focus:border-[#2DA7B5] focus:outline-hidden bg-[#F8FAFC] focus:bg-white transition-all cursor-pointer font-medium"
                 >
-                  <option value="All" className="bg-[#081217] text-white">{t('doctorList.allSpecialties')}</option>
+                  <option value="All">{t('doctorList.allSpecialties')}</option>
                   {SPECIALTIES.map((s) => (
-                    <option key={s} value={s} className="bg-[#081217] text-white">
+                    <option key={s} value={s}>
                       {translateSpecialty(s)}
                     </option>
                   ))}
@@ -179,17 +179,17 @@ export const SearchPage: React.FC = () => {
               </div>
 
               <div className="sm:col-span-1 md:col-span-2">
-                <label className="block text-xs font-bold text-slate-300 mb-1">
+                <label className="block text-xs font-bold text-slate-700 mb-1">
                   {t('search.location')}
                 </label>
                 <select
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="w-full py-2.5 px-3 border border-slate-800 rounded-xl text-xs sm:text-sm text-white focus:border-slate-600 focus:outline-hidden bg-[#081217] transition-all cursor-pointer font-medium"
+                  className="w-full py-2.5 px-3 border border-[#E2EBF0] rounded-xl text-xs sm:text-sm text-slate-800 focus:border-[#2DA7B5] focus:outline-hidden bg-[#F8FAFC] focus:bg-white transition-all cursor-pointer font-medium"
                 >
-                  <option value="All" className="bg-[#081217] text-white">{t('hospitals.allLocations')}</option>
+                  <option value="All">{t('hospitals.allLocations')}</option>
                   {LOCATIONS.map((loc) => (
-                    <option key={loc} value={loc} className="bg-[#081217] text-white">
+                    <option key={loc} value={loc}>
                       {translateLocation(loc.split('-')[0].trim())}
                     </option>
                   ))}
@@ -199,7 +199,7 @@ export const SearchPage: React.FC = () => {
               <div className="sm:col-span-2 md:col-span-2 flex items-end">
                 <button
                   type="submit"
-                  className="w-full py-2.5 px-4 palette-btn-primary active:scale-[0.99] text-xs sm:text-sm rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-2.5 px-4 bg-[#2DA7B5] hover:bg-[#23929F] text-white active:scale-[0.99] text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Filter className="w-3.5 h-3.5" />
                   <span>{t('search.searchBtn')}</span>
@@ -208,9 +208,9 @@ export const SearchPage: React.FC = () => {
             </div>
 
             {/* Provider Type selector tabs */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-800/80">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#E2EBF0]">
               <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
-                <span className="text-xs font-semibold text-slate-400 mr-1 rtl:mr-0 rtl:ml-1 shrink-0">
+                <span className="text-xs font-semibold text-slate-500 mr-1 rtl:mr-0 rtl:ml-1 shrink-0">
                   {t('search.category')}:
                 </span>
                 {['All', 'Doctor', 'Hospital', 'Clinic'].map((type) => (
@@ -220,8 +220,8 @@ export const SearchPage: React.FC = () => {
                     onClick={() => setProviderType(type)}
                     className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer shrink-0 ${
                       providerType === type
-                        ? 'palette-pill-active'
-                        : 'palette-pill-inactive'
+                        ? 'bg-[#2DA7B5] text-white shadow-xs'
+                        : 'bg-[#F8FAFC] text-slate-700 hover:bg-[#E8F6F8] hover:text-[#0E7490] hover:border-[#CDEBF0] border border-[#E2EBF0]'
                     }`}
                   >
                     {getProviderTypeLabel(type)}
@@ -229,7 +229,7 @@ export const SearchPage: React.FC = () => {
                 ))}
               </div>
 
-              <div className="text-xs text-slate-400 font-semibold shrink-0">
+              <div className="text-xs text-slate-500 font-semibold shrink-0">
                 {t('search.foundResults', { count: totalCount })}
               </div>
             </div>
@@ -238,15 +238,15 @@ export const SearchPage: React.FC = () => {
 
         {/* Results List */}
         {isLoading ? (
-          <div className="py-20 text-center bg-[#0C1A22] rounded-3xl border border-slate-800 p-12">
-            <div className="w-9 h-9 border-3 border-white border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-sm font-medium text-slate-400">{t('search.searching')}</p>
+          <div className="py-20 text-center bg-white rounded-3xl border border-[#E2EBF0] shadow-sm p-12">
+            <div className="w-9 h-9 border-3 border-[#2DA7B5] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-sm font-medium text-slate-500">{t('search.searching')}</p>
           </div>
         ) : totalCount === 0 ? (
-          <div className="bg-[#0C1A22] p-8 sm:p-12 rounded-3xl border border-slate-800 text-center max-w-lg mx-auto space-y-3">
-            <Stethoscope className="w-12 h-12 text-slate-500 mx-auto" />
-            <h3 className="text-lg font-bold text-white mb-1">{t('search.noResultsTitle')}</h3>
-            <p className="text-xs sm:text-sm text-slate-400 mb-4 leading-relaxed">
+          <div className="bg-white p-8 sm:p-12 rounded-3xl border border-[#E2EBF0] shadow-sm text-center max-w-lg mx-auto space-y-3">
+            <Stethoscope className="w-12 h-12 text-slate-400 mx-auto" />
+            <h3 className="text-lg font-bold text-slate-900 mb-1">{t('search.noResultsTitle')}</h3>
+            <p className="text-xs sm:text-sm text-slate-600 mb-4 leading-relaxed">
               {t('search.noResultsText')}
             </p>
             <button
@@ -256,7 +256,7 @@ export const SearchPage: React.FC = () => {
                 setLocation('All');
                 setProviderType('All');
               }}
-              className="px-5 py-2.5 palette-btn-primary rounded-xl text-xs cursor-pointer"
+              className="px-5 py-2.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold rounded-xl text-xs shadow-xs cursor-pointer"
             >
               {t('search.resetFilters')}
             </button>
@@ -266,8 +266,8 @@ export const SearchPage: React.FC = () => {
             {/* Doctors Section */}
             {filteredDoctors.length > 0 && (
               <div>
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <Stethoscope className="w-5 h-5 text-slate-400" />
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <Stethoscope className="w-5 h-5 text-[#2DA7B5]" />
                   <span>{t('search.specialistDoctors', { count: filteredDoctors.length })}</span>
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -275,7 +275,7 @@ export const SearchPage: React.FC = () => {
                     <motion.div
                       key={doc.id}
                       whileHover={{ y: -3, transition: { duration: 0.18 } }}
-                      className="bg-[#0C1A22] rounded-2xl sm:rounded-3xl border border-slate-800 hover:border-slate-700 p-4 sm:p-5 transition-all flex flex-col justify-between group"
+                      className="bg-white rounded-2xl sm:rounded-3xl border border-[#E2EBF0] hover:border-[#2DA7B5] hover:shadow-md p-4 sm:p-5 transition-all flex flex-col justify-between group shadow-xs"
                     >
                       <div className="flex items-start gap-3.5 sm:gap-4">
                         <img
@@ -285,42 +285,42 @@ export const SearchPage: React.FC = () => {
                             (e.currentTarget as HTMLImageElement).src =
                               'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&auto=format&fit=crop&q=80';
                           }}
-                          className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl object-cover bg-slate-800 shrink-0 border border-slate-800 group-hover:scale-105 transition-transform"
+                          className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl object-cover bg-slate-100 shrink-0 border border-[#E2EBF0] group-hover:scale-105 transition-transform"
                           referrerPolicy="no-referrer"
                         />
                         <div className="min-w-0 flex-1">
-                          <span className="text-[11px] sm:text-xs font-semibold text-slate-300 block mb-0.5 truncate">
+                          <span className="text-[11px] sm:text-xs font-semibold text-[#0E7490] block mb-0.5 truncate">
                             {translateSpecialty(doc.specialty)}
                           </span>
-                          <h4 className="text-sm sm:text-base font-bold text-white leading-snug truncate group-hover:text-slate-100 transition-colors">
+                          <h4 className="text-sm sm:text-base font-bold text-slate-900 leading-snug truncate group-hover:text-[#2DA7B5] transition-colors">
                             {doc.name}
                           </h4>
-                          <p className="text-xs text-slate-400 truncate mt-0.5">
+                          <p className="text-xs text-slate-600 truncate mt-0.5">
                             {doc.hospitalName || doc.clinicName || 'City Care Hospital'}
                           </p>
-                          <div className="flex items-center gap-1 text-[11px] sm:text-xs text-slate-400 mt-1">
+                          <div className="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 mt-1">
                             <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                             <span className="truncate">{translateLocation(doc.location)}</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs gap-2">
-                        <div className="flex items-center gap-1 font-bold text-white shrink-0">
-                          <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                      <div className="mt-4 pt-3 border-t border-[#E2EBF0] flex items-center justify-between text-xs gap-2">
+                        <div className="flex items-center gap-1 font-bold text-slate-900 shrink-0">
+                          <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                           <span>{doc.rating}</span>
                           <span className="text-slate-400 font-normal">({doc.reviewCount})</span>
                         </div>
                         <div className="flex items-center gap-1.5 sm:gap-2">
                           <Link
                             to={`/doctors/${doc.id}`}
-                            className="px-2.5 sm:px-3 py-1.5 font-semibold text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl border border-slate-700 transition-colors cursor-pointer text-xs"
+                            className="px-2.5 sm:px-3 py-1.5 font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl border border-[#E2EBF0] transition-colors cursor-pointer text-xs"
                           >
                             {t('search.details')}
                           </Link>
                           <Link
                             to={`/book/doctor/${doc.id}`}
-                            className="px-3 sm:px-3.5 py-1.5 palette-btn-primary rounded-xl transition-all cursor-pointer text-xs"
+                            className="px-3 sm:px-3.5 py-1.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold rounded-xl shadow-xs transition-all cursor-pointer text-xs"
                           >
                             {t('search.bookSlot')}
                           </Link>
@@ -335,8 +335,8 @@ export const SearchPage: React.FC = () => {
             {/* Hospitals Section */}
             {filteredHospitals.length > 0 && (
               <div>
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-slate-400" />
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-[#2DA7B5]" />
                   <span>{t('search.hospitalsCount', { count: filteredHospitals.length })}</span>
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -344,10 +344,10 @@ export const SearchPage: React.FC = () => {
                     <motion.div
                       key={hosp.id}
                       whileHover={{ y: -3, transition: { duration: 0.18 } }}
-                      className="bg-[#0C1A22] rounded-2xl sm:rounded-3xl border border-slate-800 overflow-hidden hover:border-slate-700 transition-all flex flex-col justify-between group"
+                      className="bg-white rounded-2xl sm:rounded-3xl border border-[#E2EBF0] hover:border-[#2DA7B5] hover:shadow-md transition-all flex flex-col justify-between group shadow-xs"
                     >
                       <div>
-                        <div className="relative aspect-16/9 bg-slate-900 overflow-hidden">
+                        <div className="relative aspect-16/9 bg-slate-100 overflow-hidden">
                           <img
                             src={hosp.photo}
                             alt={hosp.name}
@@ -359,24 +359,24 @@ export const SearchPage: React.FC = () => {
                             referrerPolicy="no-referrer"
                           />
                           {hosp.emergencyAvailable && (
-                            <span className="absolute top-2.5 left-2.5 rtl:left-auto rtl:right-2.5 bg-rose-600/95 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            <span className="absolute top-2.5 left-2.5 rtl:left-auto rtl:right-2.5 bg-rose-600/95 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
                               {t('search.emergency247')}
                             </span>
                           )}
-                          <div className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5 bg-[#081217] px-2.5 py-0.5 rounded-full text-xs font-bold text-white flex items-center gap-1 border border-slate-800">
-                            <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                          <div className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5 bg-white/95 backdrop-blur-xs px-2.5 py-0.5 rounded-full text-xs font-bold text-slate-800 flex items-center gap-1 border border-[#E2EBF0] shadow-xs">
+                            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                             <span>{hosp.rating}</span>
                           </div>
                         </div>
 
                         <div className="p-4 sm:p-5">
-                          <h4 className="text-sm sm:text-base font-bold text-white mb-1 group-hover:text-slate-100 transition-colors">{hosp.name}</h4>
-                          <p className="text-xs text-slate-400 mb-2.5">{translateLocation(hosp.location)}</p>
+                          <h4 className="text-sm sm:text-base font-bold text-slate-900 mb-1 group-hover:text-[#2DA7B5] transition-colors">{hosp.name}</h4>
+                          <p className="text-xs text-slate-500 mb-2.5">{translateLocation(hosp.location)}</p>
                           <div className="flex flex-wrap gap-1.5">
                             {hosp.specialties.slice(0, 3).map((spec) => (
                               <span
                                 key={spec}
-                                className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-[#081217] border border-slate-800 text-slate-300"
+                                className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-[#F8FAFC] border border-[#E2EBF0] text-slate-700"
                               >
                                 {translateSpecialty(spec)}
                               </span>
@@ -385,13 +385,13 @@ export const SearchPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="p-4 sm:p-5 pt-0 flex items-center justify-between border-t border-slate-800 pt-3 text-xs">
-                        <span className="text-slate-400 font-semibold">
+                      <div className="p-4 sm:p-5 pt-0 flex items-center justify-between border-t border-[#E2EBF0] pt-3 text-xs">
+                        <span className="text-slate-500 font-semibold">
                           {t('search.specialistsCount', { count: hosp.doctorCount })}
                         </span>
                         <Link
                           to={`/hospitals/${hosp.id}`}
-                          className="px-3.5 py-1.5 font-semibold text-slate-200 hover:text-white hover:bg-slate-800 rounded-xl flex items-center gap-1 border border-slate-800 transition-colors cursor-pointer"
+                          className="px-3.5 py-1.5 font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl flex items-center gap-1 border border-[#E2EBF0] transition-colors cursor-pointer"
                         >
                           <span>{t('search.viewHospital')}</span>
                           <ArrowRight className="w-3 h-3 rtl:rotate-180" />
@@ -406,8 +406,8 @@ export const SearchPage: React.FC = () => {
             {/* Clinics Section */}
             {filteredClinics.length > 0 && (
               <div>
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-slate-400" />
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-[#2DA7B5]" />
                   <span>{t('search.clinicsCount', { count: filteredClinics.length })}</span>
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -415,35 +415,35 @@ export const SearchPage: React.FC = () => {
                     <motion.div
                       key={clinic.id}
                       whileHover={{ y: -3, transition: { duration: 0.18 } }}
-                      className="bg-[#0C1A22] rounded-2xl sm:rounded-3xl border border-slate-800 hover:border-slate-700 p-4 sm:p-5 transition-all flex flex-col justify-between group"
+                      className="bg-white rounded-2xl sm:rounded-3xl border border-[#E2EBF0] hover:border-[#2DA7B5] hover:shadow-md p-4 sm:p-5 transition-all flex flex-col justify-between group shadow-xs"
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-semibold px-2.5 py-0.5 bg-[#081217] text-slate-300 rounded-lg border border-slate-800">
+                          <span className="text-xs font-semibold px-2.5 py-0.5 bg-[#E8F6F8] text-[#0E7490] rounded-lg border border-[#CDEBF0]">
                             {translateSpecialty(clinic.specialty)}
                           </span>
-                          <div className="flex items-center gap-1 text-xs font-bold text-white bg-[#081217] px-2 py-0.5 rounded-lg border border-slate-800">
-                            <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                          <div className="flex items-center gap-1 text-xs font-bold text-slate-800 bg-[#F8FAFC] px-2 py-0.5 rounded-lg border border-[#E2EBF0]">
+                            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                             <span>{clinic.rating}</span>
                           </div>
                         </div>
-                        <h4 className="text-sm sm:text-base font-bold text-white mb-1 group-hover:text-slate-100 transition-colors">{clinic.name}</h4>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-2">
+                        <h4 className="text-sm sm:text-base font-bold text-slate-900 mb-1 group-hover:text-[#2DA7B5] transition-colors">{clinic.name}</h4>
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
                           <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                           <span>{translateLocation(clinic.location)}</span>
                         </div>
-                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
                           {clinic.about}
                         </p>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-                        <span className="text-slate-400 font-semibold">
+                      <div className="mt-4 pt-3 border-t border-[#E2EBF0] flex items-center justify-between text-xs">
+                        <span className="text-slate-500 font-semibold">
                           {t('search.doctorsCount', { count: clinic.doctorCount })}
                         </span>
                         <Link
                           to={`/clinics/${clinic.id}`}
-                          className="px-3.5 py-1.5 font-semibold text-slate-200 hover:text-white hover:bg-slate-800 rounded-xl flex items-center gap-1 border border-slate-800 transition-colors cursor-pointer"
+                          className="px-3.5 py-1.5 font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl flex items-center gap-1 border border-[#E2EBF0] transition-colors cursor-pointer"
                         >
                           <span>{t('search.viewClinic')}</span>
                           <ArrowRight className="w-3 h-3 rtl:rotate-180" />

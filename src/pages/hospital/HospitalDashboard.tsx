@@ -41,15 +41,15 @@ import { CancelModal } from '../../components/common/CancelModal';
 const HospitalChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-slate-900/95 backdrop-blur-md text-white rounded-xl px-4 py-3 shadow-2xl text-xs space-y-1.5 border border-slate-700">
-      <p className="font-bold text-slate-300 pb-1 border-b border-slate-800">{label}</p>
+    <div className="bg-white text-slate-900 rounded-xl px-4 py-3 shadow-xl text-xs space-y-1.5 border border-[#E2EBF0]">
+      <p className="font-bold text-slate-700 pb-1 border-b border-[#E2EBF0]">{label}</p>
       {payload.map((p: any) => (
         <div key={p.name} className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: p.color || p.fill }} />
-            <span className="text-slate-400 capitalize">{p.name}:</span>
+            <span className="text-slate-500 capitalize">{p.name}:</span>
           </div>
-          <span className="font-black text-white">{Number(p.value).toLocaleString()}</span>
+          <span className="font-black text-slate-900">{Number(p.value).toLocaleString()}</span>
         </div>
       ))}
     </div>
@@ -210,7 +210,7 @@ export const HospitalDashboard: React.FC = () => {
 
   // Status breakdown Donut
   const statusBreakdownData = useMemo(() => [
-    { name: isArabic ? 'مؤكد' : 'Confirmed', value: confirmedCount || 1, color: '#2563EB' },
+    { name: isArabic ? 'مؤكد' : 'Confirmed', value: confirmedCount || 1, color: '#2DA7B5' },
     { name: isArabic ? 'قيد الانتظار' : 'Pending', value: pendingCount || 1, color: '#f59e0b' },
     { name: isArabic ? 'مكتمل' : 'Completed', value: completedCount || 1, color: '#0284c7' },
     { name: isArabic ? 'ملغى' : 'Cancelled', value: cancelledCount || 1, color: '#f43f5e' },
@@ -263,15 +263,15 @@ export const HospitalDashboard: React.FC = () => {
   }, [reportCriteria, isArabic]);
 
   return (
-    <div className="bg-slate-50 min-h-screen py-8 px-4 sm:px-6 lg:px-8 space-y-6">
+    <div className="bg-[#F4F7F9] min-h-screen py-8 px-4 sm:px-6 lg:px-8 space-y-6">
       
       {/* ========================================================================= */}
       {/* TOP BAR: Hospital Credentials & Quick Info (Client PDF Page 8)           */}
       {/* ========================================================================= */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-xs font-bold text-teal-900 mb-1.5">
-            <Building2 className="w-3.5 h-3.5 text-teal-700" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-xs font-bold text-[#0E7490] mb-1.5">
+            <Building2 className="w-3.5 h-3.5 text-[#2DA7B5]" />
             <span>{t('hospitalPortal.dashboardTitle')}</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900">
@@ -284,18 +284,18 @@ export const HospitalDashboard: React.FC = () => {
 
         {/* Hospital Login Credentials Bar (Client PDF Page 8) + Sign Out */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 sm:gap-3 bg-slate-50 p-2 sm:p-2.5 rounded-xl border border-slate-200 text-xs w-full sm:w-auto">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 sm:gap-3 bg-[#F8FAFC] p-2 sm:p-2.5 rounded-xl border border-[#E2EBF0] text-xs w-full sm:w-auto">
             <div className="min-w-0">
               <span className="text-[10px] uppercase font-bold text-slate-400 block">{isArabic ? 'البريد الإلكتروني' : 'Email'}</span>
               <span className="font-semibold text-slate-800 text-[11px] sm:text-xs truncate block max-w-[200px]" dir="ltr">{hospitalEmail}</span>
             </div>
-            <div className="hidden sm:block w-px h-6 bg-slate-200" />
+            <div className="hidden sm:block w-px h-6 bg-[#E2EBF0]" />
             <div>
               <span className="text-[10px] uppercase font-bold text-slate-400 block">{isArabic ? 'كلمة المرور' : 'Password'}</span>
               <span className="font-mono text-slate-600 tracking-wider text-[11px] sm:text-xs">{hospitalPassword}</span>
             </div>
-            <div className="hidden sm:block w-px h-6 bg-slate-200" />
-            <span className="px-2 py-0.5 rounded-md bg-teal-100 text-teal-900 font-bold text-[10px] shrink-0">
+            <div className="hidden sm:block w-px h-6 bg-[#E2EBF0]" />
+            <span className="px-2 py-0.5 rounded-md bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0] font-bold text-[10px] shrink-0">
               {t('hospitalPortal.activeSession')}
             </span>
           </div>
@@ -318,20 +318,20 @@ export const HospitalDashboard: React.FC = () => {
       {/* ========================================================================= */}
       {/* 4 PRIMARY TABS: Appointments | Doctors | Patients | Reports (PDF Page 8)  */}
       {/* ========================================================================= */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-3 overflow-x-auto no-scrollbar -mx-3 sm:mx-0 px-3 sm:px-0">
+      <div className="flex items-center gap-2 border-b border-[#E2EBF0] pb-3 overflow-x-auto no-scrollbar -mx-3 sm:mx-0 px-3 sm:px-0">
         <button
           type="button"
           onClick={() => setActiveTab('appointments')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'appointments'
-              ? 'bg-teal-700 text-white shadow-xs'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              ? 'bg-[#2DA7B5] hover:bg-[#23929F] text-white shadow-xs'
+              : 'bg-white border border-[#E2EBF0] text-slate-700 hover:bg-[#F8FAFC]'
           }`}
         >
           <Calendar className="w-4 h-4" />
           <span>{t('hospitalPortal.appointmentsTab')}</span>
           <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-            activeTab === 'appointments' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+            activeTab === 'appointments' ? 'bg-white/20 text-white' : 'bg-[#F1F5F9] text-slate-700'
           }`}>
             {appointments.length}
           </span>
@@ -342,14 +342,14 @@ export const HospitalDashboard: React.FC = () => {
           onClick={() => setActiveTab('doctors')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'doctors'
-              ? 'bg-teal-700 text-white shadow-xs'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              ? 'bg-[#2DA7B5] hover:bg-[#23929F] text-white shadow-xs'
+              : 'bg-white border border-[#E2EBF0] text-slate-700 hover:bg-[#F8FAFC]'
           }`}
         >
           <Stethoscope className="w-4 h-4" />
           <span>{t('hospitalPortal.doctorsTab')}</span>
           <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-            activeTab === 'doctors' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+            activeTab === 'doctors' ? 'bg-white/20 text-white' : 'bg-[#F1F5F9] text-slate-700'
           }`}>
             {doctors.length}
           </span>
@@ -360,14 +360,14 @@ export const HospitalDashboard: React.FC = () => {
           onClick={() => setActiveTab('patients')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'patients'
-              ? 'bg-teal-700 text-white shadow-xs'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              ? 'bg-[#2DA7B5] hover:bg-[#23929F] text-white shadow-xs'
+              : 'bg-white border border-[#E2EBF0] text-slate-700 hover:bg-[#F8FAFC]'
           }`}
         >
           <Users className="w-4 h-4" />
           <span>{t('hospitalPortal.patientsTab')}</span>
           <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-            activeTab === 'patients' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+            activeTab === 'patients' ? 'bg-white/20 text-white' : 'bg-[#F1F5F9] text-slate-700'
           }`}>
             {patientsList.length}
           </span>
@@ -378,8 +378,8 @@ export const HospitalDashboard: React.FC = () => {
           onClick={() => setActiveTab('reports')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'reports'
-              ? 'bg-teal-700 text-white shadow-xs'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              ? 'bg-[#2DA7B5] hover:bg-[#23929F] text-white shadow-xs'
+              : 'bg-white border border-[#E2EBF0] text-slate-700 hover:bg-[#F8FAFC]'
           }`}
         >
           <BarChart3 className="w-4 h-4" />
@@ -394,7 +394,7 @@ export const HospitalDashboard: React.FC = () => {
       {/* VIEW 1: APPOINTMENTS TAB (Filter Today / Tomorrow / Date -> By Time)      */}
       {/* ========================================================================= */}
       {activeTab === 'appointments' && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs space-y-6">
           
           {/* Header Controls */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -408,13 +408,13 @@ export const HospitalDashboard: React.FC = () => {
             </div>
 
             {/* Date Filter Pills (Client PDF Page 8: Today | Tomorrow | July-04-2026) */}
-            <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+            <div className="flex items-center gap-2 bg-[#F1F5F9] p-1.5 rounded-xl border border-[#E2EBF0]">
               <button
                 type="button"
                 onClick={() => setAppointmentDateFilter('today')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   appointmentDateFilter === 'today'
-                    ? 'bg-teal-700 text-white shadow-2xs'
+                    ? 'bg-[#2DA7B5] text-white shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -426,14 +426,14 @@ export const HospitalDashboard: React.FC = () => {
                 onClick={() => setAppointmentDateFilter('tomorrow')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   appointmentDateFilter === 'tomorrow'
-                    ? 'bg-teal-700 text-white shadow-2xs'
+                    ? 'bg-[#2DA7B5] text-white shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {t('hospitalPortal.tomorrow')}
               </button>
 
-              <div className="flex items-center gap-1.5 pl-2 rtl:pl-0 rtl:pr-2 border-l rtl:border-l-0 rtl:border-r border-slate-300">
+              <div className="flex items-center gap-1.5 pl-2 rtl:pl-0 rtl:pr-2 border-l rtl:border-l-0 rtl:border-r border-[#CBD5E1]">
                 <input
                   type="date"
                   value={customFilterDate}
@@ -443,8 +443,8 @@ export const HospitalDashboard: React.FC = () => {
                   }}
                   className={`text-xs font-bold px-2 py-1 rounded-lg border transition-all cursor-pointer ${
                     appointmentDateFilter === 'custom'
-                      ? 'bg-teal-700 text-white border-teal-600'
-                      : 'bg-white text-slate-700 border-slate-200'
+                      ? 'bg-[#2DA7B5] text-white border-[#23929F]'
+                      : 'bg-white text-slate-700 border-[#E2EBF0]'
                   }`}
                 />
               </div>
@@ -453,7 +453,7 @@ export const HospitalDashboard: React.FC = () => {
 
           {/* Appointments Table */}
           {appointmentsByTime.length === 0 ? (
-            <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-xs text-slate-500 space-y-2">
+            <div className="text-center py-16 bg-[#F8FAFC] rounded-2xl border border-dashed border-[#E2EBF0] text-xs text-slate-500 space-y-2">
               <Calendar className="w-8 h-8 text-slate-400 mx-auto" />
               <p className="font-bold text-slate-700">{t('hospitalPortal.noAppointmentsDate')}</p>
               <p>{t('hospitalPortal.trySwitching')}</p>
@@ -462,7 +462,7 @@ export const HospitalDashboard: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left rtl:text-right border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200 text-[11px] font-bold uppercase text-slate-400 tracking-wider">
+                  <tr className="border-b border-[#E2EBF0] text-[11px] font-bold uppercase text-slate-400 tracking-wider">
                     <th className="py-3 px-4">{t('hospitalPortal.timeSlot')}</th>
                     <th className="py-3 px-4">{t('hospitalPortal.patientName')}</th>
                     <th className="py-3 px-4">{t('hospitalPortal.doctorDept')}</th>
@@ -475,10 +475,10 @@ export const HospitalDashboard: React.FC = () => {
                   {appointmentsByTime.map((appt) => {
                     const isReachedOut = reachedOutIds[appt.id];
                     return (
-                      <tr key={appt.id} className="hover:bg-slate-50 transition-colors">
+                      <tr key={appt.id} className="hover:bg-[#F8FAFC] transition-colors">
                         {/* Time slot */}
                         <td className="py-3.5 px-4">
-                          <span className="font-mono font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
+                          <span className="font-mono font-bold text-[#0E7490] bg-[#E8F6F8] px-2.5 py-1 rounded-md border border-[#CDEBF0]">
                             {appt.timeSlot}
                           </span>
                         </td>
@@ -506,11 +506,11 @@ export const HospitalDashboard: React.FC = () => {
                             onClick={() => toggleReachedOut(appt.id, appt.patientPhone)}
                             className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-colors flex items-center gap-1.5 cursor-pointer ${
                               isReachedOut
-                                ? 'bg-teal-50 text-teal-900 border-teal-300'
-                                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                                ? 'bg-[#E8F6F8] text-[#0E7490] border-[#CDEBF0]'
+                                : 'bg-white text-slate-700 border-[#E2EBF0] hover:bg-[#F8FAFC]'
                             }`}
                           >
-                            <Phone className="w-3 h-3 text-teal-700" />
+                            <Phone className="w-3 h-3 text-[#2DA7B5]" />
                             <span dir="ltr">{isReachedOut ? t('hospitalPortal.contacted') : appt.patientPhone}</span>
                           </button>
                         </td>
@@ -520,7 +520,7 @@ export const HospitalDashboard: React.FC = () => {
                           {appt.status === 'pending' && (
                             <button
                               onClick={() => handleMarkConfirmed(appt.id)}
-                              className="px-2.5 py-1 bg-teal-700 text-white rounded-md text-[11px] font-bold hover:bg-teal-800 cursor-pointer"
+                              className="px-2.5 py-1 bg-[#2DA7B5] hover:bg-[#23929F] text-white rounded-md text-[11px] font-bold cursor-pointer transition-colors"
                             >
                               {t('hospitalPortal.confirmBtn')}
                             </button>
@@ -536,7 +536,7 @@ export const HospitalDashboard: React.FC = () => {
                           {appt.status !== 'cancelled' && (
                             <button
                               onClick={() => setCancellingAppt(appt)}
-                              className="px-2.5 py-1 bg-white border border-slate-200 text-slate-600 hover:text-red-600 rounded-md text-[11px] font-bold cursor-pointer"
+                              className="px-2.5 py-1 bg-white border border-[#E2EBF0] text-slate-600 hover:text-red-600 rounded-md text-[11px] font-bold cursor-pointer"
                             >
                               {t('hospitalPortal.cancelBtn')}
                             </button>
@@ -556,7 +556,7 @@ export const HospitalDashboard: React.FC = () => {
       {/* VIEW 2: DOCTORS TAB (Display Dr Name and their appointments - PDF Page 8) */}
       {/* ========================================================================= */}
       {activeTab === 'doctors' && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs space-y-6">
           <div>
             <h2 className="text-lg font-bold text-slate-900">
               {t('hospitalPortal.displayDoctors')}
@@ -572,27 +572,27 @@ export const HospitalDashboard: React.FC = () => {
               return (
                 <div
                   key={doc.id}
-                  className="rounded-2xl border border-slate-200 p-5 bg-slate-50/50 space-y-4 hover:border-teal-400 transition-all"
+                  className="rounded-2xl border border-[#E2EBF0] p-5 bg-[#F8FAFC] space-y-4 hover:border-[#2DA7B5] transition-all"
                 >
                   <div className="flex items-center gap-3">
                     <img
                       src={doc.photo}
                       alt={doc.name}
-                      className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0"
+                      className="w-14 h-14 rounded-xl object-cover border border-[#E2EBF0] shrink-0"
                       referrerPolicy="no-referrer"
                     />
                     <div className="flex-1 truncate">
                       <h3 className="text-sm font-bold text-slate-900 truncate">{doc.name}</h3>
-                      <p className="text-xs font-semibold text-teal-800">{translateSpecialty(doc.specialty)}</p>
+                      <p className="text-xs font-semibold text-[#0E7490]">{translateSpecialty(doc.specialty)}</p>
                       <span className="text-[11px] text-slate-500">{doc.experience} • {doc.rating} ★</span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-teal-100 text-teal-900 shrink-0">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0] shrink-0">
                       {isArabic ? `${docAppts.length} حجوزات` : `${docAppts.length} Bookings`}
                     </span>
                   </div>
 
                   {/* Sub-appointments list for this doctor */}
-                  <div className="border-t border-slate-200 pt-3 space-y-2">
+                  <div className="border-t border-[#E2EBF0] pt-3 space-y-2">
                     <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
                       {t('hospitalPortal.scheduledSlots')}
                     </span>
@@ -600,13 +600,13 @@ export const HospitalDashboard: React.FC = () => {
                       <p className="text-xs text-slate-400 italic">{t('hospitalPortal.noDoctorBookings')}</p>
                     ) : (
                       docAppts.map((a) => (
-                        <div key={a.id} className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
+                        <div key={a.id} className="bg-white p-2.5 rounded-xl border border-[#E2EBF0] flex items-center justify-between text-xs">
                           <div>
                             <span className="font-bold text-slate-900 block">{a.patientName}</span>
                             <span className="text-[11px] text-slate-500" dir="ltr">{a.date} • {a.patientPhone}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
+                            <span className="font-mono font-bold text-[#0E7490] bg-[#E8F6F8] px-2 py-0.5 rounded-md border border-[#CDEBF0]">
                               {a.timeSlot}
                             </span>
                             <StatusBadge status={a.status} />
@@ -626,7 +626,7 @@ export const HospitalDashboard: React.FC = () => {
       {/* VIEW 3: PATIENTS TAB (Display Patient Name and Time - PDF Page 8)         */}
       {/* ========================================================================= */}
       {activeTab === 'patients' && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs space-y-6">
           <div>
             <h2 className="text-lg font-bold text-slate-900">
               {t('hospitalPortal.displayPatients')}
@@ -639,7 +639,7 @@ export const HospitalDashboard: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left rtl:text-right border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 text-[11px] font-bold uppercase text-slate-400 tracking-wider">
+                <tr className="border-b border-[#E2EBF0] text-[11px] font-bold uppercase text-slate-400 tracking-wider">
                   <th className="py-3 px-4">{t('hospitalPortal.patientName')}</th>
                   <th className="py-3 px-4">{t('hospitalPortal.scheduledTime')}</th>
                   <th className="py-3 px-4">{t('hospitalPortal.date')}</th>
@@ -650,12 +650,12 @@ export const HospitalDashboard: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs">
                 {patientsList.map((pt, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                  <tr key={idx} className="hover:bg-[#F8FAFC] transition-colors">
                     <td className="py-3.5 px-4 font-bold text-slate-900">
                       {pt.patientName}
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="font-mono font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
+                      <span className="font-mono font-bold text-[#0E7490] bg-[#E8F6F8] px-2.5 py-1 rounded-md border border-[#CDEBF0]">
                         {pt.lastTime}
                       </span>
                     </td>
@@ -665,7 +665,7 @@ export const HospitalDashboard: React.FC = () => {
                     <td className="py-3.5 px-4 font-semibold text-slate-800">
                       {pt.doctorName}
                     </td>
-                    <td className="py-3.5 px-4 text-teal-800 font-medium" dir="ltr">
+                    <td className="py-3.5 px-4 text-[#0E7490] font-medium" dir="ltr">
                       {pt.patientPhone}
                     </td>
                     <td className="py-3.5 px-4 text-slate-500" dir="ltr">
@@ -683,10 +683,10 @@ export const HospitalDashboard: React.FC = () => {
       {/* VIEW 4: REPORTS TAB (Minimal Reports & Report Slot Mockup - PDF Page 8)   */}
       {/* ========================================================================= */}
       {activeTab === 'reports' && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-8">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs space-y-8">
           
           {/* Header & Date Criteria Selector */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2EBF0] pb-5">
             <div>
               <h2 className="text-lg font-bold text-slate-900">
                 {t('hospitalPortal.minimalReports')}
@@ -697,7 +697,7 @@ export const HospitalDashboard: React.FC = () => {
             </div>
 
             {/* Criteria: Date | Week | Month */}
-            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <div className="flex items-center gap-1.5 bg-[#F1F5F9] p-1 rounded-xl border border-[#E2EBF0]">
               {([
                 { id: 'date', label: t('hospitalPortal.byDate') },
                 { id: 'week', label: t('hospitalPortal.byWeek') },
@@ -709,7 +709,7 @@ export const HospitalDashboard: React.FC = () => {
                   onClick={() => setReportCriteria(crit.id)}
                   className={`px-4 py-1.5 rounded-lg text-xs font-bold capitalize transition-all cursor-pointer ${
                     reportCriteria === crit.id
-                      ? 'bg-teal-700 text-white shadow-2xs'
+                      ? 'bg-[#2DA7B5] text-white shadow-2xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
@@ -721,25 +721,25 @@ export const HospitalDashboard: React.FC = () => {
 
           {/* 4 Key Metric Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5">
+            <div className="bg-[#F8FAFC] rounded-2xl border border-[#E2EBF0] p-5">
               <span className="text-[11px] font-bold uppercase text-slate-400 block">{t('hospitalPortal.totalAppointments')}</span>
               <span className="text-3xl font-black text-slate-900 mt-1 block">{appointments.length}</span>
-              <span className="text-[10px] text-teal-800 font-bold mt-1 block">{t('hospitalPortal.inPersonPercent')}</span>
+              <span className="text-[10px] text-[#0E7490] font-bold mt-1 block">{t('hospitalPortal.inPersonPercent')}</span>
             </div>
 
-            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5">
-              <span className="text-[11px] font-bold uppercase text-teal-800 block">{t('hospitalPortal.confirmed')}</span>
-              <span className="text-3xl font-black text-teal-800 mt-1 block">{confirmedCount}</span>
+            <div className="bg-[#F8FAFC] rounded-2xl border border-[#E2EBF0] p-5">
+              <span className="text-[11px] font-bold uppercase text-[#0E7490] block">{t('hospitalPortal.confirmed')}</span>
+              <span className="text-3xl font-black text-[#2DA7B5] mt-1 block">{confirmedCount}</span>
               <span className="text-[10px] text-slate-500 mt-1 block">{t('hospitalPortal.patientVerified')}</span>
             </div>
 
-            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5">
+            <div className="bg-[#F8FAFC] rounded-2xl border border-[#E2EBF0] p-5">
               <span className="text-[11px] font-bold uppercase text-amber-700 block">{t('hospitalPortal.pendingCall')}</span>
               <span className="text-3xl font-black text-amber-700 mt-1 block">{pendingCount}</span>
               <span className="text-[10px] text-slate-500 mt-1 block">{t('hospitalPortal.awaitingIntake')}</span>
             </div>
 
-            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5">
+            <div className="bg-[#F8FAFC] rounded-2xl border border-[#E2EBF0] p-5">
               <span className="text-[11px] font-bold uppercase text-slate-400 block">{t('hospitalPortal.completed')}</span>
               <span className="text-3xl font-black text-slate-900 mt-1 block">{completedCount}</span>
               <span className="text-[10px] text-slate-500 mt-1 block">{t('hospitalPortal.finishedVisits')}</span>
@@ -747,17 +747,17 @@ export const HospitalDashboard: React.FC = () => {
           </div>
 
           {/* ── Visual Analytics & Reports Section ── */}
-          <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 space-y-8">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E2EBF0] text-slate-900 shadow-xs space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-600/20 border border-teal-400/30 text-teal-300 text-xs font-bold mb-2">
-                  <Sparkles className="w-3.5 h-3.5" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-xs font-bold mb-2">
+                  <Sparkles className="w-3.5 h-3.5 text-[#2DA7B5]" />
                   <span>{t('hospitalPortal.mvpSlotActive')}</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-black text-white">
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900">
                   {t('hospitalPortal.executiveReportTitle')}
                 </h3>
-                <p className="text-xs text-slate-300 mt-1 max-w-xl">
+                <p className="text-xs text-slate-500 mt-1 max-w-xl">
                   {t('hospitalPortal.executiveReportSubtitle')}
                 </p>
               </div>
@@ -766,7 +766,7 @@ export const HospitalDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => showToast(isArabic ? 'جاري تصدير التقرير بتنسيق CSV...' : 'Exporting CSV summary report...', 'info')}
-                  className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2.5 bg-white hover:bg-[#F8FAFC] border border-[#E2EBF0] text-slate-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>{t('hospitalPortal.downloadCsv')}</span>
@@ -775,7 +775,7 @@ export const HospitalDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => showToast(isArabic ? 'جاري إنشاء تقرير المستشفى الرسمي بصيغة PDF...' : 'Generating official PDF hospital report...', 'info')}
-                  className="px-4 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                  className="px-4 py-2.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5" />
                   <span>{t('hospitalPortal.generateReport')}</span>
@@ -784,13 +784,13 @@ export const HospitalDashboard: React.FC = () => {
             </div>
 
             {/* Main Area Chart: Intake Flow */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 sm:p-6 space-y-4">
+            <div className="bg-[#F8FAFC] border border-[#E2EBF0] rounded-2xl p-5 sm:p-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <h4 className="text-sm font-bold text-white">
+                  <h4 className="text-sm font-bold text-slate-900">
                     {isArabic ? 'حركة تدفق المواعيد والاستشارات' : 'Outpatient Consultation & Intake Trend'}
                   </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 mt-0.5">
                     {reportCriteria === 'date'
                       ? (isArabic ? 'معدل الحجوزات بالساعة لليوم' : 'Hourly appointment slots for today')
                       : reportCriteria === 'week'
@@ -798,7 +798,7 @@ export const HospitalDashboard: React.FC = () => {
                       : (isArabic ? 'معدل الحجوزات الأسبوعي لهذا الشهر' : 'Weekly volume distribution across current month')}
                   </p>
                 </div>
-                <span className="text-xs font-bold text-teal-300 bg-teal-600/20 border border-teal-400/30 px-3 py-1 rounded-full w-fit">
+                <span className="text-xs font-bold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-3 py-1 rounded-full w-fit">
                   {reportCriteria === 'date' ? (isArabic ? 'عرض يومي' : 'Daily View') : reportCriteria === 'week' ? (isArabic ? 'عرض أسبوعي' : 'Weekly View') : (isArabic ? 'عرض شهري' : 'Monthly View')}
                 </span>
               </div>
@@ -807,34 +807,34 @@ export const HospitalDashboard: React.FC = () => {
                 <AreaChart data={intakeTimelineData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
                   <defs>
                     <linearGradient id="hospApptGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#14b8a6" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#2DA7B5" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#2DA7B5" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="hospPatGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#0284c7" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#0284c7" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.4} />
-                  <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E2EBF0" />
+                  <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
                   <Tooltip content={<HospitalChartTooltip />} />
                   <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, paddingTop: 6 }} />
                   <Area
                     type="monotone"
                     dataKey={isArabic ? 'الحجوزات' : 'Appointments'}
-                    stroke="#14b8a6"
+                    stroke="#2DA7B5"
                     strokeWidth={2.5}
                     fill="url(#hospApptGrad)"
-                    dot={{ fill: '#14b8a6', r: 3 }}
+                    dot={{ fill: '#2DA7B5', r: 3 }}
                   />
                   <Area
                     type="monotone"
                     dataKey={isArabic ? 'المرضى' : 'Patients'}
-                    stroke="#38bdf8"
+                    stroke="#0284c7"
                     strokeWidth={2}
                     fill="url(#hospPatGrad)"
-                    dot={{ fill: '#38bdf8', r: 3 }}
+                    dot={{ fill: '#0284c7', r: 3 }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -844,33 +844,33 @@ export const HospitalDashboard: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
               {/* Bar Chart: Doctor Workload */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 sm:p-6 space-y-4">
+              <div className="bg-[#F8FAFC] border border-[#E2EBF0] rounded-2xl p-5 sm:p-6 space-y-4">
                 <div>
-                  <h4 className="text-sm font-bold text-white">
+                  <h4 className="text-sm font-bold text-slate-900">
                     {isArabic ? 'توزيع عبء العمل على الأطباء' : 'Physician Consultation Allocation'}
                   </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 mt-0.5">
                     {isArabic ? 'عدد المواعيد المحجوزة لكل طبيب' : 'Booked consultation slots per specialist doctor'}
                   </p>
                 </div>
                 <ResponsiveContainer width="100%" height={180}>
                   <BarChart data={doctorWorkloadData} margin={{ top: 5, right: 5, bottom: 0, left: -25 }} barSize={22}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
-                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E2EBF0" />
+                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
                     <Tooltip content={<HospitalChartTooltip />} />
-                    <Bar dataKey={isArabic ? 'الحجوزات' : 'Bookings'} fill="#14b8a6" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey={isArabic ? 'الحجوزات' : 'Bookings'} fill="#2DA7B5" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
 
               {/* Donut Chart: Status & Attendance */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 sm:p-6 space-y-4 flex flex-col justify-between">
+              <div className="bg-[#F8FAFC] border border-[#E2EBF0] rounded-2xl p-5 sm:p-6 space-y-4 flex flex-col justify-between">
                 <div>
-                  <h4 className="text-sm font-bold text-white">
+                  <h4 className="text-sm font-bold text-slate-900">
                     {isArabic ? 'معدل الحالات والجاهزية' : 'Appointment Status Distribution'}
                   </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 mt-0.5">
                     {isArabic ? 'نسبة الاستشارات المؤكدة والمكتملة والمعتذر عنها' : 'Live distribution of consultation statuses'}
                   </p>
                 </div>
@@ -899,9 +899,9 @@ export const HospitalDashboard: React.FC = () => {
                       <div key={item.name} className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
                           <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: item.color }} />
-                          <span className="text-slate-300 font-medium">{item.name}</span>
+                          <span className="text-slate-600 font-medium">{item.name}</span>
                         </div>
-                        <span className="font-mono font-bold text-white">{item.value}</span>
+                        <span className="font-mono font-bold text-slate-900">{item.value}</span>
                       </div>
                     ))}
                   </div>
@@ -912,22 +912,22 @@ export const HospitalDashboard: React.FC = () => {
 
             {/* Visual KPI Highlights Row */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
-                <span className="text-[10px] text-teal-300 uppercase font-bold tracking-wider">{t('hospitalPortal.topSpecialty')}</span>
-                <span className="text-sm font-bold text-white block">{t('hospitalPortal.cardiologyOutpatient')}</span>
-                <span className="text-xs text-slate-400">{t('hospitalPortal.slotCapacity')}</span>
+              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2EBF0] space-y-1.5">
+                <span className="text-[10px] text-[#0E7490] uppercase font-bold tracking-wider">{t('hospitalPortal.topSpecialty')}</span>
+                <span className="text-sm font-bold text-slate-900 block">{t('hospitalPortal.cardiologyOutpatient')}</span>
+                <span className="text-xs text-slate-500">{t('hospitalPortal.slotCapacity')}</span>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
-                <span className="text-[10px] text-teal-300 uppercase font-bold tracking-wider">{t('hospitalPortal.avgWaitTime')}</span>
-                <span className="text-sm font-bold text-white block">{t('hospitalPortal.under8Mins')}</span>
-                <span className="text-xs text-slate-400">{t('hospitalPortal.waitDesc')}</span>
+              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2EBF0] space-y-1.5">
+                <span className="text-[10px] text-[#0E7490] uppercase font-bold tracking-wider">{t('hospitalPortal.avgWaitTime')}</span>
+                <span className="text-sm font-bold text-slate-900 block">{t('hospitalPortal.under8Mins')}</span>
+                <span className="text-xs text-slate-500">{t('hospitalPortal.waitDesc')}</span>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
-                <span className="text-[10px] text-teal-300 uppercase font-bold tracking-wider">{t('hospitalPortal.patientSatisfaction')}</span>
-                <span className="text-sm font-bold text-white block">{t('hospitalPortal.satisfactionScore')}</span>
-                <span className="text-xs text-slate-400">{t('hospitalPortal.verifiedReviews')}</span>
+              <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E2EBF0] space-y-1.5">
+                <span className="text-[10px] text-[#0E7490] uppercase font-bold tracking-wider">{t('hospitalPortal.patientSatisfaction')}</span>
+                <span className="text-sm font-bold text-slate-900 block">{t('hospitalPortal.satisfactionScore')}</span>
+                <span className="text-xs text-slate-500">{t('hospitalPortal.verifiedReviews')}</span>
               </div>
             </div>
 

@@ -221,27 +221,27 @@ export const JoinProviderPage: React.FC = () => {
   ];
 
   return (
-    <div className="bg-[#081217] min-h-screen text-slate-100 selection:bg-slate-700 selection:text-white">
+    <div className="bg-[#F4F7F9] min-h-screen text-slate-800">
 
       {/* ========================================================================= */}
       {/* 1. HERO SECTION                                                           */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden bg-[#081217] border-b border-slate-800 pt-12 pb-16 lg:pt-20 lg:pb-24">
+      <section className="relative overflow-hidden bg-[#F4F7F9] border-b border-[#E2EBF0] pt-12 pb-16 lg:pt-20 lg:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-6 text-left rtl:text-right">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0C1A22] border border-slate-800 text-xs font-semibold text-slate-200 tracking-wide">
-                <Sparkles className="w-3.5 h-3.5 text-slate-400" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-xs font-bold text-[#0E7490] tracking-wide">
+                <Sparkles className="w-3.5 h-3.5 text-[#2DA7B5]" />
                 <span>JOIN MEETADR — FOR HOSPITALS & CLINICS</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.15]">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.15]">
                 {t('joinProvider.heroTitle')}
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl font-normal">
+              <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl font-normal">
                 Register your Hospital or Clinic on MeetAdr. Connect with patients, manage your doctor roster, and streamline appointment scheduling — all from one platform.
               </p>
 
@@ -249,7 +249,7 @@ export const JoinProviderPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => scrollToWizard()}
-                  className="px-6 py-3.5 palette-btn-primary text-sm rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                  className="px-6 py-3.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white text-sm font-bold rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-2"
                 >
                   <span>Register Your Facility</span>
                   <ArrowRight className="w-4 h-4 rtl:rotate-180" />
@@ -257,21 +257,21 @@ export const JoinProviderPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={scrollToHowItWorks}
-                  className="px-6 py-3.5 bg-[#0C1A22] hover:bg-slate-800 text-slate-200 border border-slate-800 text-sm font-semibold rounded-xl transition-all cursor-pointer"
+                  className="px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-700 border border-[#E2EBF0] text-sm font-bold rounded-xl shadow-xs transition-all cursor-pointer"
                 >
                   How It Works
                 </button>
               </div>
 
               {/* Trust highlights */}
-              <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-slate-400 font-medium">
+              <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-slate-500 font-medium">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0" />
-                  <span>3-Step Quick Registration</span>
+                  <CheckCircle2 className="w-4 h-4 text-[#2DA7B5] shrink-0" />
+                  <span className="text-slate-700 font-semibold">3-Step Quick Registration</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-slate-400 shrink-0" />
-                  <span>{t('joinProvider.heroVisualBadge')}</span>
+                  <ShieldCheck className="w-4 h-4 text-[#2DA7B5] shrink-0" />
+                  <span className="text-slate-700 font-semibold">{t('joinProvider.heroVisualBadge')}</span>
                 </div>
               </div>
             </div>
@@ -279,43 +279,43 @@ export const JoinProviderPage: React.FC = () => {
             {/* Right Visual */}
             <div className="lg:col-span-5 relative">
               <div className="relative mx-auto max-w-md">
-                <div className="relative rounded-3xl overflow-hidden border border-slate-800 bg-[#0C1A22]">
+                <div className="relative rounded-3xl overflow-hidden border border-[#E2EBF0] bg-white shadow-sm">
                   <img
                     src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=800"
                     alt="Modern Hospital Facility"
-                    className="w-full h-72 sm:h-80 object-cover object-center brightness-90"
+                    className="w-full h-72 sm:h-80 object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#081217] via-[#081217]/50 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent" />
 
-                  <div className="absolute top-4 left-4 rtl:left-auto rtl:right-4 bg-[#081217] px-3.5 py-1.5 rounded-full border border-slate-800 flex items-center gap-1.5 text-xs font-semibold text-slate-200">
-                    <ShieldCheck className="w-4 h-4 text-slate-400" />
+                  <div className="absolute top-4 left-4 rtl:left-auto rtl:right-4 bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/50 flex items-center gap-1.5 text-xs font-bold text-slate-900 shadow-sm">
+                    <ShieldCheck className="w-4 h-4 text-[#2DA7B5]" />
                     <span>Verified Provider Network</span>
                   </div>
 
                   <div className="absolute bottom-4 left-4 right-4 text-white text-left rtl:text-right space-y-1">
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                    <span className="text-[10px] font-bold text-[#E8F6F8] uppercase tracking-wider block">
                       Hospitals & Clinics
                     </span>
                     <h3 className="text-base font-black leading-snug">
                       One Platform for Your Entire Facility
                     </h3>
-                    <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                    <p className="text-xs text-slate-200 leading-relaxed font-normal">
                       Manage doctors, departments, and appointments across your entire organization.
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-3 bg-[#0C1A22] rounded-2xl border border-slate-800 p-4 space-y-2 text-left rtl:text-right text-xs">
-                  <div className="flex items-center gap-2 text-slate-300 font-medium">
-                    <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0" />
+                <div className="mt-3 bg-white rounded-2xl border border-[#E2EBF0] shadow-xs p-4 space-y-2 text-left rtl:text-right text-xs">
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
+                    <CheckCircle2 className="w-4 h-4 text-[#2DA7B5] shrink-0" />
                     <span>Multi-doctor roster management</span>
                   </div>
-                  <div className="flex items-center gap-2 text-slate-300 font-medium">
-                    <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0" />
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
+                    <CheckCircle2 className="w-4 h-4 text-[#2DA7B5] shrink-0" />
                     <span>Add doctors after account setup</span>
                   </div>
-                  <div className="flex items-center gap-2 text-slate-300 font-medium">
-                    <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0" />
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
+                    <CheckCircle2 className="w-4 h-4 text-[#2DA7B5] shrink-0" />
                     <span>Zero setup fees or complex hardware</span>
                   </div>
                 </div>
@@ -331,13 +331,13 @@ export const JoinProviderPage: React.FC = () => {
       {/* ========================================================================= */}
       <section id="benefits" className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
-          <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase">
+          <span className="text-xs font-bold text-[#2DA7B5] tracking-wider uppercase">
             {t('joinProvider.benefitsEyebrow')}
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             {t('joinProvider.benefitsTitle')}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             {t('joinProvider.benefitsSubtitle')}
           </p>
         </div>
@@ -346,13 +346,13 @@ export const JoinProviderPage: React.FC = () => {
           {benefits.map((b, i) => (
             <div
               key={i}
-              className="bg-[#0C1A22] rounded-3xl border border-slate-800 p-6 sm:p-7 hover:border-slate-700 transition-all space-y-4 text-left rtl:text-right group"
+              className="bg-white rounded-3xl border border-[#E2EBF0] p-6 sm:p-7 shadow-xs hover:border-[#2DA7B5] hover:shadow-md transition-all space-y-4 text-left rtl:text-right group"
             >
-              <div className="w-11 h-11 rounded-2xl bg-[#081217] border border-slate-800 flex items-center justify-center text-slate-300 group-hover:scale-105 transition-transform">
+              <div className="w-11 h-11 rounded-2xl bg-[#E8F6F8] border border-[#CDEBF0] flex items-center justify-center text-[#2DA7B5] group-hover:scale-105 transition-transform">
                 <b.icon className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-white leading-snug">{b.title}</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">{b.desc}</p>
+              <h3 className="text-base font-bold text-slate-900 leading-snug">{b.title}</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">{b.desc}</p>
             </div>
           ))}
         </div>
@@ -364,17 +364,17 @@ export const JoinProviderPage: React.FC = () => {
       <section
         ref={howItWorksRef}
         id="how-it-works"
-        className="py-16 sm:py-20 bg-[#081217] border-y border-slate-800/80"
+        className="py-16 sm:py-20 bg-white border-y border-[#E2EBF0]"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
-            <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase">
+            <span className="text-xs font-bold text-[#2DA7B5] tracking-wider uppercase">
               {t('joinProvider.howItWorksEyebrow')}
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               {t('joinProvider.howItWorksTitle')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-500">
               {t('joinProvider.howItWorksSubtitle')}
             </p>
           </div>
@@ -383,18 +383,18 @@ export const JoinProviderPage: React.FC = () => {
             {howItWorksSteps.map((step, idx) => (
               <div
                 key={idx}
-                className="relative bg-[#0C1A22] border border-slate-800 rounded-3xl p-6 sm:p-7 space-y-3 text-left rtl:text-right hover:border-slate-700 transition-all"
+                className="relative bg-[#F8FAFC] border border-[#E2EBF0] rounded-3xl p-6 sm:p-7 space-y-3 text-left rtl:text-right hover:border-[#2DA7B5] hover:bg-white hover:shadow-md transition-all"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl font-black text-white tracking-tight">
+                  <span className="text-2xl font-black text-slate-900 tracking-tight">
                     {step.number}
                   </span>
-                  <div className="w-8 h-8 rounded-full bg-[#081217] border border-slate-800 text-slate-200 flex items-center justify-center text-xs font-bold">
+                  <div className="w-8 h-8 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] flex items-center justify-center text-xs font-bold">
                     {idx + 1}
                   </div>
                 </div>
-                <h3 className="text-base font-bold text-white">{step.title}</h3>
-                <p className="text-xs text-slate-400 leading-relaxed font-normal">{step.desc}</p>
+                <h3 className="text-base font-bold text-slate-900">{step.title}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed font-normal">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -406,13 +406,13 @@ export const JoinProviderPage: React.FC = () => {
       {/* ========================================================================= */}
       <section id="provider-types" className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
-          <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase">
+          <span className="text-xs font-bold text-[#2DA7B5] tracking-wider uppercase">
             {t('joinProvider.typesEyebrow')}
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             Who Can Join MeetAdr
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             MeetAdr onboards Hospitals and Clinics. Your facility manages doctors from the dashboard after registration.
           </p>
         </div>
@@ -421,20 +421,20 @@ export const JoinProviderPage: React.FC = () => {
           {providerTypes.map((item) => (
             <div
               key={item.type}
-              className="bg-[#0C1A22] rounded-3xl border border-slate-800 p-6 sm:p-8 hover:border-slate-700 transition-all flex flex-col justify-between text-left rtl:text-right space-y-6"
+              className="bg-white rounded-3xl border border-[#E2EBF0] p-6 sm:p-8 shadow-xs hover:border-[#2DA7B5] hover:shadow-md transition-all flex flex-col justify-between text-left rtl:text-right space-y-6"
             >
               <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#081217] border border-slate-800 text-slate-300 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-[#E8F6F8] border border-[#CDEBF0] text-[#2DA7B5] flex items-center justify-center">
                   <item.icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-white">{item.title}</h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">{item.desc}</p>
+                  <h3 className="text-lg font-black text-slate-900">{item.title}</h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">{item.desc}</p>
                 </div>
-                <div className="pt-2 border-t border-slate-800 space-y-2">
+                <div className="pt-2 border-t border-[#E2EBF0] space-y-2">
                   {item.features.map((feat, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                      <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                    <div key={i} className="flex items-start gap-2 text-xs text-slate-600 font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-[#2DA7B5] shrink-0 mt-0.5" />
                       <span>{feat}</span>
                     </div>
                   ))}
@@ -443,7 +443,7 @@ export const JoinProviderPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => scrollToWizard(item.type)}
-                className="w-full py-3 bg-[#081217] hover:bg-slate-800 hover:text-white text-slate-200 border border-slate-800 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3 bg-[#F8FAFC] hover:bg-[#2DA7B5] hover:text-white text-slate-700 border border-[#E2EBF0] hover:border-[#2DA7B5] text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <span>{item.cta}</span>
                 <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -453,10 +453,10 @@ export const JoinProviderPage: React.FC = () => {
         </div>
 
         {/* Doctor note */}
-        <div className="mt-8 max-w-3xl mx-auto bg-[#0C1A22] border border-slate-800 rounded-2xl p-4 flex items-start gap-3">
-          <ShieldCheck className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
-          <div className="text-xs text-slate-300 leading-relaxed">
-            <span className="font-bold block text-white">For Individual Doctors</span>
+        <div className="mt-8 max-w-3xl mx-auto bg-white border border-[#E2EBF0] shadow-xs rounded-2xl p-4 flex items-start gap-3">
+          <ShieldCheck className="w-5 h-5 text-[#2DA7B5] shrink-0 mt-0.5" />
+          <div className="text-xs text-slate-600 leading-relaxed">
+            <span className="font-bold block text-slate-900">For Individual Doctors</span>
             Doctors are added and managed by the Hospital or Clinic they are affiliated with. If you are a doctor, contact your facility administrator to be added to the MeetAdr roster.
           </div>
         </div>
@@ -468,55 +468,55 @@ export const JoinProviderPage: React.FC = () => {
       <section
         ref={wizardRef}
         id="join-form"
-        className="py-16 sm:py-20 bg-[#081217] border-y border-slate-800/80"
+        className="py-16 sm:py-20 bg-white border-y border-[#E2EBF0]"
       >
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Header */}
           <div className="text-center mb-10 space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0C1A22] border border-slate-800 text-xs font-semibold text-slate-200">
-              <FileCheck className="w-3.5 h-3.5 text-slate-400" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-xs font-bold text-[#0E7490]">
+              <FileCheck className="w-3.5 h-3.5 text-[#2DA7B5]" />
               <span>PROVIDER ONBOARDING</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Register Your Facility
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">
+            <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
               Complete 3 quick steps to submit your Hospital or Clinic application. Our team will review and connect with you within 1–2 business days.
             </p>
           </div>
 
           {/* Success State */}
           {isSuccess ? (
-            <div className="bg-[#0C1A22] border border-slate-800 rounded-3xl p-8 sm:p-12 text-center space-y-5">
-              <div className="w-16 h-16 bg-[#007B8A] text-white rounded-full flex items-center justify-center mx-auto">
+            <div className="bg-[#F4F7F9] border border-[#E2EBF0] rounded-3xl p-8 sm:p-12 text-center space-y-5">
+              <div className="w-16 h-16 bg-[#2DA7B5] text-white rounded-full flex items-center justify-center mx-auto shadow-sm">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-white">Application Submitted!</h3>
-                <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed mt-2">
-                  Thank you for registering <span className="font-bold text-white">{wizardData.facilityName}</span> on MeetAdr. Our onboarding team will review your application and contact you at <span className="font-semibold text-white">{wizardData.email}</span> within 1–2 business days.
+                <h3 className="text-xl font-black text-slate-900">Application Submitted!</h3>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed mt-2">
+                  Thank you for registering <span className="font-bold text-slate-900">{wizardData.facilityName}</span> on MeetAdr. Our onboarding team will review your application and contact you at <span className="font-semibold text-slate-900">{wizardData.email}</span> within 1–2 business days.
                 </p>
               </div>
 
               {submittedReference && (
-                <div className="inline-block px-4 py-2 rounded-xl bg-[#081217] border border-slate-800 text-slate-200 text-xs font-bold font-mono">
+                <div className="inline-block px-4 py-2 rounded-xl bg-white border border-[#E2EBF0] text-slate-800 text-xs font-bold font-mono shadow-xs">
                   Reference: {submittedReference}
                 </div>
               )}
 
-              <div className="pt-2 p-4 bg-[#081217] rounded-2xl border border-slate-800 text-xs text-slate-300 text-left rtl:text-right space-y-1.5">
-                <p className="font-bold text-white">What happens next?</p>
+              <div className="pt-2 p-4 bg-white rounded-2xl border border-[#E2EBF0] text-xs text-slate-600 text-left rtl:text-right space-y-1.5">
+                <p className="font-bold text-slate-900">What happens next?</p>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#2DA7B5] shrink-0 mt-0.5" />
                   <span>Our team reviews your credentials & facility info</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#2DA7B5] shrink-0 mt-0.5" />
                   <span>You receive your dashboard login credentials</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#2DA7B5] shrink-0 mt-0.5" />
                   <span>Add your doctors directly from your dashboard</span>
                 </div>
               </div>
@@ -524,7 +524,7 @@ export const JoinProviderPage: React.FC = () => {
               <button
                 type="button"
                 onClick={resetWizard}
-                className="px-6 py-2.5 palette-btn-primary text-xs rounded-xl transition-colors cursor-pointer"
+                className="px-6 py-2.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
               >
                 Register Another Facility
               </button>
@@ -535,10 +535,10 @@ export const JoinProviderPage: React.FC = () => {
               <div className="mb-8">
                 <div className="flex items-center justify-between relative">
                   {/* Background connector */}
-                  <div className="absolute top-5 left-0 right-0 h-1 bg-slate-800 rounded-full z-0" />
+                  <div className="absolute top-5 left-0 right-0 h-1 bg-[#E2EBF0] rounded-full z-0" />
                   {/* Active connector */}
                   <div
-                    className="absolute top-5 left-0 h-1 bg-[#007B8A] rounded-full z-0 transition-all duration-500"
+                    className="absolute top-5 left-0 h-1 bg-[#2DA7B5] rounded-full z-0 transition-all duration-500"
                     style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
                   />
                   {STEPS.map((step) => {
@@ -549,17 +549,17 @@ export const JoinProviderPage: React.FC = () => {
                         <div
                           className={`w-10 h-10 rounded-full flex items-center justify-center border-2 font-bold text-xs transition-all duration-300 ${
                             isCompleted
-                              ? 'bg-[#007B8A] border-[#007B8A] text-white font-bold'
+                              ? 'bg-[#2DA7B5] border-[#2DA7B5] text-white font-bold'
                               : isActive
-                              ? 'bg-[#0C1A22] border-[#007B8A] text-white font-bold'
-                              : 'bg-[#081217] border-slate-700 text-slate-500'
+                              ? 'bg-white border-[#2DA7B5] text-[#2DA7B5] font-bold shadow-xs'
+                              : 'bg-white border-[#E2EBF0] text-slate-400'
                           }`}
                         >
                           {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : step.id}
                         </div>
                         <span
                           className={`text-[10px] font-bold text-center hidden sm:block ${
-                            isActive ? 'text-white font-bold' : isCompleted ? 'text-[#007B8A]' : 'text-slate-500'
+                            isActive ? 'text-slate-900 font-bold' : isCompleted ? 'text-[#2DA7B5]' : 'text-slate-400'
                           }`}
                         >
                           {step.label}
@@ -572,10 +572,10 @@ export const JoinProviderPage: React.FC = () => {
 
               {/* ─── STEP 1: Provider Type ─── */}
               {currentStep === 1 && (
-                <div className="bg-[#0C1A22] rounded-3xl border border-slate-800 p-6 sm:p-10 space-y-6">
+                <div className="bg-[#F8FAFC] rounded-3xl border border-[#E2EBF0] p-6 sm:p-10 space-y-6">
                   <div>
-                    <h3 className="text-lg font-black text-white">Select Provider Type</h3>
-                    <p className="text-xs text-slate-400 mt-1">Choose the type of healthcare facility you are registering.</p>
+                    <h3 className="text-lg font-black text-slate-900">Select Provider Type</h3>
+                    <p className="text-xs text-slate-500 mt-1">Choose the type of healthcare facility you are registering.</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -585,23 +585,23 @@ export const JoinProviderPage: React.FC = () => {
                       onClick={() => update('providerType', 'clinic')}
                       className={`p-6 rounded-2xl border-2 text-left rtl:text-right cursor-pointer transition-all space-y-3 ${
                         wizardData.providerType === 'clinic'
-                          ? 'bg-[#081217] border-[#007B8A]'
-                          : 'bg-[#081217] border-slate-800 hover:border-slate-700'
+                          ? 'bg-white border-[#2DA7B5] shadow-xs'
+                          : 'bg-white border-[#E2EBF0] hover:border-slate-300'
                       }`}
                     >
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                        wizardData.providerType === 'clinic' ? 'bg-[#007B8A] text-white' : 'bg-slate-800 text-slate-400'
+                        wizardData.providerType === 'clinic' ? 'bg-[#E8F6F8] text-[#2DA7B5]' : 'bg-slate-100 text-slate-500'
                       }`}>
                         <Building2 className="w-6 h-6" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-black text-white">Clinic</h4>
-                        <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                        <h4 className="text-sm font-black text-slate-900">Clinic</h4>
+                        <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
                           Outpatient clinics, polyclinics, and specialized medical centers.
                         </p>
                       </div>
                       {wizardData.providerType === 'clinic' && (
-                        <div className="flex items-center gap-1 text-white text-[11px] font-bold">
+                        <div className="flex items-center gap-1 text-[#2DA7B5] text-[11px] font-bold">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Selected</span>
                         </div>
@@ -614,23 +614,23 @@ export const JoinProviderPage: React.FC = () => {
                       onClick={() => update('providerType', 'hospital')}
                       className={`p-6 rounded-2xl border-2 text-left rtl:text-right cursor-pointer transition-all space-y-3 ${
                         wizardData.providerType === 'hospital'
-                          ? 'bg-[#081217] border-[#007B8A]'
-                          : 'bg-[#081217] border-slate-800 hover:border-slate-700'
+                          ? 'bg-white border-[#2DA7B5] shadow-xs'
+                          : 'bg-white border-[#E2EBF0] hover:border-slate-300'
                       }`}
                     >
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                        wizardData.providerType === 'hospital' ? 'bg-[#007B8A] text-white' : 'bg-slate-800 text-slate-400'
+                        wizardData.providerType === 'hospital' ? 'bg-[#E8F6F8] text-[#2DA7B5]' : 'bg-slate-100 text-slate-500'
                       }`}>
                         <Hospital className="w-6 h-6" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-black text-white">Hospital</h4>
-                        <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                        <h4 className="text-sm font-black text-slate-900">Hospital</h4>
+                        <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
                           Tertiary hospitals and large integrated healthcare organizations.
                         </p>
                       </div>
                       {wizardData.providerType === 'hospital' && (
-                        <div className="flex items-center gap-1 text-white text-[11px] font-bold">
+                        <div className="flex items-center gap-1 text-[#2DA7B5] text-[11px] font-bold">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Selected</span>
                         </div>
@@ -639,10 +639,10 @@ export const JoinProviderPage: React.FC = () => {
                   </div>
 
                   {/* Doctor note */}
-                  <div className="bg-[#081217] border border-slate-800 rounded-2xl p-4 flex items-start gap-3">
-                    <ShieldCheck className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-slate-300 leading-relaxed">
-                      <span className="font-bold text-white">Individual doctors</span> are not onboarded through this page. They are added by their affiliated Hospital or Clinic after account creation.
+                  <div className="bg-white border border-[#E2EBF0] rounded-2xl p-4 flex items-start gap-3">
+                    <ShieldCheck className="w-4 h-4 text-[#2DA7B5] shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      <span className="font-bold text-slate-900">Individual doctors</span> are not onboarded through this page. They are added by their affiliated Hospital or Clinic after account creation.
                     </p>
                   </div>
 
@@ -650,7 +650,7 @@ export const JoinProviderPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={goNext}
-                      className="px-7 py-3 palette-btn-primary text-xs rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                      className="px-7 py-3 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-2"
                     >
                       <span>Continue</span>
                       <ArrowRight className="w-4 h-4 rtl:rotate-180" />
@@ -661,22 +661,22 @@ export const JoinProviderPage: React.FC = () => {
 
               {/* ─── STEP 2: Organization Details ─── */}
               {currentStep === 2 && (
-                <div className="bg-[#0C1A22] rounded-3xl border border-slate-800 p-6 sm:p-10 space-y-6">
+                <div className="bg-[#F8FAFC] rounded-3xl border border-[#E2EBF0] p-6 sm:p-10 space-y-6">
                   <div>
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#081217] border border-slate-800 text-slate-200 text-[10px] font-bold mb-2">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-[10px] font-bold mb-2">
                       {wizardData.providerType === 'hospital'
-                        ? <Hospital className="w-3 h-3 text-slate-400" />
-                        : <Building2 className="w-3 h-3 text-slate-400" />}
+                        ? <Hospital className="w-3 h-3 text-[#2DA7B5]" />
+                        : <Building2 className="w-3 h-3 text-[#2DA7B5]" />}
                       <span className="capitalize">{wizardData.providerType} Registration</span>
                     </div>
-                    <h3 className="text-lg font-black text-white">Organization Details</h3>
-                    <p className="text-xs text-slate-400 mt-1">Provide your facility and contact information.</p>
+                    <h3 className="text-lg font-black text-slate-900">Organization Details</h3>
+                    <p className="text-xs text-slate-500 mt-1">Provide your facility and contact information.</p>
                   </div>
 
                   <div className="space-y-4">
                     {/* Facility Name */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-200 mb-1.5">
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
                         {wizardData.providerType === 'hospital' ? 'Hospital Name' : 'Clinic Name'} *
                       </label>
                       <input
@@ -685,13 +685,13 @@ export const JoinProviderPage: React.FC = () => {
                         value={wizardData.facilityName}
                         onChange={(e) => update('facilityName', e.target.value)}
                         placeholder={wizardData.providerType === 'hospital' ? 'e.g. City Care Hospital' : 'e.g. Green Valley Clinic'}
-                        className="w-full bg-[#081217] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 font-medium"
+                        className="w-full bg-white border border-[#E2EBF0] rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#2DA7B5] font-medium shadow-xs"
                       />
                     </div>
 
                     {/* Contact Person */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-200 mb-1.5">
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
                         Contact Person Name *
                       </label>
                       <input
@@ -700,56 +700,56 @@ export const JoinProviderPage: React.FC = () => {
                         value={wizardData.contactPerson}
                         onChange={(e) => update('contactPerson', e.target.value)}
                         placeholder="e.g. Mohammed Al Rashid or Dr. Sarah Chen"
-                        className="w-full bg-[#081217] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 font-medium"
+                        className="w-full bg-white border border-[#E2EBF0] rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#2DA7B5] font-medium shadow-xs"
                       />
                     </div>
 
                     {/* Phone & Email */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-200 mb-1.5">
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
                           Contact Phone *
                         </label>
                         <div className="flex gap-2">
                           <select
                             value={wizardData.countryCode}
                             onChange={(e) => update('countryCode', e.target.value)}
-                            className="w-28 bg-[#081217] border border-slate-800 rounded-xl px-2.5 py-3 text-xs font-bold text-white focus:outline-none cursor-pointer"
+                            className="w-28 bg-white border border-[#E2EBF0] rounded-xl px-2.5 py-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#2DA7B5] cursor-pointer shadow-xs"
                           >
-                            <option value="+971" className="bg-[#081217] text-white">+971 (UAE)</option>
-                            <option value="+965" className="bg-[#081217] text-white">+965 (KWT)</option>
-                            <option value="+966" className="bg-[#081217] text-white">+966 (KSA)</option>
-                            <option value="+974" className="bg-[#081217] text-white">+974 (QAT)</option>
-                            <option value="+44" className="bg-[#081217] text-white">+44 (UK)</option>
-                            <option value="+1" className="bg-[#081217] text-white">+1 (US)</option>
+                            <option value="+971">+971 (UAE)</option>
+                            <option value="+965">+965 (KWT)</option>
+                            <option value="+966">+966 (KSA)</option>
+                            <option value="+974">+974 (QAT)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+1">+1 (US)</option>
                           </select>
-                          <div className="flex-1 bg-[#081217] rounded-xl border border-slate-800 px-3.5 py-3 flex items-center">
-                            <Phone className="w-3.5 h-3.5 text-slate-500 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
+                          <div className="flex-1 bg-white rounded-xl border border-[#E2EBF0] px-3.5 py-3 flex items-center shadow-xs">
+                            <Phone className="w-3.5 h-3.5 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
                             <input
                               type="tel"
                               required
                               value={wizardData.contactNumber}
                               onChange={(e) => update('contactNumber', e.target.value)}
                               placeholder="50 123 4567"
-                              className="w-full bg-transparent text-xs text-white focus:outline-none font-medium placeholder-slate-500"
+                              className="w-full bg-transparent text-xs text-slate-900 focus:outline-none font-medium placeholder-slate-400"
                             />
                           </div>
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-200 mb-1.5">
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
                           Official Email *
                         </label>
-                        <div className="bg-[#081217] rounded-xl border border-slate-800 px-3.5 py-3 flex items-center">
-                          <Mail className="w-3.5 h-3.5 text-slate-500 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
+                        <div className="bg-white rounded-xl border border-[#E2EBF0] px-3.5 py-3 flex items-center shadow-xs">
+                          <Mail className="w-3.5 h-3.5 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
                           <input
                             type="email"
                             required
                             value={wizardData.email}
                             onChange={(e) => update('email', e.target.value)}
                             placeholder="info@hospital.com"
-                            className="w-full bg-transparent text-xs text-white focus:outline-none font-medium placeholder-slate-500"
+                            className="w-full bg-transparent text-xs text-slate-900 focus:outline-none font-medium placeholder-slate-400"
                           />
                         </div>
                       </div>
@@ -758,59 +758,59 @@ export const JoinProviderPage: React.FC = () => {
                     {/* City & Country */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-200 mb-1.5">
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
                           City / Emirate *
                         </label>
-                        <div className="bg-[#081217] rounded-xl border border-slate-800 px-3.5 py-3 flex items-center">
-                          <MapPin className="w-3.5 h-3.5 text-slate-500 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
+                        <div className="bg-white rounded-xl border border-[#E2EBF0] px-3.5 py-3 flex items-center shadow-xs">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400 mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
                           <input
                             type="text"
                             required
                             value={wizardData.location}
                             onChange={(e) => update('location', e.target.value)}
                             placeholder="e.g. Dubai, Abu Dhabi, Sharjah"
-                            className="w-full bg-transparent text-xs text-white focus:outline-none font-medium placeholder-slate-500"
+                            className="w-full bg-transparent text-xs text-slate-900 focus:outline-none font-medium placeholder-slate-400"
                           />
                         </div>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-200 mb-1.5">
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
                           Country
                         </label>
                         <input
                           type="text"
                           readOnly
                           value={wizardData.country}
-                          className="w-full bg-[#060D11] border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-400 cursor-not-allowed font-medium"
+                          className="w-full bg-slate-100 border border-[#E2EBF0] rounded-xl px-4 py-3 text-xs text-slate-500 cursor-not-allowed font-medium"
                         />
                       </div>
                     </div>
 
                     {/* Website */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-200 mb-1.5">
-                        Website <span className="font-normal text-slate-500">(Optional)</span>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Website <span className="font-normal text-slate-400">(Optional)</span>
                       </label>
                       <input
                         type="url"
                         value={wizardData.website}
                         onChange={(e) => update('website', e.target.value)}
                         placeholder="https://yourhospital.com"
-                        className="w-full bg-[#081217] border border-slate-800 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 font-medium"
+                        className="w-full bg-white border border-[#E2EBF0] rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#2DA7B5] font-medium shadow-xs"
                       />
                     </div>
 
                     {/* Notes */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-200 mb-1.5">
-                        Additional Notes <span className="font-normal text-slate-500">(Optional)</span>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Additional Notes <span className="font-normal text-slate-400">(Optional)</span>
                       </label>
                       <textarea
                         rows={3}
                         value={wizardData.notes}
                         onChange={(e) => update('notes', e.target.value)}
                         placeholder="Briefly describe your facility, departments, or any questions for our team..."
-                        className="w-full bg-[#081217] border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 font-medium resize-none"
+                        className="w-full bg-white border border-[#E2EBF0] rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#2DA7B5] font-medium resize-none shadow-xs"
                       />
                     </div>
                   </div>
@@ -819,7 +819,7 @@ export const JoinProviderPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={goBack}
-                      className="px-5 py-3 bg-[#081217] hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                      className="px-5 py-3 bg-white hover:bg-slate-50 text-slate-700 border border-[#E2EBF0] text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-2"
                     >
                       <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
                       <span>Back</span>
@@ -827,7 +827,7 @@ export const JoinProviderPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={goNext}
-                      className="px-7 py-3 palette-btn-primary text-xs rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                      className="px-7 py-3 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-2"
                     >
                       <span>Review Application</span>
                       <ArrowRight className="w-4 h-4 rtl:rotate-180" />
@@ -838,81 +838,81 @@ export const JoinProviderPage: React.FC = () => {
 
               {/* ─── STEP 3: Review & Submit ─── */}
               {currentStep === 3 && (
-                <div className="bg-[#0C1A22] rounded-3xl border border-slate-800 p-6 sm:p-10 space-y-6">
+                <div className="bg-[#F8FAFC] rounded-3xl border border-[#E2EBF0] p-6 sm:p-10 space-y-6">
                   <div>
-                    <h3 className="text-lg font-black text-white">Review Your Application</h3>
-                    <p className="text-xs text-slate-400 mt-1">Please confirm all details before submitting.</p>
+                    <h3 className="text-lg font-black text-slate-900">Review Your Application</h3>
+                    <p className="text-xs text-slate-500 mt-1">Please confirm all details before submitting.</p>
                   </div>
 
                   {/* Review Card */}
-                  <div className="bg-[#081217] rounded-2xl border border-slate-800 divide-y divide-slate-800 overflow-hidden">
+                  <div className="bg-white rounded-2xl border border-[#E2EBF0] divide-y divide-[#E2EBF0] overflow-hidden shadow-xs">
                     <div className="p-4 flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         {wizardData.providerType === 'hospital'
-                          ? <Hospital className="w-5 h-5 text-slate-400" />
-                          : <Building2 className="w-5 h-5 text-slate-400" />}
+                          ? <Hospital className="w-5 h-5 text-[#2DA7B5]" />
+                          : <Building2 className="w-5 h-5 text-[#2DA7B5]" />}
                         <div>
-                          <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Provider Type</p>
-                          <p className="text-sm font-bold text-white capitalize">{wizardData.providerType}</p>
+                          <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Provider Type</p>
+                          <p className="text-sm font-bold text-slate-900 capitalize">{wizardData.providerType}</p>
                         </div>
                       </div>
-                      <button type="button" onClick={() => setCurrentStep(1)} className="text-[10px] text-slate-300 font-bold hover:underline cursor-pointer">Edit</button>
+                      <button type="button" onClick={() => setCurrentStep(1)} className="text-[10px] text-[#2DA7B5] font-bold hover:underline cursor-pointer">Edit</button>
                     </div>
 
                     <div className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">
                           {wizardData.providerType === 'hospital' ? 'Hospital' : 'Clinic'} Name
                         </p>
-                        <p className="text-sm font-bold text-white">{wizardData.facilityName}</p>
+                        <p className="text-sm font-bold text-slate-900">{wizardData.facilityName}</p>
                       </div>
-                      <button type="button" onClick={() => setCurrentStep(2)} className="text-[10px] text-slate-300 font-bold hover:underline cursor-pointer">Edit</button>
+                      <button type="button" onClick={() => setCurrentStep(2)} className="text-[10px] text-[#2DA7B5] font-bold hover:underline cursor-pointer">Edit</button>
                     </div>
 
                     <div className="p-4 flex items-center justify-between">
                       <div>
-                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Contact Person</p>
-                        <p className="text-sm font-bold text-white">{wizardData.contactPerson}</p>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Contact Person</p>
+                        <p className="text-sm font-bold text-slate-900">{wizardData.contactPerson}</p>
                       </div>
-                      <button type="button" onClick={() => setCurrentStep(2)} className="text-[10px] text-slate-300 font-bold hover:underline cursor-pointer">Edit</button>
+                      <button type="button" onClick={() => setCurrentStep(2)} className="text-[10px] text-[#2DA7B5] font-bold hover:underline cursor-pointer">Edit</button>
                     </div>
 
                     <div className="p-4">
-                      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Contact Phone</p>
-                      <p className="text-sm font-bold text-white">{wizardData.countryCode} {wizardData.contactNumber}</p>
+                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Contact Phone</p>
+                      <p className="text-sm font-bold text-slate-900">{wizardData.countryCode} {wizardData.contactNumber}</p>
                     </div>
 
                     <div className="p-4">
-                      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Official Email</p>
-                      <p className="text-sm font-bold text-white">{wizardData.email}</p>
+                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Official Email</p>
+                      <p className="text-sm font-bold text-slate-900">{wizardData.email}</p>
                     </div>
 
                     <div className="p-4">
-                      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Location</p>
-                      <p className="text-sm font-bold text-white">{wizardData.location}, {wizardData.country}</p>
+                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Location</p>
+                      <p className="text-sm font-bold text-slate-900">{wizardData.location}, {wizardData.country}</p>
                     </div>
 
                     {wizardData.website && (
                       <div className="p-4">
-                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Website</p>
-                        <p className="text-sm font-bold text-white">{wizardData.website}</p>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Website</p>
+                        <p className="text-sm font-bold text-slate-900">{wizardData.website}</p>
                       </div>
                     )}
 
                     {wizardData.notes && (
                       <div className="p-4">
-                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Additional Notes</p>
-                        <p className="text-xs text-slate-300 leading-relaxed mt-0.5">{wizardData.notes}</p>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Additional Notes</p>
+                        <p className="text-xs text-slate-600 leading-relaxed mt-0.5">{wizardData.notes}</p>
                       </div>
                     )}
                   </div>
 
                   {/* Security Notice */}
-                  <div className="p-4 rounded-2xl bg-[#081217] border border-slate-800 text-xs text-slate-300 flex items-start gap-3">
-                    <ShieldCheck className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                  <div className="p-4 rounded-2xl bg-white border border-[#E2EBF0] text-xs text-slate-600 flex items-start gap-3 shadow-xs">
+                    <ShieldCheck className="w-4 h-4 text-[#2DA7B5] shrink-0 mt-0.5" />
                     <div className="space-y-0.5">
-                      <span className="font-bold text-white block">{t('joinProvider.trustSecurityTitle')}</span>
-                      <p className="text-[11px] text-slate-400 leading-relaxed font-normal">
+                      <span className="font-bold text-slate-900 block">{t('joinProvider.trustSecurityTitle')}</span>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
                         {t('joinProvider.trustSecurityDesc')}
                       </p>
                     </div>
@@ -922,7 +922,7 @@ export const JoinProviderPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={goBack}
-                      className="px-5 py-3 bg-[#081217] hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                      className="px-5 py-3 bg-white hover:bg-slate-50 text-slate-700 border border-[#E2EBF0] text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-2"
                     >
                       <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
                       <span>Back</span>
@@ -931,11 +931,11 @@ export const JoinProviderPage: React.FC = () => {
                       type="button"
                       onClick={handleSubmit}
                       disabled={isSubmitting}
-                      className="px-7 py-3 palette-btn-primary text-xs rounded-xl transition-all cursor-pointer disabled:opacity-50 flex items-center gap-2"
+                      className="px-7 py-3 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer disabled:opacity-50 flex items-center gap-2"
                     >
                       {isSubmitting ? (
                         <>
-                          <div className="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                          <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                           <span>Submitting...</span>
                         </>
                       ) : (
@@ -958,13 +958,13 @@ export const JoinProviderPage: React.FC = () => {
       {/* ========================================================================= */}
       <section id="faq" className="py-16 sm:py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 space-y-3">
-          <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase">
+          <span className="text-xs font-bold text-[#2DA7B5] tracking-wider uppercase">
             {t('joinProvider.faqEyebrow')}
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             {t('joinProvider.faqTitle')}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             {t('joinProvider.faqSubtitle')}
           </p>
         </div>
@@ -975,23 +975,23 @@ export const JoinProviderPage: React.FC = () => {
             return (
               <div
                 key={idx}
-                className="bg-[#0C1A22] rounded-2xl border border-slate-800 overflow-hidden transition-all"
+                className="bg-white rounded-2xl border border-[#E2EBF0] shadow-xs overflow-hidden transition-all hover:border-slate-300"
               >
                 <button
                   type="button"
                   onClick={() => setActiveFaq((prev) => (prev === idx ? null : idx))}
-                  className="w-full p-5 text-left rtl:text-right flex items-center justify-between gap-4 cursor-pointer hover:bg-[#081217] transition-colors"
+                  className="w-full p-5 text-left rtl:text-right flex items-center justify-between gap-4 cursor-pointer hover:bg-slate-50 transition-colors"
                   aria-expanded={isOpen}
                 >
-                  <span className="text-xs sm:text-sm font-bold text-white">{faq.q}</span>
+                  <span className="text-xs sm:text-sm font-bold text-slate-900">{faq.q}</span>
                   <ChevronDown
                     className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ${
-                      isOpen ? 'rotate-180 text-white' : ''
+                      isOpen ? 'rotate-180 text-[#2DA7B5]' : ''
                     }`}
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-5 pb-5 pt-1 text-xs text-slate-300 leading-relaxed border-t border-slate-800 font-normal">
+                  <div className="px-5 pb-5 pt-1 text-xs text-slate-600 leading-relaxed border-t border-[#E2EBF0] font-normal">
                     {faq.a}
                   </div>
                 )}
@@ -1005,26 +1005,26 @@ export const JoinProviderPage: React.FC = () => {
       {/* 7. FINAL CTA                                                              */}
       {/* ========================================================================= */}
       <section className="py-12 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#0C1A22] rounded-3xl p-8 sm:p-12 text-center text-white border border-slate-800 relative overflow-hidden">
+        <div className="bg-white rounded-3xl p-8 sm:p-12 text-center border border-[#E2EBF0] shadow-sm relative overflow-hidden">
           <div className="max-w-2xl mx-auto space-y-4 relative z-10">
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
               {t('joinProvider.finalCtaTitle')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
               {t('joinProvider.finalCtaSubtitle')}
             </p>
             <div className="pt-3 flex flex-wrap justify-center items-center gap-3">
               <button
                 type="button"
                 onClick={() => scrollToWizard()}
-                className="px-6 py-3 palette-btn-primary text-xs rounded-xl transition-all cursor-pointer flex items-center gap-2"
+                className="px-6 py-3 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-2"
               >
                 <span>Register Your Facility</span>
                 <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
               </button>
               <Link
                 to="/contact"
-                className="px-6 py-3 bg-[#081217] hover:bg-slate-800 text-slate-200 text-xs font-semibold rounded-xl border border-slate-800 transition-all cursor-pointer"
+                className="px-6 py-3 bg-[#F8FAFC] hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-[#E2EBF0] transition-all cursor-pointer"
               >
                 {t('joinProvider.finalCtaSecondary')}
               </Link>

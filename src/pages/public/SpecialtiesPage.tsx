@@ -353,32 +353,32 @@ export const SpecialtiesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#081217] text-slate-100 selection:bg-slate-700 selection:text-white">
+    <div className="min-h-screen bg-[#F4F7F9] text-slate-900 selection:bg-teal-100 selection:text-slate-800">
       
       {/* ── HERO BANNER ── */}
-      <section className="relative pt-12 pb-16 bg-[#081217] border-b border-slate-800">
+      <section className="relative pt-12 pb-16 bg-[#F4F7F9] border-b border-[#E2EBF0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 mb-6">
-            <Link to="/" className="hover:text-white transition-colors">
+          <nav className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 mb-6">
+            <Link to="/" className="hover:text-slate-900 transition-colors">
               {t('navigation.home')}
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180 text-slate-500" />
-            <span className="text-white font-bold">Medical Specialties</span>
+            <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180 text-slate-400" />
+            <span className="text-slate-900 font-bold">Medical Specialties</span>
           </nav>
 
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0C1A22] border border-slate-800 text-xs font-semibold text-slate-200 mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-slate-400" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-xs font-semibold text-[#0E7490] mb-4">
+              <Sparkles className="w-3.5 h-3.5 text-[#2DA7B5]" />
               <span>30+ Accredited Clinical Specialties</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
               Explore Medical Specialties & Care Disciplines
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-400 mt-4 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 mt-4 leading-relaxed">
               Find licensed doctors, specialized medical departments, and accredited clinical centers tailored to your specific healthcare needs across the UAE.
             </p>
           </div>
@@ -392,13 +392,13 @@ export const SpecialtiesPage: React.FC = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search specialty, symptom, or condition (e.g. Cardiology, Eczema, Knee, MRI)..."
-                className="w-full pl-11 pr-10 rtl:pl-10 rtl:pr-11 py-3.5 bg-[#0C1A22] rounded-2xl border border-slate-800 focus:border-slate-600 focus:outline-hidden text-sm text-white placeholder-slate-500 transition-all"
+                className="w-full pl-11 pr-10 rtl:pl-10 rtl:pr-11 py-3.5 bg-white rounded-2xl border border-[#E2EBF0] focus:border-[#2DA7B5] focus:outline-hidden text-sm text-slate-900 placeholder:text-slate-400 transition-all shadow-xs"
               />
               {search && (
                 <button
                   type="button"
                   onClick={() => setSearch('')}
-                  className="absolute right-3.5 rtl:right-auto rtl:left-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 cursor-pointer"
+                  className="absolute right-3.5 rtl:right-auto rtl:left-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -415,8 +415,8 @@ export const SpecialtiesPage: React.FC = () => {
                 onClick={() => setSelectedGroup(grp.id)}
                 className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   selectedGroup === grp.id
-                    ? 'palette-pill-active'
-                    : 'palette-pill-inactive'
+                    ? 'bg-[#2DA7B5] text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-[#E8F6F8] hover:text-[#0E7490] hover:border-[#CDEBF0] border border-[#E2EBF0] shadow-2xs'
                 }`}
               >
                 {grp.label}
@@ -431,26 +431,26 @@ export const SpecialtiesPage: React.FC = () => {
       <section className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
               Clinical Directory
             </h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Showing {filteredSpecialties.length} specialized healthcare departments
             </p>
           </div>
         </div>
 
         {filteredSpecialties.length === 0 ? (
-          <div className="bg-[#0C1A22] rounded-3xl border border-slate-800 p-12 text-center max-w-md mx-auto">
-            <div className="w-12 h-12 rounded-2xl bg-[#081217] text-slate-400 flex items-center justify-center mx-auto mb-3 border border-slate-800">
+          <div className="bg-white rounded-3xl border border-[#E2EBF0] shadow-sm p-12 text-center max-w-md mx-auto">
+            <div className="w-12 h-12 rounded-2xl bg-[#E8F6F8] text-[#2DA7B5] flex items-center justify-center mx-auto mb-3 border border-[#CDEBF0]">
               <Search className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-white">No specialties found</h3>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">Try clearing your search query or choosing another group filter.</p>
+            <h3 className="text-base font-bold text-slate-900">No specialties found</h3>
+            <p className="text-xs text-slate-600 mt-1 leading-relaxed">Try clearing your search query or choosing another group filter.</p>
             <button
               type="button"
               onClick={() => { setSearch(''); setSelectedGroup('all'); }}
-              className="mt-4 px-5 py-2.5 palette-btn-primary rounded-xl text-xs cursor-pointer"
+              className="mt-4 px-5 py-2.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold rounded-xl text-xs shadow-xs cursor-pointer"
             >
               Reset Filters
             </button>
@@ -460,37 +460,37 @@ export const SpecialtiesPage: React.FC = () => {
             {filteredSpecialties.map((item) => (
               <div
                 key={item.id}
-                className="bg-[#0C1A22] rounded-3xl border border-slate-800 overflow-hidden hover:border-slate-700 transition-all duration-300 flex flex-col justify-between group"
+                className="bg-white rounded-3xl border border-[#E2EBF0] overflow-hidden hover:border-[#2DA7B5] hover:shadow-md transition-all duration-300 flex flex-col justify-between group shadow-xs"
               >
                 <div>
                   {/* Image with zoom effect */}
-                  <div className="relative aspect-16/10 overflow-hidden bg-slate-900">
+                  <div className="relative aspect-16/10 overflow-hidden bg-slate-100">
                     <img
                       src={item.image}
                       alt={item.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0C1A22] via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                     
                     {/* Badge: Doctor count */}
-                    <div className="absolute top-3 right-3 rtl:right-auto rtl:left-3 bg-[#081217] px-2.5 py-1 rounded-full text-[11px] font-semibold text-slate-200 border border-slate-800 flex items-center gap-1.5">
-                      <Stethoscope className="w-3.5 h-3.5 text-slate-400" />
+                    <div className="absolute top-3 right-3 rtl:right-auto rtl:left-3 bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-full text-[11px] font-semibold text-slate-800 border border-[#E2EBF0] flex items-center gap-1.5 shadow-xs">
+                      <Stethoscope className="w-3.5 h-3.5 text-[#2DA7B5]" />
                       <span>{item.doctorCount} Doctors</span>
                     </div>
 
                     {/* Group pill on image */}
-                    <div className="absolute bottom-3 left-3 rtl:left-auto rtl:right-3 bg-[#081217] px-2.5 py-1 rounded-lg text-[10px] font-bold text-white border border-slate-800">
+                    <div className="absolute bottom-3 left-3 rtl:left-auto rtl:right-3 bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-lg text-[10px] font-bold text-slate-800 border border-[#E2EBF0] shadow-xs">
                       {item.groupLabel}
                     </div>
                   </div>
 
                   {/* Body Content */}
                   <div className="p-5 space-y-2.5">
-                    <h3 className="text-base font-black text-white group-hover:text-slate-100 transition-colors leading-snug">
+                    <h3 className="text-base font-black text-slate-900 group-hover:text-[#2DA7B5] transition-colors leading-snug">
                       {isArabic && item.nameAr ? item.nameAr : item.name}
                     </h3>
-                    <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
                       {item.description}
                     </p>
 
@@ -503,7 +503,7 @@ export const SpecialtiesPage: React.FC = () => {
                         {item.commonConditions.slice(0, 3).map((cond) => (
                           <span
                             key={cond}
-                            className="text-[10px] font-semibold text-slate-300 bg-[#081217] border border-slate-800 px-2 py-0.5 rounded-md"
+                            className="text-[10px] font-semibold text-slate-700 bg-[#F8FAFC] border border-[#E2EBF0] px-2 py-0.5 rounded-md"
                           >
                             {cond}
                           </span>
@@ -519,14 +519,14 @@ export const SpecialtiesPage: React.FC = () => {
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-5 pt-0 border-t border-slate-800 mt-3 flex items-center justify-between gap-2">
-                  <span className="text-[11px] text-slate-400 font-medium">
+                <div className="p-5 pt-0 border-t border-[#E2EBF0] mt-3 flex items-center justify-between gap-2">
+                  <span className="text-[11px] text-slate-500 font-medium">
                     {item.clinicCount} Partner Clinics
                   </span>
                   <button
                     type="button"
                     onClick={() => handleSelectSpecialty(item.name)}
-                    className="inline-flex items-center gap-1 px-3.5 py-2 palette-btn-primary rounded-xl text-xs cursor-pointer"
+                    className="inline-flex items-center gap-1 px-3.5 py-2 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold rounded-xl text-xs shadow-xs transition-colors cursor-pointer"
                   >
                     <span>Find Doctors</span>
                     <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -539,28 +539,28 @@ export const SpecialtiesPage: React.FC = () => {
       </section>
 
       {/* ── BOTTOM CTA ── */}
-      <section className="py-16 bg-[#0C1A22] border-t border-slate-800 text-white">
+      <section className="py-16 bg-white border-t border-[#E2EBF0] text-slate-900 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#081217] border border-slate-800 text-xs font-semibold text-slate-200">
-            <ShieldCheck className="w-4 h-4 text-slate-400" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-xs font-semibold text-[#0E7490]">
+            <ShieldCheck className="w-4 h-4 text-[#2DA7B5]" />
             <span>UAE Verified Medical Network</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
+          <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-900">
             Can’t Find Your Required Medical Specialty?
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
             Our medical concierge team is available to assist you in connecting with the right sub-specialist or hospital facility across the Emirates.
           </p>
           <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/doctors"
-              className="px-6 py-3 palette-btn-primary rounded-xl text-xs transition-all"
+              className="px-6 py-3 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold rounded-xl text-xs shadow-xs transition-all"
             >
               Browse All Doctors
             </Link>
             <Link
               to="/contact"
-              className="px-6 py-3 bg-[#081217] hover:bg-slate-800 text-white rounded-xl text-xs font-semibold border border-slate-800 transition-all"
+              className="px-6 py-3 bg-[#F8FAFC] hover:bg-slate-100 text-slate-800 rounded-xl text-xs font-semibold border border-[#E2EBF0] transition-all"
             >
               Contact Medical Concierge
             </Link>

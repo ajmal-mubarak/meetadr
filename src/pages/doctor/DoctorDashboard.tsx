@@ -160,24 +160,22 @@ export const DoctorDashboard: React.FC = () => {
     <div className="space-y-6 w-full max-w-full">
 
       {/* ── Header Banner ── */}
-      <div className="bg-gradient-to-r from-sky-950 via-slate-900 to-slate-950 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20"
-          style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, #38bdf8 0%, transparent 60%)' }} />
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E2EBF0] text-slate-900 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
         <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-bold mb-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-xs font-bold mb-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>{t('doctorPortal.badge')}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
             {user?.name || (isArabic ? 'د. طارق المنصور' : 'Dr. Tariq Al-Mansoor')}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
             {t('doctorPortal.subtitle')}
           </p>
         </div>
 
         <div className="relative z-10 flex flex-wrap items-center gap-2.5">
-          <span className="text-xs font-bold px-3.5 py-2.5 bg-emerald-500/20 border border-emerald-400/30 rounded-xl text-emerald-300 flex items-center gap-2">
+          <span className="text-xs font-bold px-3.5 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 flex items-center gap-2">
             <Clock className="w-3.5 h-3.5" />
             {isArabic ? 'العيادة تعمل حالياً' : 'Clinic Hours Active'}
           </span>
@@ -188,7 +186,7 @@ export const DoctorDashboard: React.FC = () => {
               showToast(isArabic ? 'تم تسجيل الخروج بنجاح.' : 'Signed out successfully.', 'info');
               navigate('/login');
             }}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all cursor-pointer border border-white/20"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#F8FAFC] hover:bg-slate-100 text-slate-700 text-xs font-bold transition-all cursor-pointer border border-[#E2EBF0]"
           >
             <LogOut className="w-3.5 h-3.5 rtl:rotate-180" />
             <span>{t('common.logout')}</span>
@@ -198,26 +196,26 @@ export const DoctorDashboard: React.FC = () => {
 
       {/* ── KPI Row ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
-          <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center mb-3">
-            <User className="w-5 h-5 text-slate-800" />
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-5 shadow-xs hover:border-[#2DA7B5] hover:shadow-md transition-all">
+          <div className="w-11 h-11 rounded-xl bg-[#E8F6F8] text-[#0E7490] flex items-center justify-center mb-3 border border-[#CDEBF0]">
+            <User className="w-5 h-5 text-[#2DA7B5]" />
           </div>
           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('doctorPortal.totalPatients')}</p>
           <p className="text-2xl sm:text-3xl font-black mt-1 text-slate-900">{appointments.length}</p>
           <p className="text-[11px] text-slate-500 mt-1">{isArabic ? 'إجمالي المرضى بالجدول' : 'Total scheduled roster'}</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
-          <div className="w-11 h-11 rounded-xl bg-sky-50 flex items-center justify-center mb-3">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-5 shadow-xs hover:border-[#2DA7B5] hover:shadow-md transition-all">
+          <div className="w-11 h-11 rounded-xl bg-sky-50 flex items-center justify-center mb-3 border border-sky-100">
             <Calendar className="w-5 h-5 text-sky-600" />
           </div>
           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('doctorPortal.todayAppointments')}</p>
-          <p className="text-2xl sm:text-3xl font-black mt-1 text-sky-600">{confirmed.length}</p>
+          <p className="text-2xl sm:text-3xl font-black mt-1 text-[#2DA7B5]">{confirmed.length}</p>
           <p className="text-[11px] text-slate-500 mt-1">{isArabic ? 'جاهز للاستشارة' : 'Ready for consultation'}</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
-          <div className="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center mb-3">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-5 shadow-xs hover:border-[#2DA7B5] hover:shadow-md transition-all">
+          <div className="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center mb-3 border border-emerald-100">
             <CheckCircle2 className="w-5 h-5 text-emerald-600" />
           </div>
           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{t('doctorPortal.completedToday')}</p>
@@ -225,8 +223,8 @@ export const DoctorDashboard: React.FC = () => {
           <p className="text-[11px] text-slate-500 mt-1">{isArabic ? 'استشارات منجزة' : 'Finished consultations'}</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
-          <div className="w-11 h-11 rounded-xl bg-rose-50 flex items-center justify-center mb-3">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-5 shadow-xs hover:border-[#2DA7B5] hover:shadow-md transition-all">
+          <div className="w-11 h-11 rounded-xl bg-rose-50 flex items-center justify-center mb-3 border border-rose-100">
             <Activity className="w-5 h-5 text-rose-600" />
           </div>
           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{isArabic ? 'الملغاة أو المعتذرة' : 'Cancelled / Missed'}</p>
@@ -239,7 +237,7 @@ export const DoctorDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Weekly Patient Load Bar Chart */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+        <div className="lg:col-span-2 bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
             <div>
               <h3 className="text-base font-bold text-slate-900">
@@ -249,8 +247,8 @@ export const DoctorDashboard: React.FC = () => {
                 {isArabic ? 'توزيع المرضى حسب أيام الأسبوع' : 'Daily patient load across current clinical schedule'}
               </p>
             </div>
-            <span className="text-xs font-bold text-teal-800 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full flex items-center gap-1 w-fit">
-              <TrendingUp className="w-3.5 h-3.5" />
+            <span className="text-xs font-bold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-3 py-1 rounded-full flex items-center gap-1 w-fit">
+              <TrendingUp className="w-3.5 h-3.5 text-[#2DA7B5]" />
               {isArabic ? '+23% مقارنة بالأسبوع الماضي' : '+23% vs last week'}
             </span>
           </div>
@@ -263,7 +261,7 @@ export const DoctorDashboard: React.FC = () => {
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey={isArabic ? 'المرضى' : 'Patients'} radius={[6, 6, 0, 0]}>
                 {weeklyLoad.map((_, i) => (
-                  <Cell key={i} fill={i === 3 ? '#2563EB' : '#38bdf8'} />
+                  <Cell key={i} fill={i === 3 ? '#2DA7B5' : '#7DD3FC'} />
                 ))}
               </Bar>
             </BarChart>
@@ -271,7 +269,7 @@ export const DoctorDashboard: React.FC = () => {
         </div>
 
         {/* Performance & Status Donut */}
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+        <div className="bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="text-base font-bold text-slate-900 mb-1">
               {isArabic ? 'معدل الإنجاز والأداء' : 'Consultation Outcomes'}
@@ -301,7 +299,7 @@ export const DoctorDashboard: React.FC = () => {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-2xl font-black text-teal-700">{completionRate}%</span>
+                <span className="text-2xl font-black text-[#2DA7B5]">{completionRate}%</span>
                 <span className="text-[10px] text-slate-400 font-bold uppercase">{isArabic ? 'إنجاز' : 'Done'}</span>
               </div>
             </div>
@@ -322,7 +320,7 @@ export const DoctorDashboard: React.FC = () => {
       </div>
 
       {/* ── Monthly Overview Area ── */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+      <div className="bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
           <div>
             <h3 className="text-base font-bold text-slate-900">
@@ -338,8 +336,8 @@ export const DoctorDashboard: React.FC = () => {
           <AreaChart data={monthlyTrend} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
             <defs>
               <linearGradient id="docCompletedGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
+                <stop offset="5%" stopColor="#2DA7B5" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#2DA7B5" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -349,10 +347,10 @@ export const DoctorDashboard: React.FC = () => {
             <Area
               type="monotone"
               dataKey={isArabic ? 'مكتمل' : 'Completed'}
-              stroke="#2563EB"
+              stroke="#2DA7B5"
               strokeWidth={2.5}
               fill="url(#docCompletedGrad)"
-              dot={{ fill: '#2563EB', r: 3 }}
+              dot={{ fill: '#2DA7B5', r: 3 }}
             />
             <Area
               type="monotone"
@@ -368,20 +366,20 @@ export const DoctorDashboard: React.FC = () => {
       </div>
 
       {/* ── Patient Queue Table ── */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-white rounded-3xl border border-[#E2EBF0] shadow-xs overflow-hidden">
+        <div className="p-6 border-b border-[#E2EBF0] flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-slate-900">{t('doctorPortal.consultationRegistry')}</h3>
             <p className="text-xs text-slate-500 mt-0.5">{t('doctorPortal.allSlots')}</p>
           </div>
-          <span className="text-xs font-bold text-sky-800 bg-sky-50 border border-sky-200 px-3 py-1.5 rounded-xl">
+          <span className="text-xs font-bold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-3 py-1.5 rounded-xl">
             {confirmed.length} {isArabic ? 'قيد الانتظار اليوم' : 'pending consultations'}
           </span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left rtl:text-right text-xs">
-            <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100">
+            <thead className="bg-[#F8FAFC] text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-[#E2EBF0]">
               <tr>
                 <th className="px-6 py-3.5">{t('doctorPortal.patientName')}</th>
                 <th className="px-6 py-3.5">{t('doctorPortal.dateTime')}</th>
@@ -391,12 +389,12 @@ export const DoctorDashboard: React.FC = () => {
                 <th className="px-6 py-3.5 text-right rtl:text-left">{t('doctorPortal.actions')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[#E2EBF0]">
               {appointments.map((appt) => (
-                <tr key={appt.id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={appt.id} className="hover:bg-[#F8FAFC]/70 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-sky-100 text-sky-800 flex items-center justify-center font-bold text-xs shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0] flex items-center justify-center font-bold text-xs shrink-0">
                         {appt.patientName.charAt(0)}
                       </div>
                       <div>
@@ -411,7 +409,7 @@ export const DoctorDashboard: React.FC = () => {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-1.5 text-slate-700 font-mono">
-                      <Phone className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                      <Phone className="w-3.5 h-3.5 text-[#2DA7B5] shrink-0" />
                       <span dir="ltr">{appt.patientPhone || appt.patientMobile}</span>
                     </div>
                   </td>
@@ -419,7 +417,7 @@ export const DoctorDashboard: React.FC = () => {
                     {appt.notes || <span className="italic text-slate-300">{t('doctorPortal.noNotes')}</span>}
                     {appt.cancelReason && (
                       <div className="text-rose-600 text-[10px] font-bold mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3 shrink-0" />
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{appt.cancelReason}</span>
                       </div>
                     )}
@@ -432,7 +430,7 @@ export const DoctorDashboard: React.FC = () => {
                       <div className="flex items-center justify-end rtl:justify-start gap-2">
                         <button
                           onClick={() => handleMarkCompleted(appt.id)}
-                          className="px-3 py-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all flex items-center gap-1 shadow-xs cursor-pointer"
+                          className="px-3 py-1.5 text-xs font-bold bg-[#2DA7B5] hover:bg-[#23929F] text-white rounded-xl transition-all flex items-center gap-1 shadow-xs cursor-pointer"
                         >
                           <Check className="w-3.5 h-3.5" />
                           <span>{t('doctorPortal.complete')}</span>

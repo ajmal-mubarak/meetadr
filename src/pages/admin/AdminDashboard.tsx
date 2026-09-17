@@ -44,15 +44,15 @@ const SPECIALTY_COLORS: Record<string, string> = {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-slate-900/95 backdrop-blur-md text-white rounded-xl px-4 py-3 shadow-2xl text-xs space-y-1.5 border border-slate-700">
-      <p className="font-bold text-slate-300 pb-1 border-b border-slate-800">{label}</p>
+    <div className="bg-white text-slate-900 rounded-xl px-4 py-3 shadow-xl text-xs space-y-1.5 border border-[#E2EBF0]">
+      <p className="font-bold text-slate-700 pb-1 border-b border-[#E2EBF0]">{label}</p>
       {payload.map((p: any) => (
         <div key={p.name} className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: p.color || p.fill }} />
-            <span className="text-slate-400 capitalize">{p.name}:</span>
+            <span className="text-slate-500 capitalize">{p.name}:</span>
           </div>
-          <span className="font-black text-white">{Number(p.value).toLocaleString()}</span>
+          <span className="font-black text-slate-900">{Number(p.value).toLocaleString()}</span>
         </div>
       ))}
     </div>
@@ -66,14 +66,14 @@ const KpiCard = ({
   label: string; value: string | number; sub: string;
   icon: React.ComponentType<{ className?: string }>; color: string; bg: string; trend?: string;
 }) => (
-  <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
+  <div className="bg-white rounded-2xl border border-[#E2EBF0] p-5 shadow-xs hover:border-[#2DA7B5] transition-all">
     <div className="flex items-start justify-between">
       <div className={`w-11 h-11 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
         <Icon className={`w-5 h-5 ${color}`} />
       </div>
       {trend && (
         <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-0.5">
-          <TrendingUp className="w-3 h-3" />{trend}
+          <TrendingUp className="w-3.5 h-3.5" />{trend}
         </span>
       )}
     </div>
@@ -163,22 +163,20 @@ export const AdminDashboard: React.FC = () => {
     <div className="space-y-6 w-full max-w-full">
 
       {/* ── Header Banner ── */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: 'radial-gradient(circle at 80% 50%, #14b8a6 0%, transparent 60%)' }} />
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E2EBF0] text-slate-900 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs relative overflow-hidden">
         <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-600/20 border border-teal-400/30 text-teal-300 text-xs font-bold mb-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-xs font-bold mb-2">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#2DA7B5]" />
             <span>{t('adminPortal.systemAdmin')}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">{t('adminPortal.controlConsole')}</h1>
-          <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">{t('adminPortal.consoleSubtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">{t('adminPortal.controlConsole')}</h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">{t('adminPortal.consoleSubtitle')}</p>
         </div>
 
         <div className="relative z-10 flex flex-wrap items-center gap-2.5">
           <Link
             to="/admin/reports"
-            className="px-4 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl text-xs shadow-sm transition-all flex items-center gap-2"
+            className="px-4 py-2.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold rounded-xl text-xs shadow-xs transition-all flex items-center gap-2"
           >
             <FileBarChart className="w-4 h-4" />
             <span>{t('adminPortal.operationalReports')}</span>
@@ -190,7 +188,7 @@ export const AdminDashboard: React.FC = () => {
               showToast(isArabic ? 'تم تسجيل الخروج بنجاح.' : 'Signed out successfully.', 'info');
               navigate('/login');
             }}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all cursor-pointer border border-white/20"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-[#F8FAFC] text-slate-700 text-xs font-bold transition-all cursor-pointer border border-[#E2EBF0] shadow-2xs"
           >
             <LogOut className="w-3.5 h-3.5 rtl:rotate-180" />
             <span>{t('common.logout')}</span>
@@ -205,8 +203,8 @@ export const AdminDashboard: React.FC = () => {
           value={stats?.totalDoctors ?? '—'}
           sub={t('adminPortal.verifiedActive')}
           icon={Stethoscope}
-          color="text-teal-700"
-          bg="bg-teal-50"
+          color="text-[#0E7490]"
+          bg="bg-[#E8F6F8]"
           trend="+12%"
         />
         <KpiCard
@@ -249,7 +247,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Booking & Consultations Trend Area Chart */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+        <div className="lg:col-span-2 bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
             <div>
               <h3 className="text-base font-bold text-slate-900">
@@ -269,15 +267,15 @@ export const AdminDashboard: React.FC = () => {
             <AreaChart data={trendData} margin={{ top: 10, right: 10, bottom: 0, left: -15 }}>
               <defs>
                 <linearGradient id="adminBookingGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#2DA7B5" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#2DA7B5" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="adminConsultGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#0284c7" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#0284c7" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2EBF0" />
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
               <Tooltip content={<CustomTooltip />} />
@@ -285,19 +283,19 @@ export const AdminDashboard: React.FC = () => {
               <Area
                 type="monotone"
                 dataKey={isArabic ? 'الحجوزات' : 'Bookings'}
-                stroke="#2563EB"
+                stroke="#2DA7B5"
                 strokeWidth={3}
                 fill="url(#adminBookingGrad)"
-                dot={{ fill: '#2563EB', r: 3 }}
+                dot={{ fill: '#2DA7B5', r: 3 }}
                 activeDot={{ r: 6 }}
               />
               <Area
                 type="monotone"
                 dataKey={isArabic ? 'الاستشارات' : 'Consultations'}
-                stroke="#6366f1"
+                stroke="#0284c7"
                 strokeWidth={2}
                 fill="url(#adminConsultGrad)"
-                dot={{ fill: '#6366f1', r: 3 }}
+                dot={{ fill: '#0284c7', r: 3 }}
                 activeDot={{ r: 5 }}
               />
             </AreaChart>
@@ -305,7 +303,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Specialty Donut Chart */}
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+        <div className="bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="text-base font-bold text-slate-900 mb-1">{t('adminPortal.topSpecialties')}</h3>
             <p className="text-xs text-slate-500 mb-4">{isArabic ? 'توزيع الحجوزات الطبية حسب التخصص' : 'Consultations volume by medical discipline'}</p>
@@ -328,18 +326,19 @@ export const AdminDashboard: React.FC = () => {
                 <Tooltip
                   formatter={(v: any) => [`${v} ${isArabic ? 'حجوزات' : 'visits'}`, '']}
                   contentStyle={{
-                    background: '#0f172a',
-                    border: 'none',
+                    background: '#ffffff',
+                    border: '1px solid #E2EBF0',
                     borderRadius: 12,
-                    color: '#fff',
+                    color: '#0f172a',
                     fontSize: 12,
+                    boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)',
                   }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="space-y-2 mt-4 pt-3 border-t border-slate-100">
+          <div className="space-y-2 mt-4 pt-3 border-t border-[#E2EBF0]">
             {specialtyChartData.map((s: any) => (
               <div key={s.name} className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
@@ -357,7 +356,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Provider Active Volume Bar Chart */}
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+        <div className="bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="text-base font-bold text-slate-900 mb-1">
               {isArabic ? 'نشاط المراكز والكوادر الطبية' : 'Provider Weekly Load'}
@@ -367,20 +366,20 @@ export const AdminDashboard: React.FC = () => {
             </p>
             <ResponsiveContainer width="100%" height={210}>
               <BarChart data={providerBarData} margin={{ top: 5, right: 5, bottom: 0, left: -20 }} barSize={8}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E2EBF0" />
                 <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="doctors" name={isArabic ? 'أطباء' : 'Doctors'} fill="#2563EB" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="doctors" name={isArabic ? 'أطباء' : 'Doctors'} fill="#2DA7B5" radius={[3, 3, 0, 0]} />
                 <Bar dataKey="hospitals" name={isArabic ? 'مستشفيات' : 'Hospitals'} fill="#6366f1" radius={[3, 3, 0, 0]} />
                 <Bar dataKey="clinics" name={isArabic ? 'عيادات' : 'Clinics'} fill="#f59e0b" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="flex gap-4 mt-3 text-xs font-semibold justify-center pt-3 border-t border-slate-100">
+          <div className="flex gap-4 mt-3 text-xs font-semibold justify-center pt-3 border-t border-[#E2EBF0]">
             {[
-              [isArabic ? 'الأطباء' : 'Doctors', '#2563EB'],
+              [isArabic ? 'الأطباء' : 'Doctors', '#2DA7B5'],
               [isArabic ? 'المستشفيات' : 'Hospitals', '#6366f1'],
               [isArabic ? 'العيادات' : 'Clinics', '#f59e0b'],
             ].map(([label, color]) => (
@@ -393,16 +392,16 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Recent Ecosystem Bookings Table */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col justify-between">
+        <div className="lg:col-span-2 bg-white rounded-3xl border border-[#E2EBF0] shadow-xs overflow-hidden flex flex-col justify-between">
           <div>
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="p-6 border-b border-[#E2EBF0] flex items-center justify-between">
               <div>
                 <h3 className="text-base font-bold text-slate-900">{t('adminPortal.recentBookings')}</h3>
                 <p className="text-xs text-slate-500 mt-0.5">{t('adminPortal.recentBookingsSubtitle')}</p>
               </div>
               <Link
                 to="/admin/bookings"
-                className="text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1 transition-colors"
+                className="text-xs font-bold text-[#0E7490] hover:text-[#2DA7B5] flex items-center gap-1 transition-colors"
               >
                 <span>{t('adminPortal.viewAll')}</span>
                 <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -411,7 +410,7 @@ export const AdminDashboard: React.FC = () => {
 
             <div className="overflow-x-auto">
               <table className="w-full text-left rtl:text-right text-xs">
-                <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-100">
+                <thead className="bg-[#F8FAFC] text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-[#E2EBF0]">
                   <tr>
                     <th className="px-6 py-3.5">{t('adminPortal.patient')}</th>
                     <th className="px-6 py-3.5">{t('adminPortal.doctor')}</th>
@@ -421,10 +420,10 @@ export const AdminDashboard: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {recentBookings.map((appt) => (
-                    <tr key={appt.id} className="hover:bg-slate-50/70 transition-colors">
+                    <tr key={appt.id} className="hover:bg-[#F8FAFC] transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-teal-100 text-teal-900 flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0] flex items-center justify-center font-bold text-xs shrink-0">
                             {appt.patientName.charAt(0)}
                           </div>
                           <div>
@@ -455,7 +454,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* ── Pending Provider Requests ── */}
       {pendingRequests.length > 0 && (
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+        <div className="bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h3 className="text-base font-bold text-slate-900">{t('adminPortal.providerApplications')}</h3>
@@ -468,7 +467,7 @@ export const AdminDashboard: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {pendingRequests.slice(0, 3).map((req) => (
-              <div key={req.id} className="p-5 rounded-2xl border border-slate-200 bg-slate-50/60 space-y-3">
+              <div key={req.id} className="p-5 rounded-2xl border border-[#E2EBF0] bg-[#F8FAFC] space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-900 text-sm">{req.name}</span>
                   <span className="text-[10px] font-bold uppercase px-2.5 py-0.5 bg-indigo-100 text-indigo-700 rounded-md">
@@ -476,11 +475,11 @@ export const AdminDashboard: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-xs text-slate-500">{req.location}, {req.country}</p>
-                <div className="flex items-center justify-between pt-2 border-t border-slate-200/60">
+                <div className="flex items-center justify-between pt-2 border-t border-[#E2EBF0]">
                   <span className="text-[11px] font-mono text-slate-600" dir="ltr">{req.contactNumber}</span>
                   <Link
                     to="/admin/requests"
-                    className="text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1"
+                    className="text-xs font-bold text-[#0E7490] hover:text-[#2DA7B5] flex items-center gap-1"
                   >
                     <span>{t('adminPortal.manageApplications')}</span>
                     <ArrowRight className="w-3 h-3 rtl:rotate-180" />

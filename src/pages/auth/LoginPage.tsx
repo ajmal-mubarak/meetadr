@@ -82,7 +82,8 @@ const ROLES: {
 ];
 
 const QUICK_DEMOS: { role: UserRole; label: string; cls: string }[] = [
-  { role: 'patient',  label: 'Patient',  cls: 'bg-teal-700 hover:bg-teal-800 text-white' },
+  { role: 'patient',  label: 'Patient',  cls: 'bg-[#2DA7B5] hover:bg-[#23929F] text-white' },
+  { role: 'doctor',   label: 'Doctor',   cls: 'bg-sky-600 hover:bg-sky-700 text-white' },
   { role: 'hospital', label: 'Hospital', cls: 'bg-indigo-600 hover:bg-indigo-700 text-white' },
   { role: 'admin',    label: 'Admin',    cls: 'bg-slate-800 hover:bg-slate-700 text-white' },
 ];
@@ -145,14 +146,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
   return (
     /* Full-page background */
     <div
-      className="min-h-screen flex items-center justify-center px-4 py-10 relative overflow-hidden bg-[#081217]"
-      style={{
-        background: 'radial-gradient(ellipse at 60% 0%, #0d948825 0%, transparent 55%), radial-gradient(ellipse at 10% 80%, #0284c720 0%, transparent 50%), #081217',
-      }}
+      className="min-h-screen flex items-center justify-center px-4 py-10 relative overflow-hidden bg-[#F4F7F9]"
     >
       {/* Subtle decorative glowing blobs */}
-      <div className="fixed top-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3" />
-      <div className="fixed bottom-0 left-0 w-80 h-80 bg-teal-600/10 rounded-full blur-3xl pointer-events-none translate-y-1/2 -translate-x-1/3" />
+      <div className="fixed top-0 right-0 w-96 h-96 bg-[#2DA7B5]/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3" />
+      <div className="fixed bottom-0 left-0 w-80 h-80 bg-[#2DA7B5]/10 rounded-full blur-3xl pointer-events-none translate-y-1/2 -translate-x-1/3" />
 
       <motion.div
         initial={{ opacity: 0, y: 18 }}
@@ -163,24 +161,24 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
         {/* ── LOGO ── */}
         <div className="flex flex-col items-center mb-7">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-lg shadow-teal-500/25 group-hover:scale-105 transition-all">
-              <Stethoscope className="w-6 h-6 text-slate-950 stroke-[2.5]" />
+            <div className="w-12 h-12 rounded-2xl bg-[#2DA7B5] flex items-center justify-center shadow-md shadow-[#2DA7B5]/25 group-hover:scale-105 transition-all">
+              <Stethoscope className="w-6 h-6 text-white stroke-[2.5]" />
             </div>
-            <span className="text-3xl font-black text-white tracking-tight">
-              meet<span className="text-teal-400">Adr</span>
+            <span className="text-3xl font-black text-slate-900 tracking-tight">
+              meet<span className="text-[#2DA7B5]">Adr</span>
             </span>
           </Link>
-          <p className="text-sm text-slate-400 mt-2 font-medium text-center">
+          <p className="text-sm text-slate-500 mt-2 font-medium text-center">
             Sign in to manage your appointments & healthcare
           </p>
         </div>
 
         {/* ── CARD ── */}
-        <div className="bg-[#0C1A22] rounded-3xl shadow-2xl shadow-black/60 border border-teal-500/20 overflow-hidden backdrop-blur-md">
+        <div className="bg-white rounded-3xl shadow-sm border border-[#E2EBF0] overflow-hidden">
 
           {/* Role strip */}
           {!forcedRole && (
-            <div className="grid grid-cols-4 border-b border-slate-800 bg-[#081217]/60">
+            <div className="grid grid-cols-4 border-b border-[#E2EBF0] bg-[#F8FAFC]">
               {ROLES.map((r) => {
                 const Icon = r.icon;
                 const active = activeRole === r.role;
@@ -191,11 +189,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
                     onClick={() => setActiveRole(r.role)}
                     className={`flex flex-col items-center gap-1 py-3.5 text-[10px] font-bold uppercase tracking-wide transition-all cursor-pointer border-b-2 ${
                       active
-                        ? `border-teal-400 text-teal-300 bg-teal-950/40`
-                        : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
+                        ? `border-[#2DA7B5] text-[#0E7490] bg-white font-black`
+                        : 'border-transparent text-slate-400 hover:text-slate-700 hover:bg-slate-100/60'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 ${active ? 'text-teal-400' : 'text-slate-400'}`} />
+                    <Icon className={`w-4 h-4 ${active ? 'text-[#2DA7B5]' : 'text-slate-400'}`} />
                     {r.label}
                   </button>
                 );
@@ -206,12 +204,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
           <div className="px-6 py-6 space-y-5">
 
             {/* ── Demo quick access ── */}
-            <div className="rounded-2xl bg-[#081217] border border-slate-800 p-4">
+            <div className="rounded-2xl bg-[#F8FAFC] border border-[#E2EBF0] p-4">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-5 h-5 rounded-md bg-amber-400/20 border border-amber-400/40 flex items-center justify-center shrink-0">
-                  <Zap className="w-3 h-3 text-amber-400" strokeWidth={2.5} />
+                <div className="w-5 h-5 rounded-md bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0">
+                  <Zap className="w-3 h-3 text-amber-600" strokeWidth={2.5} />
                 </div>
-                <span className="text-xs font-bold text-slate-300 tracking-wide">
+                <span className="text-xs font-bold text-slate-700 tracking-wide">
                   Instant Demo Access
                 </span>
               </div>
@@ -222,7 +220,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
                     type="button"
                     onClick={() => handleQuickLogin(dq.role)}
                     disabled={quickLoading !== null}
-                    className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1 shadow-sm ${dq.cls}`}
+                    className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1 shadow-2xs ${dq.cls}`}
                   >
                     {quickLoading === dq.role
                       ? <div className="w-3 h-3 border-2 border-white/60 border-t-white rounded-full animate-spin" />
@@ -237,7 +235,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
 
               {/* Email / Mobile */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-300 block">
+                <label className="text-xs font-bold text-slate-700 block">
                   Email or Mobile
                 </label>
                 <div className="relative">
@@ -251,7 +249,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
                     value={loginInput}
                     onChange={(e) => setLoginInput(e.target.value)}
                     placeholder={role.demoEmail}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-700 bg-[#081217] text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 transition-all font-medium"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E2EBF0] bg-[#F8FAFC] text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#2DA7B5] focus:bg-white transition-all font-medium shadow-2xs"
                   />
                 </div>
               </div>
@@ -259,11 +257,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
               {/* Password */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-300 block">Password</label>
+                  <label className="text-xs font-bold text-slate-700 block">Password</label>
                   <button
                     type="button"
                     onClick={autofill}
-                    className="flex items-center gap-1 text-[11px] font-bold text-teal-400 hover:text-teal-300 cursor-pointer transition-colors"
+                    className="flex items-center gap-1 text-[11px] font-bold text-[#2DA7B5] hover:underline cursor-pointer transition-colors"
                   >
                     <CheckCircle2 className="w-3 h-3" />
                     Auto-fill demo
@@ -276,12 +274,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter password"
-                    className="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-700 bg-[#081217] text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400 transition-all font-medium"
+                    className="w-full pl-10 pr-12 py-3 rounded-xl border border-[#E2EBF0] bg-[#F8FAFC] text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#2DA7B5] focus:bg-white transition-all font-medium shadow-2xs"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 cursor-pointer transition-colors"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors"
                   >
                     {showPassword
                       ? <EyeOff className="w-4 h-4" />
@@ -294,10 +292,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3.5 rounded-xl bg-teal-500 hover:bg-teal-400 disabled:opacity-60 text-slate-950 font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-teal-500/20 transition-all cursor-pointer group mt-2"
+                className="w-full py-3.5 rounded-xl bg-[#2DA7B5] hover:bg-[#23929F] disabled:opacity-60 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer group mt-2"
               >
                 {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-slate-950/40 border-t-slate-950 rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
                     <span>Sign in as {role.label}</span>
@@ -309,16 +307,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
 
             {/* Divider */}
             <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-slate-800" />
-              <span className="text-[11px] text-slate-500 font-semibold uppercase tracking-wider">or</span>
-              <div className="flex-1 h-px bg-slate-800" />
+              <div className="flex-1 h-px bg-[#E2EBF0]" />
+              <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">or</span>
+              <div className="flex-1 h-px bg-[#E2EBF0]" />
             </div>
 
             {/* Google */}
             <button
               type="button"
               onClick={() => showToast('Google sign-in coming soon!', 'info')}
-              className="w-full py-3 rounded-xl border border-slate-700 hover:border-slate-600 bg-[#081217] hover:bg-[#0e222e] text-sm font-bold text-slate-200 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+              className="w-full py-3 rounded-xl border border-[#E2EBF0] hover:border-slate-300 bg-[#F8FAFC] hover:bg-white text-sm font-bold text-slate-700 flex items-center justify-center gap-2.5 transition-all cursor-pointer shadow-2xs"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -331,8 +329,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
 
             {/* Security */}
             <div className="flex items-center justify-center gap-1.5 pb-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-              <span className="text-[10px] text-slate-400 font-medium">End-to-End Encrypted</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-[#2DA7B5] shrink-0" />
+              <span className="text-[10px] text-slate-500 font-medium">End-to-End Encrypted</span>
             </div>
 
           </div>
@@ -342,7 +340,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ forcedRole }) => {
         <div className="text-center mt-5">
           <Link
             to="/"
-            className="text-xs text-slate-400 hover:text-teal-400 font-medium transition-colors inline-flex items-center gap-1"
+            className="text-xs text-slate-500 hover:text-[#2DA7B5] font-semibold transition-colors inline-flex items-center gap-1"
           >
             ← Back to home
           </Link>

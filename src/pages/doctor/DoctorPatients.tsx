@@ -48,7 +48,7 @@ export const DoctorPatients: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Patient Directory</h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -63,15 +63,15 @@ export const DoctorPatients: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search patient name or phone..."
-            className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-xl focus:border-teal-600 focus:outline-none"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-[#F8FAFC] border border-[#E2EBF0] rounded-xl focus:bg-white focus:border-[#2DA7B5] focus:outline-none"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+            <thead className="bg-[#F8FAFC] text-slate-500 font-semibold border-b border-[#E2EBF0]">
               <tr>
                 <th className="px-5 py-3">Patient Name</th>
                 <th className="px-5 py-3">Contact Phone</th>
@@ -80,12 +80,12 @@ export const DoctorPatients: React.FC = () => {
                 <th className="px-5 py-3">Recent Notes</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[#E2EBF0]">
               {patientList.map((p, idx) => (
-                <tr key={idx} className="hover:bg-slate-50/50">
+                <tr key={idx} className="hover:bg-[#F8FAFC]/60 transition-colors">
                   <td className="px-5 py-3.5 font-bold text-slate-900">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-xs">
+                      <div className="w-7 h-7 rounded-full bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0] flex items-center justify-center font-bold text-xs">
                         {p.name.charAt(0)}
                       </div>
                       <span>{p.name}</span>

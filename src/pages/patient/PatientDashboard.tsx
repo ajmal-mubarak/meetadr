@@ -73,7 +73,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 border border-slate-200 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 border border-[#E2EBF0] shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
@@ -90,16 +90,16 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
         </div>
 
         {/* Doctor info */}
-        <div className="bg-slate-50 rounded-2xl p-3 flex items-center gap-3 border border-slate-200">
+        <div className="bg-[#F8FAFC] rounded-2xl p-3 flex items-center gap-3 border border-[#E2EBF0]">
           <img
             src={appointment.doctorPhoto || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150'}
             alt={appointment.doctorName}
-            className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0"
+            className="w-12 h-12 rounded-xl object-cover border border-[#E2EBF0] shrink-0"
             referrerPolicy="no-referrer"
           />
           <div>
             <p className="text-sm font-bold text-slate-900">{appointment.doctorName}</p>
-            <p className="text-xs text-teal-800 font-semibold">{translateSpecialty(appointment.specialty)}</p>
+            <p className="text-xs text-[#0E7490] font-semibold">{translateSpecialty(appointment.specialty)}</p>
             <p className="text-[11px] text-slate-500">{appointment.facilityName || appointment.hospitalName}</p>
           </div>
         </div>
@@ -144,7 +144,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
             onChange={(e) => setComment(e.target.value)}
             placeholder={t('patientPortal.sharePlaceholder')}
             rows={3}
-            className="w-full text-xs border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-400 resize-none text-slate-700 placeholder:text-slate-400 transition-all"
+            className="w-full text-xs border border-[#E2EBF0] rounded-xl px-4 py-3 focus:outline-none focus:border-[#2DA7B5] focus:ring-1 focus:ring-[#2DA7B5] resize-none text-slate-700 placeholder:text-slate-400 transition-all bg-white"
           />
         </div>
 
@@ -152,7 +152,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+            className="flex-1 py-2.5 rounded-xl border border-[#E2EBF0] text-xs font-bold text-slate-600 hover:bg-[#F8FAFC] transition-colors cursor-pointer"
           >
             {t('patientPortal.skipForNow')}
           </button>
@@ -163,7 +163,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onClose, onSubmi
             className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
               rating === 0
                 ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                : 'bg-teal-700 hover:bg-teal-800 text-white shadow-sm'
+                : 'bg-[#2DA7B5] hover:bg-[#23929F] text-white shadow-xs'
             }`}
           >
             <Star className="w-3.5 h-3.5" />
@@ -432,8 +432,8 @@ export const PatientDashboard: React.FC = () => {
 
       {/* ── Quick Stats Row ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center shrink-0 border border-slate-200">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-5 shadow-xs hover:border-[#2DA7B5] hover:shadow-md transition-all flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-[#E8F6F8] text-[#0E7490] flex items-center justify-center shrink-0 border border-[#CDEBF0]">
             <Calendar className="w-6 h-6" />
           </div>
           <div>
@@ -442,7 +442,7 @@ export const PatientDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center gap-4">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-5 shadow-xs hover:border-[#2DA7B5] hover:shadow-md transition-all flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 border border-sky-100">
             <FileText className="w-6 h-6" />
           </div>
@@ -452,7 +452,7 @@ export const PatientDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center gap-4">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-5 shadow-xs hover:border-[#2DA7B5] hover:shadow-md transition-all flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-100">
             <CheckCircle2 className="w-6 h-6" />
           </div>
@@ -462,7 +462,7 @@ export const PatientDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex items-center gap-4">
+        <div className="bg-white rounded-2xl border border-[#E2EBF0] p-5 shadow-xs hover:border-[#2DA7B5] hover:shadow-md transition-all flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0 border border-purple-100">
             <User className="w-6 h-6" />
           </div>
@@ -477,7 +477,7 @@ export const PatientDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Health Consultations Activity Area Chart */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+        <div className="lg:col-span-2 bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
             <div>
               <h3 className="text-base font-bold text-slate-900">
@@ -487,8 +487,8 @@ export const PatientDashboard: React.FC = () => {
                 {isArabic ? 'تتبع زيارات العيادات والفحوصات الدورية خلال الـ 6 أشهر الماضية' : 'Outpatient consultations and medical reviews across past 6 months'}
               </p>
             </div>
-            <span className="text-xs font-bold text-slate-800 bg-slate-100 border border-slate-300 px-3 py-1 rounded-full flex items-center gap-1 w-fit">
-              <TrendingUp className="w-3.5 h-3.5" />
+            <span className="text-xs font-bold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-3 py-1 rounded-full flex items-center gap-1 w-fit">
+              <TrendingUp className="w-3.5 h-3.5 text-[#2DA7B5]" />
               {isArabic ? 'سجل الرعاية منتظم' : 'Care on Schedule'}
             </span>
           </div>
@@ -497,8 +497,8 @@ export const PatientDashboard: React.FC = () => {
             <AreaChart data={healthActivityData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
               <defs>
                 <linearGradient id="patConsultGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#2DA7B5" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#2DA7B5" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="patFollowGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
@@ -513,10 +513,10 @@ export const PatientDashboard: React.FC = () => {
               <Area
                 type="monotone"
                 dataKey={isArabic ? 'الاستشارات' : 'Consultations'}
-                stroke="#2563EB"
+                stroke="#2DA7B5"
                 strokeWidth={2.5}
                 fill="url(#patConsultGrad)"
-                dot={{ fill: '#2563EB', r: 3 }}
+                dot={{ fill: '#2DA7B5', r: 3 }}
               />
               <Area
                 type="monotone"
@@ -531,7 +531,7 @@ export const PatientDashboard: React.FC = () => {
         </div>
 
         {/* Specialty Care Breakdown Donut Chart */}
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+        <div className="bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="text-base font-bold text-slate-900 mb-1">
               {isArabic ? 'توزيع الرعاية التخصصية' : 'Specialty Care Distribution'}
@@ -577,7 +577,7 @@ export const PatientDashboard: React.FC = () => {
 
       {/* ── NEXT UPCOMING APPOINTMENT (In order with side countdown) ── */}
       {nextAppt && (
-        <div className="bg-white rounded-3xl border-2 border-slate-300 p-5 sm:p-6 shadow-xs relative overflow-hidden">
+        <div className="bg-white rounded-3xl border border-[#2DA7B5]/40 p-5 sm:p-6 shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -587,13 +587,13 @@ export const PatientDashboard: React.FC = () => {
             </div>
             <div className="flex items-center gap-2.5">
               {/* Small side countdown with low opacity */}
-              <span className="text-[10px] sm:text-[11px] font-mono text-slate-500 opacity-60 flex items-center gap-1 bg-slate-100/80 px-2.5 py-1 rounded-lg">
+              <span className="text-[10px] sm:text-[11px] font-mono text-slate-500 opacity-60 flex items-center gap-1 bg-[#F8FAFC] border border-[#E2EBF0] px-2.5 py-1 rounded-lg">
                 <Clock className="w-3 h-3 text-slate-400 shrink-0" />
                 <span>{formatCountdown(nextAppt, now, isArabic)}</span>
               </span>
               <Link
                 to="/patient/bookings"
-                className="text-xs font-bold text-slate-700 hover:text-slate-900 flex items-center gap-1"
+                className="text-xs font-bold text-[#2DA7B5] hover:text-[#23929F] flex items-center gap-1"
               >
                 <span>{t('patientBookings.pageTitle')}</span>
                 <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -606,11 +606,11 @@ export const PatientDashboard: React.FC = () => {
               <img
                 src={nextAppt.doctorPhoto || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150'}
                 alt={nextAppt.doctorName}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-slate-200 shrink-0 shadow-xs"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-[#E2EBF0] shrink-0 shadow-xs"
                 referrerPolicy="no-referrer"
               />
               <div className="space-y-1">
-                <span className="inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 text-[11px] font-bold border border-slate-300">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#E8F6F8] text-[#0E7490] text-[11px] font-bold border border-[#CDEBF0]">
                   {translateSpecialty(nextAppt.specialty)}
                 </span>
                 <h4 className="text-base sm:text-lg font-black text-slate-900">{nextAppt.doctorName}</h4>
@@ -642,7 +642,7 @@ export const PatientDashboard: React.FC = () => {
                 href="https://maps.google.com/maps?q=Clemenceau+Medical+Center+Hospital+Dubai"
                 target="_blank"
                 rel="noreferrer"
-                className="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors"
+                className="px-3.5 py-2 rounded-xl border border-[#E2EBF0] text-xs font-bold text-slate-700 hover:bg-[#F8FAFC] flex items-center gap-1.5 transition-colors"
               >
                 <MapPin className="w-3.5 h-3.5 text-slate-500" />
                 <span>{t('patientPortal.directions')}</span>
@@ -650,7 +650,7 @@ export const PatientDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleRebook(nextAppt)}
-                className="px-3.5 py-2 rounded-xl bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 hover:bg-slate-200 transition-colors cursor-pointer"
+                className="px-3.5 py-2 rounded-xl bg-[#F8FAFC] border border-[#E2EBF0] text-xs font-bold text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 {t('patientPortal.reschedule')}
               </button>
@@ -667,8 +667,8 @@ export const PatientDashboard: React.FC = () => {
       )}
 
       {/* ── APPOINTMENTS PREVIEW & RECENT BOOKINGS ── */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs space-y-5">
+        <div className="flex items-center justify-between border-b border-[#E2EBF0] pb-4">
           <div className="flex items-center gap-2 flex-wrap">
             {([
               { key: 'confirmed', label: isArabic ? 'المواعيد القادمة' : 'Upcoming Visits', count: confirmed.length },
@@ -681,8 +681,8 @@ export const PatientDashboard: React.FC = () => {
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeTab === tab.key
-                    ? 'bg-teal-700 text-white shadow-2xs'
-                    : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
+                    ? 'bg-[#2DA7B5] text-white shadow-2xs'
+                    : 'bg-white text-slate-700 hover:bg-[#F8FAFC] border border-[#E2EBF0]'
                 }`}
               >
                 {tab.label} ({tab.count})
@@ -691,7 +691,7 @@ export const PatientDashboard: React.FC = () => {
           </div>
           <Link
             to="/patient/bookings"
-            className="text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1"
+            className="text-xs font-bold text-[#2DA7B5] hover:text-[#23929F] flex items-center gap-1"
           >
             <span>{isArabic ? 'السجل الكامل' : 'Full History'}</span>
             <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -699,10 +699,10 @@ export const PatientDashboard: React.FC = () => {
         </div>
 
         {displayedAppointments.length === 0 ? (
-          <div className="text-center py-14 space-y-3 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+          <div className="text-center py-14 space-y-3 bg-[#F8FAFC] rounded-2xl border border-dashed border-[#E2EBF0]">
             <CalendarCheck className="w-10 h-10 text-slate-400 mx-auto opacity-50" />
             <p className="text-xs font-bold text-slate-700">{t('patientPortal.noBookings')}</p>
-            <Link to="/doctors" className="inline-block px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl transition-colors">
+            <Link to="/doctors" className="inline-block px-4 py-2 bg-[#2DA7B5] hover:bg-[#23929F] text-white text-xs font-bold rounded-xl transition-colors">
               {t('patientPortal.findDoctorBtn')}
             </Link>
           </div>
@@ -717,7 +717,7 @@ export const PatientDashboard: React.FC = () => {
               return (
                 <div
                   key={appt.id}
-                  className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3 hover:border-teal-300 transition-all shadow-2xs flex flex-col justify-between"
+                  className="bg-white rounded-2xl border border-[#E2EBF0] p-4 space-y-3 hover:border-[#2DA7B5] transition-all shadow-2xs flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-3">
@@ -725,12 +725,12 @@ export const PatientDashboard: React.FC = () => {
                         <img
                           src={appt.doctorPhoto || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150'}
                           alt={appt.doctorName}
-                          className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0"
+                          className="w-12 h-12 rounded-xl object-cover border border-[#E2EBF0] shrink-0"
                           referrerPolicy="no-referrer"
                         />
                         <div className="truncate">
                           <h4 className="text-sm font-bold text-slate-900 truncate">{appt.doctorName}</h4>
-                          <p className="text-xs font-semibold text-teal-800">{translateSpecialty(appt.specialty)}</p>
+                          <p className="text-xs font-semibold text-[#0E7490]">{translateSpecialty(appt.specialty)}</p>
                           <p className="text-[11px] text-slate-500 truncate">{appt.facilityName || appt.hospitalName || 'CMC Hospital Dubai'}</p>
                         </div>
                       </div>
@@ -744,7 +744,7 @@ export const PatientDashboard: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="mt-3 bg-slate-50 rounded-xl p-2.5 space-y-1.5 text-xs text-slate-600">
+                    <div className="mt-3 bg-[#F8FAFC] rounded-xl p-2.5 space-y-1.5 text-xs text-slate-600 border border-[#E2EBF0]/60">
                       <div className="flex items-center gap-2">
                         <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span className="font-semibold text-slate-800">{appt.date}</span>
@@ -768,7 +768,7 @@ export const PatientDashboard: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleRebook(appt)}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-300"
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer bg-[#F8FAFC] text-slate-800 hover:bg-slate-100 border border-[#E2EBF0]"
                         >
                           <RefreshCw className="w-3 h-3" />
                           {t('patientPortal.rebook')}
@@ -780,7 +780,7 @@ export const PatientDashboard: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleRebook(appt)}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer text-slate-500 hover:text-slate-700 hover:bg-slate-100"
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer text-slate-500 hover:text-slate-700 hover:bg-[#F8FAFC]"
                         >
                           <RefreshCw className="w-3 h-3" />
                           {t('patientPortal.reschedule')}
@@ -792,14 +792,14 @@ export const PatientDashboard: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => showToast(isArabic ? 'الوصفة الطبية جاهزة للاستلام من صيدلية المركز الطبي.' : 'Prescription is ready for pickup at clinic pharmacy.', 'info')}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-800 hover:bg-slate-200 font-bold transition-colors cursor-pointer"
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#E2EBF0] bg-[#F8FAFC] text-slate-800 hover:bg-slate-100 font-bold transition-colors cursor-pointer"
                         >
                           <FileText className="w-3 h-3 text-slate-600" />
                           {t('patientPortal.prescription')}
                         </button>
                       )}
 
-                      {/* Rate & Review — ONLY for completed visits (Step 11: Post-Visit Review) */}
+                      {/* Rate & Review — ONLY for completed visits */}
                       {isCompleted && !isReviewed && (
                         <button
                           type="button"
@@ -811,9 +811,9 @@ export const PatientDashboard: React.FC = () => {
                         </button>
                       )}
 
-                      {/* Reviewed badge — only for completed visits */}
+                      {/* Reviewed badge */}
                       {isCompleted && isReviewed && (
-                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-800 border border-slate-300 font-bold text-[11px]">
+                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#F8FAFC] text-slate-800 border border-[#E2EBF0] font-bold text-[11px]">
                           <CheckCircle2 className="w-3 h-3" />
                           {t('patientPortal.reviewed')}
                         </span>
@@ -839,10 +839,10 @@ export const PatientDashboard: React.FC = () => {
       </div>
 
       {/* ── NEARBY HOSPITALS ── */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
+      <div className="bg-white rounded-2xl border border-[#E2EBF0] p-6 shadow-xs space-y-5">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-300 text-xs font-bold text-slate-900 mb-1.5">
-            <MapPin className="w-3.5 h-3.5 text-slate-600" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-xs font-bold text-[#0E7490] mb-1.5">
+            <MapPin className="w-3.5 h-3.5 text-[#2DA7B5]" />
             <span>{isArabic ? 'شبكة المنشآت القريبة' : 'Nearby Network'}</span>
           </div>
           <h2 className="text-lg font-bold text-slate-900">{t('patientPortal.nearbyHospitals')}</h2>
@@ -853,36 +853,36 @@ export const PatientDashboard: React.FC = () => {
           {nearbyHospitals.map((hosp) => (
             <div
               key={hosp.id}
-              className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-teal-300 transition-all flex flex-col justify-between"
+              className="p-4 rounded-2xl border border-[#E2EBF0] bg-[#F8FAFC] hover:bg-white hover:border-[#2DA7B5] transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-slate-900 pr-2 rtl:pr-0 rtl:pl-2">{hosp.name}</h3>
-                  <span className="text-[10px] font-bold text-teal-800 bg-teal-100 px-2 py-0.5 rounded-full shrink-0">{hosp.distance}</span>
+                  <span className="text-[10px] font-bold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-2 py-0.5 rounded-full shrink-0">{hosp.distance}</span>
                 </div>
                 <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-teal-700 shrink-0" />
+                  <MapPin className="w-3 h-3 text-[#2DA7B5] shrink-0" />
                   {hosp.location}
                 </p>
                 <div className="flex flex-wrap gap-1 mt-3">
                   {hosp.specialties.map((s) => (
-                    <span key={s} className="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold text-slate-700">{s}</span>
+                    <span key={s} className="px-2 py-0.5 rounded-md bg-white border border-[#E2EBF0] text-[10px] font-semibold text-slate-700">{s}</span>
                   ))}
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs">
+              <div className="mt-4 pt-3 border-t border-[#E2EBF0] flex items-center justify-between text-xs">
                 <a
                   href={`https://maps.google.com/maps?q=${encodeURIComponent(hosp.name)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="font-bold text-teal-800 hover:underline flex items-center gap-1"
+                  className="font-bold text-[#0E7490] hover:underline flex items-center gap-1"
                 >
                   {t('patientPortal.directions')} <ExternalLink className="w-3 h-3" />
                 </a>
                 <Link
                   to="/doctors"
-                  className="px-3 py-1.5 bg-teal-700 hover:bg-teal-800 text-white rounded-lg font-bold text-xs flex items-center gap-1 transition-colors shadow-2xs"
+                  className="px-3 py-1.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white rounded-lg font-bold text-xs flex items-center gap-1 transition-colors shadow-2xs"
                 >
                   {t('common.bookNow')} <ArrowRight className="w-3 h-3 rtl:rotate-180" />
                 </Link>
@@ -912,10 +912,10 @@ export const PatientDashboard: React.FC = () => {
       {/* OTP Login Modal (PDF Page 9) */}
       {showOtpModal && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 border border-slate-200 shadow-2xl">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 border border-[#E2EBF0] shadow-2xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-[#E8F6F8] text-[#0E7490] flex items-center justify-center border border-[#CDEBF0]">
                   <Smartphone className="w-4 h-4" />
                 </div>
                 <h3 className="text-base font-bold text-slate-900">{t('patientPortal.smsOtpNotice')}</h3>
@@ -936,7 +936,7 @@ export const PatientDashboard: React.FC = () => {
                   <select
                     value={countryCode}
                     onChange={(e) => setCountryCode(e.target.value)}
-                    className="w-24 bg-slate-50 border border-slate-200 rounded-xl px-2 py-2.5 text-xs font-bold text-slate-900 focus:outline-none"
+                    className="w-24 bg-[#F8FAFC] border border-[#E2EBF0] rounded-xl px-2 py-2.5 text-xs font-bold text-slate-900 focus:outline-none"
                   >
                     <option value="+971">+971 UAE</option>
                     <option value="+965">+965 KWT</option>
@@ -947,7 +947,7 @@ export const PatientDashboard: React.FC = () => {
                     value={mobileNumber}
                     onChange={(e) => setMobileNumber(e.target.value)}
                     placeholder="52 412 2794"
-                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none font-medium"
+                    className="flex-1 bg-[#F8FAFC] border border-[#E2EBF0] rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none font-medium"
                   />
                 </div>
               </div>
@@ -962,14 +962,14 @@ export const PatientDashboard: React.FC = () => {
                       value={otpCode}
                       onChange={(e) => setOtpCode(e.target.value)}
                       placeholder="1234"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-center text-lg font-mono font-bold tracking-widest text-slate-900 focus:outline-none focus:border-slate-500"
+                      className="w-full bg-[#F8FAFC] border border-[#E2EBF0] rounded-xl px-4 py-3 text-center text-lg font-mono font-bold tracking-widest text-slate-900 focus:outline-none focus:border-[#2DA7B5]"
                     />
                     <span className="text-[11px] text-slate-500 font-bold block mt-1 text-center">Demo code: 1234</span>
                   </div>
                   <button
                     type="button"
                     onClick={handleVerifyOtp}
-                    className="w-full py-3 bg-[#007B8A] hover:bg-[#005F6B] text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                    className="w-full py-3 bg-[#2DA7B5] hover:bg-[#23929F] text-white rounded-xl text-xs font-bold transition-colors cursor-pointer shadow-xs"
                   >
                     {t('patientPortal.confirmOtp')}
                   </button>
@@ -978,7 +978,7 @@ export const PatientDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleSendOtp}
-                  className="w-full py-3 bg-[#007B8A] hover:bg-[#005F6B] text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                  className="w-full py-3 bg-[#2DA7B5] hover:bg-[#23929F] text-white rounded-xl text-xs font-bold transition-colors cursor-pointer shadow-xs"
                 >
                   {t('patientPortal.sendOtp')}
                 </button>
