@@ -88,7 +88,7 @@ export const AdminBookings: React.FC = () => {
                 onClick={() => setStatus(st)}
                 className={`px-3 py-1.5 rounded-lg capitalize transition-all cursor-pointer ${
                   status === st
-                    ? 'bg-white text-blue-700 shadow-xs font-bold'
+                    ? 'bg-white text-teal-800 shadow-xs font-bold'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -104,7 +104,7 @@ export const AdminBookings: React.FC = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('adminPortal.searchPlaceholder')}
-              className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-xl focus:border-blue-600 focus:outline-none"
+              className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-xl focus:border-teal-600 focus:outline-none"
             />
           </div>
         </div>
@@ -140,13 +140,13 @@ export const AdminBookings: React.FC = () => {
                     <td className="px-5 py-3.5 text-slate-900 font-medium">
                       <div className="font-bold">{appt.patientName}</div>
                       <div className="text-[11px] text-slate-500 font-mono flex items-center gap-1" dir="ltr">
-                        <Phone className="w-3 h-3 text-blue-600 shrink-0" />
+                        <Phone className="w-3 h-3 text-teal-700 shrink-0" />
                         <span>{appt.patientPhone}</span>
                       </div>
                     </td>
                     <td className="px-5 py-3.5 text-slate-800">
                       <div className="font-semibold">{appt.doctorName}</div>
-                      <div className="text-[11px] text-blue-600">{translateSpecialty(appt.specialty)}</div>
+                      <div className="text-[11px] text-teal-700">{translateSpecialty(appt.specialty)}</div>
                     </td>
                     <td className="px-5 py-3.5 text-slate-600">{appt.facilityName}</td>
                     <td className="px-5 py-3.5 text-slate-700">

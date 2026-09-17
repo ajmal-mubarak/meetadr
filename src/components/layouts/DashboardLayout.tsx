@@ -108,7 +108,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const navItems = getNavItems();
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row selection:bg-teal-100 selection:text-teal-900 overflow-x-clip w-full max-w-full">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row selection:bg-teal-100 selection:text-slate-800 overflow-x-clip w-full max-w-full">
       
       {/* ── MOBILE SLIDE-OUT DRAWER ── */}
       {isMobileMenuOpen && (
@@ -130,12 +130,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             {/* Drawer Header */}
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-base border border-teal-200 shadow-2xs shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#0C1A22] text-slate-200 flex items-center justify-center font-bold text-base border border-slate-800 shrink-0">
                   {user?.name.charAt(0) || 'U'}
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-slate-900 truncate max-w-[150px]">{user?.name}</p>
-                  <span className="inline-block mt-0.5 capitalize text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full truncate">
+                  <span className="inline-block mt-0.5 capitalize text-[10px] font-bold bg-[#0C1A22] text-slate-200 border border-slate-800 px-2 py-0.5 rounded-full truncate">
                     {getPortalLabel(user?.role)}
                   </span>
                 </div>
@@ -162,7 +162,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-teal-600 text-white shadow-2xs font-bold'
+                        ? 'bg-teal-700 text-white shadow-2xs font-bold'
                         : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
@@ -204,13 +204,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <aside className="hidden md:flex md:w-64 bg-white border-r rtl:border-r-0 rtl:border-l border-slate-200 shrink-0 flex-col h-screen sticky top-0 z-20">
         {/* User Card */}
         <div className="p-5 border-b border-slate-200 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-base border border-teal-200 shadow-2xs shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#0C1A22] text-slate-200 flex items-center justify-center font-bold text-base border border-slate-800 shrink-0">
             {user?.name.charAt(0) || 'U'}
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-slate-900 truncate">{user?.name}</p>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="capitalize text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full truncate">
+              <span className="capitalize text-[10px] font-bold bg-[#0C1A22] text-slate-200 border border-slate-800 px-2 py-0.5 rounded-full truncate">
                 {getPortalLabel(user?.role)}
               </span>
             </div>
@@ -228,7 +228,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 to={item.path}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-teal-600 text-white shadow-2xs font-bold'
+                    ? 'bg-[#007B8A] text-white font-bold'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >
@@ -275,11 +275,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <Menu className="w-5 h-5" />
             </button>
 
-            <Link to="/" className="text-base font-black tracking-tight text-slate-900 hover:text-teal-700 transition-colors shrink-0">
-              meet<span className="text-teal-600">Adr</span>
+            <Link to="/" className="text-base font-black tracking-tight text-slate-900 hover:text-[#007B8A] transition-colors shrink-0">
+              meet<span className="text-[#007B8A]">Adr</span>
             </Link>
             <span className="text-slate-300 shrink-0">/</span>
-            <span className="text-[11px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200 capitalize truncate max-w-[125px] sm:max-w-none">
+            <span className="text-[11px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 rounded-full bg-[#0C1A22] text-slate-200 border border-slate-800 capitalize truncate max-w-[125px] sm:max-w-none">
               {getPortalLabel(user?.role)}
             </span>
           </div>
@@ -299,7 +299,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <div className="w-px h-5 bg-slate-200 hidden sm:block" />
 
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 text-white flex items-center justify-center font-bold text-xs shadow-2xs shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-[#007B8A] text-white flex items-center justify-center font-bold text-xs shrink-0">
                 {user?.name.charAt(0) || 'U'}
               </div>
               <span className="text-xs font-bold text-slate-800 hidden lg:block max-w-[120px] truncate">
@@ -329,7 +329,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   <div className="flex items-center gap-2.5 flex-wrap">
                     <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
                     {badge && (
-                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200">
+                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#0C1A22] text-slate-200 border border-slate-800">
                         {badge}
                       </span>
                     )}

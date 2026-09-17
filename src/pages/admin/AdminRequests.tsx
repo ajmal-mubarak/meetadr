@@ -75,7 +75,7 @@ export const AdminRequests: React.FC = () => {
                   <tr key={r.id} className="hover:bg-slate-50/50">
                     <td className="px-5 py-3.5 font-bold text-slate-900">{r.name}</td>
                     <td className="px-5 py-3.5 capitalize">
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-50 text-blue-700">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-teal-50 text-teal-800">
                         {r.providerType}
                       </span>
                     </td>

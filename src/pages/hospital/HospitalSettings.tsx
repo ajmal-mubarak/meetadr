@@ -63,7 +63,7 @@ export const HospitalSettings: React.FC = () => {
       {/* Header Card */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs">
         <div className="flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-teal-600" />
+          <Building2 className="w-5 h-5 text-teal-700" />
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
             {isArabic ? 'إعدادات المنشأة والمستشفى' : 'Hospital Facility Configuration'}
           </h1>
@@ -90,7 +90,7 @@ export const HospitalSettings: React.FC = () => {
             onChange={(e) => setName(e.target.value)}
             className={`w-full p-3 rounded-xl text-sm transition-all border ${
               isEditing
-                ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-500/10 focus:outline-none'
+                ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-600/10 focus:outline-none'
                 : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed'
             }`}
           />
@@ -109,7 +109,7 @@ export const HospitalSettings: React.FC = () => {
             onChange={(e) => setAddress(e.target.value)}
             className={`w-full p-3 rounded-xl text-sm transition-all border ${
               isEditing
-                ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-500/10 focus:outline-none'
+                ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-600/10 focus:outline-none'
                 : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed'
             }`}
           />
@@ -129,7 +129,7 @@ export const HospitalSettings: React.FC = () => {
               onChange={(e) => setPhone(e.target.value)}
               className={`w-full p-3 rounded-xl text-sm font-mono transition-all border ${
                 isEditing
-                  ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-500/10 focus:outline-none'
+                  ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-600/10 focus:outline-none'
                   : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed'
               }`}
             />
@@ -148,7 +148,7 @@ export const HospitalSettings: React.FC = () => {
               onChange={(e) => setOperatingHours(e.target.value)}
               className={`w-full p-3 rounded-xl text-sm transition-all border ${
                 isEditing
-                  ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-500/10 focus:outline-none'
+                  ? 'bg-white text-slate-900 border-teal-500 ring-2 ring-teal-600/10 focus:outline-none'
                   : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed'
               }`}
             />
@@ -166,7 +166,7 @@ export const HospitalSettings: React.FC = () => {
         >
           <div className="space-y-0.5">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-teal-600" />
+              <ShieldCheck className="w-4 h-4 text-teal-700" />
               <strong className="text-xs font-bold text-slate-900">
                 {isArabic ? 'قسم طوارئ على مدار 24/7' : '24/7 Emergency Department'}
               </strong>
@@ -182,7 +182,7 @@ export const HospitalSettings: React.FC = () => {
             disabled={!isEditing}
             checked={emergency}
             onChange={(e) => setEmergency(e.target.checked)}
-            className={`w-5 h-5 rounded-md text-teal-600 border-slate-300 focus:ring-teal-500 ${
+            className={`w-5 h-5 rounded-md text-teal-700 border-slate-300 focus:ring-teal-600 ${
               isEditing ? 'cursor-pointer' : 'cursor-not-allowed opacity-80'
             }`}
           />
@@ -202,7 +202,7 @@ export const HospitalSettings: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+                className="px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>{isArabic ? 'حفظ التعديلات' : 'Save Configuration'}</span>
@@ -212,7 +212,7 @@ export const HospitalSettings: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsEditing(true)}
-              className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
             >
               <Edit3 className="w-4 h-4" />
               <span>{isArabic ? 'تعديل الإعدادات' : 'Edit Configuration'}</span>

@@ -28,6 +28,8 @@ import { HospitalList } from './pages/public/HospitalList';
 import { HospitalDetails } from './pages/public/HospitalDetails';
 import { ClinicList } from './pages/public/ClinicList';
 import { ClinicDetails } from './pages/public/ClinicDetails';
+import { SpecialtiesPage } from './pages/public/SpecialtiesPage';
+import { ConditionsPage } from './pages/public/ConditionsPage';
 
 import { JoinProviderPage } from './pages/public/JoinProviderPage';
 import {
@@ -95,12 +97,12 @@ const PublicLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-sky-100 selection:text-sky-900 font-sans overflow-x-clip w-full max-w-full">
+    <div className="min-h-screen flex flex-col bg-[#081217] text-slate-100 selection:bg-teal-500/30 selection:text-teal-200 font-sans overflow-x-clip w-full max-w-full">
       {/* If an admin, hospital, or doctor visits the public site, show site in guest view mode with a return bar */}
       {isNonPatientStaff && (
-        <div className="bg-slate-900 text-slate-200 text-xs px-4 py-2 flex items-center justify-between border-b border-slate-800 z-50">
+        <div className="bg-[#050D11] text-slate-300 text-xs px-4 py-2 flex items-center justify-between border-b border-teal-500/20 z-50">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
             <span className="font-medium">
               {isArabic
                 ? `تصفح الموقع العام كزائر (${getRoleName(user.role)}) · الحجز متاح للمرضى فقط`
@@ -109,7 +111,7 @@ const PublicLayout: React.FC = () => {
           </div>
           <Link
             to={getDashboardPath(user.role)}
-            className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-600 hover:bg-teal-500 text-white rounded-lg font-bold text-[11px] transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-600 hover:bg-teal-500 text-white rounded-lg font-bold text-[11px] transition-colors shadow-xs shadow-teal-500/20"
           >
             <span>{isArabic ? 'العودة إلى لوحة التحكم' : `Back to ${getRoleName(user.role)} Portal`}</span>
           </Link>
@@ -142,6 +144,9 @@ export default function App() {
               <Route path="/hospitals/:id" element={<HospitalDetails />} />
               <Route path="/clinics" element={<ClinicList />} />
               <Route path="/clinics/:id" element={<ClinicDetails />} />
+              <Route path="/specialties" element={<SpecialtiesPage />} />
+              <Route path="/conditions" element={<ConditionsPage />} />
+              <Route path="/diseases" element={<Navigate to="/conditions" replace />} />
               <Route path="/waitlist" element={<Navigate to="/" replace />} />
               <Route path="/join" element={<JoinProviderPage />} />
               <Route path="/become-a-partner" element={<JoinProviderPage />} />

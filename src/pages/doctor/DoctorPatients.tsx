@@ -63,7 +63,7 @@ export const DoctorPatients: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search patient name or phone..."
-            className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-xl focus:border-blue-600 focus:outline-none"
+            className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-xl focus:border-teal-600 focus:outline-none"
           />
         </div>
       </div>
@@ -85,7 +85,7 @@ export const DoctorPatients: React.FC = () => {
                 <tr key={idx} className="hover:bg-slate-50/50">
                   <td className="px-5 py-3.5 font-bold text-slate-900">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
+                      <div className="w-7 h-7 rounded-full bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-xs">
                         {p.name.charAt(0)}
                       </div>
                       <span>{p.name}</span>

@@ -95,7 +95,7 @@ export const AdminDoctors: React.FC = () => {
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-2xl font-bold text-slate-900">Manage Doctors</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200">
               {doctors.length} Registered
             </span>
           </div>
@@ -203,7 +203,7 @@ export const AdminDoctors: React.FC = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-3.5 text-teal-700 font-semibold">
+                      <td className="px-5 py-3.5 text-teal-800 font-semibold">
                         {doc.specialty}
                       </td>
                       <td className="px-5 py-3.5 text-slate-600">
@@ -240,7 +240,7 @@ export const AdminDoctors: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setSelectedDoctor(doc)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 text-slate-700 rounded-xl text-xs font-semibold transition-all border border-slate-200 cursor-pointer shadow-2xs whitespace-nowrap"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-800 hover:border-teal-200 text-slate-700 rounded-xl text-xs font-semibold transition-all border border-slate-200 cursor-pointer shadow-2xs whitespace-nowrap"
                         >
                           <Eye className="w-3.5 h-3.5 text-slate-500" />
                           <span>View Doctor</span>
@@ -264,7 +264,7 @@ export const AdminDoctors: React.FC = () => {
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div className="flex items-center gap-2">
-                <Stethoscope className="w-5 h-5 text-teal-600" />
+                <Stethoscope className="w-5 h-5 text-teal-700" />
                 <h2 className="text-base font-bold text-slate-900">Doctor Profile & Verification</h2>
               </div>
               <button
@@ -289,12 +289,12 @@ export const AdminDoctors: React.FC = () => {
                 <div className="space-y-1 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-lg font-bold text-slate-900">{selectedDoctor.name}</h3>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200">
-                      <ShieldCheck className="w-3 h-3 text-teal-600" />
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
+                      <ShieldCheck className="w-3 h-3 text-teal-700" />
                       Licensed Specialist
                     </span>
                   </div>
-                  <p className="text-xs font-semibold text-teal-700">{selectedDoctor.specialty}</p>
+                  <p className="text-xs font-semibold text-teal-800">{selectedDoctor.specialty}</p>
                   <p className="text-xs text-slate-500 flex items-center gap-1">
                     <Building2 className="w-3.5 h-3.5 text-slate-400" />
                     <span>{selectedDoctor.hospitalName || selectedDoctor.clinicName || 'City Care Hospital'}</span>
@@ -341,7 +341,7 @@ export const AdminDoctors: React.FC = () => {
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Consultation Fee</span>
-                  <span className="font-bold text-teal-700 mt-0.5 block">AED {selectedDoctor.consultationFee || 350}</span>
+                  <span className="font-bold text-teal-800 mt-0.5 block">AED {selectedDoctor.consultationFee || 350}</span>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Location</span>
@@ -353,7 +353,7 @@ export const AdminDoctors: React.FC = () => {
               <div className="space-y-3 text-xs">
                 <div>
                   <h4 className="font-bold text-slate-800 flex items-center gap-1.5 mb-1">
-                    <GraduationCap className="w-4 h-4 text-teal-600" />
+                    <GraduationCap className="w-4 h-4 text-teal-700" />
                     <span>Education & Board Certification</span>
                   </h4>
                   <p className="text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200 leading-relaxed">
@@ -363,7 +363,7 @@ export const AdminDoctors: React.FC = () => {
 
                 <div>
                   <h4 className="font-bold text-slate-800 flex items-center gap-1.5 mb-1">
-                    <Award className="w-4 h-4 text-teal-600" />
+                    <Award className="w-4 h-4 text-teal-700" />
                     <span>About & Clinical Focus</span>
                   </h4>
                   <p className="text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200 leading-relaxed">
@@ -374,7 +374,7 @@ export const AdminDoctors: React.FC = () => {
                 {/* Available Slots Preview */}
                 <div>
                   <h4 className="font-bold text-slate-800 flex items-center gap-1.5 mb-1.5">
-                    <Clock className="w-4 h-4 text-teal-600" />
+                    <Clock className="w-4 h-4 text-teal-700" />
                     <span>Rostered Slots Preview</span>
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
@@ -402,7 +402,7 @@ export const AdminDoctors: React.FC = () => {
                 to={`/doctors/${selectedDoctor.id}`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1 cursor-pointer"
+                className="text-xs font-bold text-teal-800 hover:text-teal-900 flex items-center gap-1 cursor-pointer"
               >
                 <span>View Public Profile Page</span>
                 <ExternalLink className="w-3.5 h-3.5" />

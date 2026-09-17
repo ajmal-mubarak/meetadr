@@ -44,7 +44,7 @@ export const AdminReports: React.FC = () => {
   if (isLoading || !data) {
     return (
       <div className="py-16 text-center">
-        <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        <div className="w-8 h-8 border-3 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
         <p className="text-xs text-slate-500">{t('adminPortal.aggregatingReports')}</p>
       </div>
     );
@@ -67,7 +67,7 @@ export const AdminReports: React.FC = () => {
 
         <button
           onClick={handleDownload}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer"
+          className="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer"
         >
           <Download className="w-4 h-4" />
           <span>{t('adminPortal.exportJson')}</span>
@@ -88,7 +88,7 @@ export const AdminReports: React.FC = () => {
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             {t('adminPortal.weekly')}
           </span>
-          <div className="text-3xl font-extrabold text-blue-600 mt-2">{data.summary.weekly}</div>
+          <div className="text-3xl font-extrabold text-teal-700 mt-2">{data.summary.weekly}</div>
           <p className="text-[11px] text-slate-400 mt-1">{isArabic ? 'آخر 7 أيام' : 'Last 7 rolling days'}</p>
         </div>
 
@@ -121,11 +121,11 @@ export const AdminReports: React.FC = () => {
                 <div key={item.specialty} className="space-y-1">
                   <div className="flex justify-between text-xs font-semibold text-slate-700">
                     <span>{translateSpecialty(item.specialty)}</span>
-                    <span className="text-blue-600">{item.count} {t('hospitalPortal.bookings')}</span>
+                    <span className="text-teal-700">{item.count} {t('hospitalPortal.bookings')}</span>
                   </div>
                   <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-blue-600 rounded-full transition-all"
+                      className="h-full bg-teal-700 rounded-full transition-all"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -169,11 +169,11 @@ export const AdminReports: React.FC = () => {
                 <div key={item.name} className="p-3 rounded-xl border border-slate-100 bg-slate-50/50 space-y-1">
                   <div className="flex justify-between text-xs font-semibold text-slate-800">
                     <span>{item.name}</span>
-                    <span className="text-blue-700 font-bold">{item.count}</span>
+                    <span className="text-teal-800 font-bold">{item.count}</span>
                   </div>
                   <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-blue-600 rounded-full"
+                      className="h-full bg-teal-700 rounded-full"
                       style={{ width: `${pct}%` }}
                     />
                   </div>

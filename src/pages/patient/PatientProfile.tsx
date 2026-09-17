@@ -107,13 +107,13 @@ export const PatientProfile: React.FC = () => {
   const inputClass = (extra: string = '') =>
     `w-full py-2.5 px-3 border rounded-xl text-sm transition-all ${
       isEditing
-        ? 'bg-white text-slate-900 border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none shadow-2xs'
+        ? 'bg-white text-slate-900 border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-600/20 focus:outline-none shadow-2xs'
         : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed select-none'
     } ${extra}`;
 
   const iconInputClass = `w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2.5 border rounded-xl text-sm transition-all ${
     isEditing
-      ? 'bg-white text-slate-900 border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none shadow-2xs'
+      ? 'bg-white text-slate-900 border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-600/20 focus:outline-none shadow-2xs'
       : 'bg-slate-50 text-slate-700 border-slate-200 cursor-not-allowed select-none'
   }`;
 
@@ -132,7 +132,7 @@ export const PatientProfile: React.FC = () => {
       <form onSubmit={handleSave} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6">
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider">{t('patientProfile.personalSection')}</h3>
+            <h3 className="text-xs font-bold text-teal-700 uppercase tracking-wider">{t('patientProfile.personalSection')}</h3>
             {!isEditing && (
               <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">
                 {isArabic ? 'للقراءة فقط' : 'View Only'}
@@ -191,7 +191,7 @@ export const PatientProfile: React.FC = () => {
 
         {/* ── INSURANCE ── */}
         <div className="pt-4 border-t border-slate-100">
-          <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider mb-4">{t('patientProfile.insuranceSection')}</h3>
+          <h3 className="text-xs font-bold text-teal-700 uppercase tracking-wider mb-4">{t('patientProfile.insuranceSection')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.insuranceProvider')}</label>
@@ -218,7 +218,7 @@ export const PatientProfile: React.FC = () => {
 
         {/* ── EMERGENCY HEALTH SUMMARY ── */}
         <div className="pt-4 border-t border-slate-100">
-          <h3 className="text-xs font-bold text-teal-600 uppercase tracking-wider mb-4">{t('patientProfile.emergencySection')}</h3>
+          <h3 className="text-xs font-bold text-teal-700 uppercase tracking-wider mb-4">{t('patientProfile.emergencySection')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">{t('patientProfile.bloodGroup')}</label>
@@ -264,7 +264,7 @@ export const PatientProfile: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsEditing(true)}
-              className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
             >
               <Edit3 className="w-4 h-4" />
               <span>{t('patientProfile.editProfile')}</span>
@@ -281,7 +281,7 @@ export const PatientProfile: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
+                className="px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>{t('patientProfile.saveProfile')}</span>
@@ -296,7 +296,7 @@ export const PatientProfile: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
-              <Users className="w-4 h-4 text-teal-600" />
+              <Users className="w-4 h-4 text-teal-700" />
               <h3 className="text-sm font-bold text-slate-900">{t('patientProfile.dependentsSection')}</h3>
             </div>
             <p className="text-[11px] text-slate-500">
@@ -306,7 +306,7 @@ export const PatientProfile: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowAddDependent((v) => !v)}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             {t('patientProfile.addDependent')}
@@ -316,7 +316,7 @@ export const PatientProfile: React.FC = () => {
         {/* Add Dependent Form */}
         {showAddDependent && (
           <div className="bg-teal-50/50 border border-teal-200 rounded-2xl p-4 space-y-3">
-            <p className="text-xs font-bold text-teal-700">{t('patientProfile.newDependentTitle')}</p>
+            <p className="text-xs font-bold text-teal-800">{t('patientProfile.newDependentTitle')}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-[11px] font-semibold text-slate-600 mb-1">{t('patientProfile.fullName')} *</label>
@@ -373,7 +373,7 @@ export const PatientProfile: React.FC = () => {
               <button
                 type="button"
                 onClick={handleAddDependent}
-                className="flex-1 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-colors cursor-pointer"
+                className="flex-1 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold transition-colors cursor-pointer"
               >
                 {t('patientProfile.addMember')}
               </button>
@@ -395,7 +395,7 @@ export const PatientProfile: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-teal-200 transition-all"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-sm">
+                  <div className="w-9 h-9 rounded-full bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-sm">
                     {dep.name.charAt(0)}
                   </div>
                   <div>
@@ -409,7 +409,7 @@ export const PatientProfile: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => showToast(isArabic ? 'اختر طبيباً ثم حدد هذا التابع أثناء الحجز.' : 'Select a doctor and choose this dependent at booking.', 'info')}
-                    className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100 transition-colors cursor-pointer"
+                    className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-teal-50 text-teal-800 border border-teal-200 hover:bg-teal-100 transition-colors cursor-pointer"
                   >
                     {t('patientProfile.bookForThem')}
                   </button>

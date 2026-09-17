@@ -50,7 +50,7 @@ export const PatientLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-teal-100 selection:text-teal-900 overflow-x-clip w-full max-w-full">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-teal-100 selection:text-slate-800 overflow-x-clip w-full max-w-full">
       {/* 1. Website Navbar is ALWAYS visible */}
       <Header />
 
@@ -60,7 +60,7 @@ export const PatientLayout: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Patient identity */}
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-700 text-white flex items-center justify-center font-black text-lg shadow-sm shadow-teal-600/20 ring-4 ring-teal-50 shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-800 text-white flex items-center justify-center font-black text-lg shadow-sm shadow-teal-700/20 ring-4 ring-teal-50 shrink-0">
                 {user?.name?.charAt(0) || 'P'}
               </div>
               <div>
@@ -83,7 +83,7 @@ export const PatientLayout: React.FC = () => {
             <div className="flex items-center gap-2.5">
               <NavLink
                 to="/doctors"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs shadow-teal-600/20 cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl transition-all shadow-xs shadow-teal-700/20 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>{t('patient.bookNewDoctor')}</span>
@@ -102,11 +102,11 @@ export const PatientLayout: React.FC = () => {
                     to={tab.path}
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
                       tab.isActive
-                        ? 'bg-teal-50 text-teal-700 font-bold border border-teal-200/60 shadow-2xs'
+                        ? 'bg-[#007B8A] text-white font-bold'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 ${tab.isActive ? 'text-teal-600' : 'text-slate-400'}`} />
+                    <Icon className={`w-4 h-4 ${tab.isActive ? 'text-white' : 'text-slate-400'}`} />
                     <span>{tab.name}</span>
                   </NavLink>
                 );

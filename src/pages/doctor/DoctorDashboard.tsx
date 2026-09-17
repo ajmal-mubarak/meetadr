@@ -152,7 +152,7 @@ export const DoctorDashboard: React.FC = () => {
   // Donut chart status breakdown
   const statusPieData = useMemo(() => [
     { name: isArabic ? 'مؤكد' : 'Confirmed', value: confirmed.length || 1, color: '#0284c7' },
-    { name: isArabic ? 'مكتمل' : 'Completed', value: completed.length || 1, color: '#0d9488' },
+    { name: isArabic ? 'مكتمل' : 'Completed', value: completed.length || 1, color: '#2563EB' },
     { name: isArabic ? 'ملغى' : 'Cancelled', value: cancelled.length || 1, color: '#f43f5e' },
   ], [confirmed.length, completed.length, cancelled.length, isArabic]);
 
@@ -160,7 +160,7 @@ export const DoctorDashboard: React.FC = () => {
     <div className="space-y-6 w-full max-w-full">
 
       {/* ── Header Banner ── */}
-      <div className="bg-gradient-to-r from-sky-950 via-teal-950 to-slate-950 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-sky-950 via-slate-900 to-slate-950 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 opacity-20"
           style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, #38bdf8 0%, transparent 60%)' }} />
         <div className="relative z-10">
@@ -249,7 +249,7 @@ export const DoctorDashboard: React.FC = () => {
                 {isArabic ? 'توزيع المرضى حسب أيام الأسبوع' : 'Daily patient load across current clinical schedule'}
               </p>
             </div>
-            <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full flex items-center gap-1 w-fit">
+            <span className="text-xs font-bold text-teal-800 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full flex items-center gap-1 w-fit">
               <TrendingUp className="w-3.5 h-3.5" />
               {isArabic ? '+23% مقارنة بالأسبوع الماضي' : '+23% vs last week'}
             </span>
@@ -263,7 +263,7 @@ export const DoctorDashboard: React.FC = () => {
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey={isArabic ? 'المرضى' : 'Patients'} radius={[6, 6, 0, 0]}>
                 {weeklyLoad.map((_, i) => (
-                  <Cell key={i} fill={i === 3 ? '#0d9488' : '#38bdf8'} />
+                  <Cell key={i} fill={i === 3 ? '#2563EB' : '#38bdf8'} />
                 ))}
               </Bar>
             </BarChart>
@@ -301,7 +301,7 @@ export const DoctorDashboard: React.FC = () => {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-2xl font-black text-teal-600">{completionRate}%</span>
+                <span className="text-2xl font-black text-teal-700">{completionRate}%</span>
                 <span className="text-[10px] text-slate-400 font-bold uppercase">{isArabic ? 'إنجاز' : 'Done'}</span>
               </div>
             </div>
@@ -338,8 +338,8 @@ export const DoctorDashboard: React.FC = () => {
           <AreaChart data={monthlyTrend} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
             <defs>
               <linearGradient id="docCompletedGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#0d9488" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#0d9488" stopOpacity={0} />
+                <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -349,10 +349,10 @@ export const DoctorDashboard: React.FC = () => {
             <Area
               type="monotone"
               dataKey={isArabic ? 'مكتمل' : 'Completed'}
-              stroke="#0d9488"
+              stroke="#2563EB"
               strokeWidth={2.5}
               fill="url(#docCompletedGrad)"
-              dot={{ fill: '#0d9488', r: 3 }}
+              dot={{ fill: '#2563EB', r: 3 }}
             />
             <Area
               type="monotone"

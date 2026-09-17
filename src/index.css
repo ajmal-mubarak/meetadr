@@ -2,20 +2,18 @@
 
 @layer base {
   :root {
-    /* Modern Clinical & Hospital Color System */
-    --hospital-navy: #0B2545;
-    --hospital-navy-dark: #07172C;
-    --hospital-blue: #0284C7;
-    --hospital-blue-dark: #0369A1;
-    --hospital-blue-light: #F0F9FF;
-    --hospital-teal: #0D9488;
-    --hospital-teal-dark: #0F766E;
-    --hospital-teal-light: #F0FDFA;
-    --hospital-bg: #F8FAFC;
-    --hospital-card: #FFFFFF;
-    --hospital-border: #E2E8F0;
-    --hospital-text: #0F172A;
-    --hospital-muted: #64748B;
+    /* Pure Solid Dark Healthcare Palette — Deep Teal & Pine, Zero Shadows */
+    --hospital-navy: #081217;
+    --hospital-navy-dark: #04090C;
+    --hospital-primary: #007B8A;
+    --hospital-primary-dark: #005F6B;
+    --hospital-primary-light: #0C1A22;
+    --hospital-accent: #007B8A;
+    --hospital-bg: #081217;
+    --hospital-card: #0C1A22;
+    --hospital-border: #005F6B;
+    --hospital-text: #F1F5F9;
+    --hospital-muted: #94A3B8;
   }
 
   html, body {
@@ -24,16 +22,17 @@
   }
 
   html {
-    background-color: #F8FAFC;
-    color: #0F172A;
+    background-color: #081217;
+    color: #F1F5F9;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color-scheme: dark;
   }
   html[lang="ar"], [dir="rtl"] {
     font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Tahoma, Arial, sans-serif;
   }
   body {
-    background-color: #F8FAFC;
-    color: #0F172A;
+    background-color: #081217;
+    color: #F1F5F9;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -43,21 +42,107 @@
     overflow-x: clip;
     width: 100%;
     min-height: 100vh;
+    background-color: #081217;
   }
 }
 
-/* Custom scrollbars */
+/* Pure Dark Utilities — Zero Shadows, Solid Dark Palette */
+.palette-bar-active {
+  background-color: #007B8A !important;
+  box-shadow: none !important;
+}
+
+.palette-btn-primary {
+  background-color: #007B8A !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  border: 1px solid #005F6B !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.palette-btn-primary:hover {
+  background-color: #005F6B !important;
+  border-color: #007B8A !important;
+  box-shadow: none !important;
+}
+
+.palette-badge {
+  background-color: #0C1A22 !important;
+  border: 1px solid #1E293B !important;
+  color: #E2E8F0 !important;
+  box-shadow: none !important;
+}
+
+.palette-pill-active {
+  background-color: #007B8A !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  border: 1px solid #007B8A !important;
+  box-shadow: none !important;
+}
+
+.palette-pill-inactive {
+  background-color: #0C1A22 !important;
+  border: 1px solid #1E293B !important;
+  color: #94A3B8 !important;
+  box-shadow: none !important;
+}
+.palette-pill-inactive:hover {
+  background-color: #1E293B !important;
+  color: #FFFFFF !important;
+}
+
+/* Custom modern dark scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F8FAFC;
+  background: #081217;
 }
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #005F6B;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #007B8A;
+}
+
+/* Two-line infinite marquee animation for specialties */
+@keyframes slide-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slide-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-slide-right {
+  display: flex;
+  width: max-content;
+  animation: slide-right 30s linear infinite;
+  will-change: transform;
+}
+
+.animate-slide-left {
+  display: flex;
+  width: max-content;
+  animation: slide-left 30s linear infinite;
+  will-change: transform;
+}
+
+.animate-slide-right:hover,
+.animate-slide-left:hover {
+  animation-play-state: paused;
 }

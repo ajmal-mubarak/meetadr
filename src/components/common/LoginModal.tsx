@@ -69,7 +69,7 @@ const ROLES: RoleOption[] = [
 ];
 
 const DEMO_QUICK: { role: UserRole; label: string; accent: string }[] = [
-  { role: 'patient', label: 'Patient', accent: 'bg-teal-600 text-white hover:bg-teal-700' },
+  { role: 'patient', label: 'Patient', accent: 'bg-teal-700 text-white hover:bg-teal-800' },
   { role: 'doctor', label: 'Doctor', accent: 'bg-sky-600 text-white hover:bg-sky-700' },
   { role: 'admin', label: 'Admin', accent: 'bg-slate-800 text-white hover:bg-slate-900' },
 ];
@@ -198,7 +198,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                 {/* Header */}
                 <div className="text-center">
                   <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-                    Welcome to <span className="text-teal-700">meetAdr</span>
+                    Welcome to <span className="text-[#007B8A]">meetAdr</span>
                   </h2>
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                     Sign in to access your appointments and curated bookings
@@ -216,7 +216,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                         onClick={() => setActiveRole(r.role)}
                         className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                           activeRole === r.role
-                            ? 'bg-teal-700 text-white shadow-sm'
+                            ? 'bg-[#007B8A] text-white'
                             : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
                         }`}
                       >
@@ -259,7 +259,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1.5">
                       Mobile Number or Email
-                      <span className="text-teal-600 ml-0.5">*</span>
+                      <span className="text-rose-500 ml-0.5">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
@@ -274,7 +274,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                         value={loginInput}
                         onChange={(e) => setLoginInput(e.target.value)}
                         placeholder={activeRoleData.demoEmail}
-                        className="w-full pl-10 pr-3 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all"
+                        className="w-full pl-10 pr-3 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-400 transition-all"
                       />
                     </div>
                   </div>
@@ -286,7 +286,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                       <button
                         type="button"
                         onClick={autofillDemo}
-                        className="flex items-center gap-1 text-[11px] font-bold text-teal-600 hover:text-teal-700 cursor-pointer"
+                        className="flex items-center gap-1 text-[11px] font-bold text-slate-600 hover:text-slate-900 cursor-pointer"
                       >
                         <CheckCircle2 className="w-3 h-3" />
                         Auto-Fill Demo
@@ -299,7 +299,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder={activeRoleData.demoPassword}
-                        className="w-full pl-10 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition-all"
+                        className="w-full pl-10 pr-12 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-400 transition-all"
                       />
                       <button
                         type="button"
@@ -315,7 +315,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-3 bg-teal-700 hover:bg-teal-800 text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-teal-700/20 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer mt-1"
+                    className="w-full py-3 bg-[#007B8A] hover:bg-[#005F6B] text-white font-bold text-sm rounded-xl transition-all border border-[#005F6B] flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer mt-1"
                   >
                     {isLoading ? (
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -352,7 +352,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
                 {/* Security note */}
                 <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400 font-medium">
-                  <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
                   End-to-End Encrypted Concierge Security
                 </div>
               </div>

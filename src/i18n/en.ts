@@ -174,9 +174,9 @@ export const en = {
   },
   "home": {
     "badge": "UAE HEALTHCARE APPOINTMENT SYSTEM",
-    "trustPill": "Direct Appointments • Verified UAE Hospital Network",
-    "heroAccreditedTitle": "Book accredited hospital doctors in a single click.",
-    "heroAccreditedSubtitle": "Schedule guaranteed 30-minute consultations across top facilities including Clemenceau Medical Center (CMC Dubai), Canadian Specialist Hospital, and Medcare.",
+    "trustPill": "Accredited UAE Healthcare Network",
+    "heroAccreditedTitle": "Connect with leading doctors at premier UAE hospitals.",
+    "heroAccreditedSubtitle": "Browse verified specialists, view real-time clinic availability, and confirm your outpatient consultation in seconds — with zero booking fees.",
     "heroTitle": "Book a doctor’s appointment in a",
     "heroHighlight": "single click.",
     "heroSubtitle": "Fast, simple, and human. Guaranteed in-person medical consultations across premier hospitals & clinics in the UAE.",

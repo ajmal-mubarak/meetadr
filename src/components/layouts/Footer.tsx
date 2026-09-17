@@ -9,32 +9,32 @@ export const Footer: React.FC = () => {
   return (
     <div id="main-hospital-footer" className="overflow-x-clip w-full max-w-full">
       {/* Above-Footer Client Mission Callout */}
-      <section className="bg-slate-50 py-12 border-t border-slate-200 text-center overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2">
-          <div className="w-10 h-1 bg-teal-600 mx-auto rounded-full mb-3" />
-          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+      <section className="bg-[#0A161D] py-14 border-t border-slate-800 text-center overflow-hidden relative">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 relative z-10">
+          <div className="w-10 h-1 bg-[#007B8A] mx-auto rounded-full mb-3" />
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight">
             {t('footer.tagline')}
           </h2>
-          <p className="text-xs font-bold text-teal-700 tracking-wider">
+          <p className="text-xs font-semibold text-slate-400 tracking-widest uppercase">
             meetadr.com
           </p>
         </div>
       </section>
 
       {/* Main Dark Footer */}
-      <footer className="bg-slate-950 text-white pt-16 pb-12 border-t border-slate-800 overflow-hidden">
+      <footer className="bg-[#050C10] text-white pt-16 pb-12 border-t border-slate-800 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
             
             {/* Brand and contact info */}
             <div className="lg:col-span-2 space-y-4">
               <Link to="/" className="flex items-center gap-2.5 group">
-                <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center text-white font-bold shadow-xs">
+                <div className="w-9 h-9 rounded-xl bg-[#007B8A] border border-[#005F6B] flex items-center justify-center text-white font-bold">
                   <Stethoscope className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-2xl font-black tracking-tight text-white leading-none">
-                    meet<span className="text-teal-400">Adr</span>
+                    meet<span className="text-[#007B8A]">Adr</span>
                   </span>
                   <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400 mt-0.5">
                     {t('common.hospitalNetwork')}
@@ -48,19 +48,19 @@ export const Footer: React.FC = () => {
 
               <div className="pt-2 space-y-2.5 text-xs text-slate-300">
                 <div className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-teal-400 shrink-0" />
+                  <Mail className="w-4 h-4 text-slate-400 shrink-0" />
                   <a href="mailto:info@meetadr.com" className="hover:text-white transition-colors">
                     info@meetadr.com
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-teal-400 shrink-0" />
+                  <Phone className="w-4 h-4 text-slate-400 shrink-0" />
                   <a href="tel:+971524122794" className="hover:text-white transition-colors">
                     +971 52 412 2794
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4 text-teal-400 shrink-0" />
+                  <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
                   <span>{t('common.availableNationwide')}</span>
                 </div>
               </div>
@@ -68,13 +68,23 @@ export const Footer: React.FC = () => {
 
             {/* QUICK LINKS */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-4">
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">
                 {t('footer.quickLinks')}
               </h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
                 <li>
                   <Link to="/" className="hover:text-white transition-colors">
                     {t('navigation.home')}
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/specialties" className="hover:text-white transition-colors">
+                    Specialties & Departments
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/conditions" className="hover:text-white transition-colors">
+                    Diseases & Conditions
                   </Link>
                 </li>
                 <li>
@@ -102,7 +112,7 @@ export const Footer: React.FC = () => {
 
             {/* JOIN WITH US */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-4">
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">
                 {t('footer.joinWithUs')}
               </h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
@@ -131,7 +141,7 @@ export const Footer: React.FC = () => {
 
             {/* SUPPORT & LEGAL */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-teal-400 mb-4">
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-4">
                 {t('navigation.support')}
               </h4>
               <ul className="space-y-2.5 text-xs text-slate-300">
@@ -166,7 +176,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Bottom Bar */}
-          <div className="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+          <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
             <p>© {new Date().getFullYear()} meetAdr. {t('footer.allRightsReserved')}</p>
             <p className="flex items-center gap-1.5">
               <span>{t('footer.madeForUAE')}</span>

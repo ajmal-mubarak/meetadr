@@ -118,7 +118,7 @@ export const AdminProviders: React.FC = () => {
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-2xl font-bold text-slate-900">Providers Directory</h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200">
               {allProviders.length} Facilities
             </span>
           </div>
@@ -136,7 +136,7 @@ export const AdminProviders: React.FC = () => {
                 onClick={() => setType(t)}
                 className={`px-3 py-1.5 rounded-lg capitalize transition-all cursor-pointer ${
                   type === t
-                    ? 'bg-white text-teal-800 shadow-xs font-bold'
+                    ? 'bg-white text-teal-900 shadow-xs font-bold'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -245,8 +245,8 @@ export const AdminProviders: React.FC = () => {
                         <span
                           className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                             item.providerCategory === 'Hospital'
-                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                              : 'bg-teal-50 text-teal-700 border border-teal-200'
+                              ? 'bg-teal-50 text-teal-800 border border-teal-200'
+                              : 'bg-teal-50 text-teal-800 border border-teal-200'
                           }`}
                         >
                           {item.providerCategory}
@@ -282,7 +282,7 @@ export const AdminProviders: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setSelectedProvider(item)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 text-slate-700 rounded-xl text-xs font-semibold transition-all border border-slate-200 cursor-pointer shadow-2xs whitespace-nowrap"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-800 hover:border-teal-200 text-slate-700 rounded-xl text-xs font-semibold transition-all border border-slate-200 cursor-pointer shadow-2xs whitespace-nowrap"
                         >
                           <Eye className="w-3.5 h-3.5 text-slate-500" />
                           <span>View Facility</span>
@@ -306,7 +306,7 @@ export const AdminProviders: React.FC = () => {
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-teal-600" />
+                <Building2 className="w-5 h-5 text-teal-700" />
                 <h2 className="text-base font-bold text-slate-900">
                   {selectedProvider.providerCategory} Profile & Licensing
                 </h2>
@@ -336,8 +336,8 @@ export const AdminProviders: React.FC = () => {
                     <span
                       className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
                         selectedProvider.providerCategory === 'Hospital'
-                          ? 'bg-blue-50 text-blue-700 border-blue-200'
-                          : 'bg-teal-50 text-teal-700 border-teal-200'
+                          ? 'bg-teal-50 text-teal-800 border-teal-200'
+                          : 'bg-teal-50 text-teal-800 border-teal-200'
                       }`}
                     >
                       {selectedProvider.providerCategory}
@@ -382,7 +382,7 @@ export const AdminProviders: React.FC = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Rostered Doctors</span>
-                  <span className="font-bold text-teal-700 mt-0.5 block flex items-center gap-1">
+                  <span className="font-bold text-teal-800 mt-0.5 block flex items-center gap-1">
                     <Stethoscope className="w-3.5 h-3.5" />
                     {selectedProvider.doctorCount || selectedProvider.doctorIds.length} Specialists
                   </span>
@@ -412,7 +412,7 @@ export const AdminProviders: React.FC = () => {
               <div className="space-y-3 text-xs">
                 <div>
                   <h4 className="font-bold text-slate-800 flex items-center gap-1.5 mb-1">
-                    <Activity className="w-4 h-4 text-teal-600" />
+                    <Activity className="w-4 h-4 text-teal-700" />
                     <span>About Institutional Facility</span>
                   </h4>
                   <p className="text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200 leading-relaxed">
@@ -423,7 +423,7 @@ export const AdminProviders: React.FC = () => {
                 {/* Specialties or Departments */}
                 <div>
                   <h4 className="font-bold text-slate-800 flex items-center gap-1.5 mb-1.5">
-                    <Stethoscope className="w-4 h-4 text-teal-600" />
+                    <Stethoscope className="w-4 h-4 text-teal-700" />
                     <span>Clinical Specialties & Departments</span>
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
@@ -431,13 +431,13 @@ export const AdminProviders: React.FC = () => {
                       selectedProvider.specialties.map((s) => (
                         <span
                           key={s}
-                          className="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-700 text-[11px] font-semibold border border-teal-200"
+                          className="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-800 text-[11px] font-semibold border border-teal-200"
                         >
                           {s}
                         </span>
                       ))
                     ) : 'specialty' in selectedProvider ? (
-                      <span className="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-700 text-[11px] font-semibold border border-teal-200">
+                      <span className="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-800 text-[11px] font-semibold border border-teal-200">
                         {selectedProvider.specialty}
                       </span>
                     ) : null}
@@ -465,7 +465,7 @@ export const AdminProviders: React.FC = () => {
                 }
                 target="_blank"
                 rel="noreferrer"
-                className="text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1 cursor-pointer"
+                className="text-xs font-bold text-teal-800 hover:text-teal-900 flex items-center gap-1 cursor-pointer"
               >
                 <span>View Public Page</span>
                 <ExternalLink className="w-3.5 h-3.5" />

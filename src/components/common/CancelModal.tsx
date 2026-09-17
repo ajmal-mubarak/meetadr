@@ -111,8 +111,8 @@ export const CancelModal: React.FC<CancelModalProps> = ({
                   key={opt.value}
                   className={`flex items-center gap-3 p-3 rounded-xl border text-sm font-medium cursor-pointer transition-all ${
                     reason === opt.value
-                      ? 'border-teal-600 bg-teal-50/50 text-teal-950'
-                      : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                      ? 'border-[#007B8A] bg-[#0C1A22] text-white'
+                      : 'border-slate-700 hover:bg-slate-800/60 text-slate-300'
                   }`}
                 >
                   <input
@@ -121,7 +121,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
                     value={opt.value}
                     checked={reason === opt.value}
                     onChange={(e) => setReason(e.target.value)}
-                    className="w-4 h-4 text-teal-600 border-slate-300 focus:ring-teal-500"
+                    className="w-4 h-4 text-[#007B8A] border-slate-700 focus:ring-slate-600"
                   />
                   <span>{opt.label}</span>
                 </label>
@@ -131,7 +131,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
 
           {reason === 'Others' && (
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
                 {t('appointment.pleaseSpecify')} <span className="text-rose-500">*</span>
               </label>
               <textarea
@@ -139,7 +139,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
                 value={otherNote}
                 onChange={(e) => setOtherNote(e.target.value)}
                 placeholder={t('appointment.pleaseSpecify')}
-                className="w-full rounded-xl border border-slate-200 p-3 text-sm focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600 resize-none"
+                className="w-full rounded-xl border border-slate-700 bg-[#0C1A22] text-slate-200 p-3 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500 resize-none"
               />
             </div>
           )}

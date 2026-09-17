@@ -97,7 +97,7 @@ export const HospitalDoctors: React.FC = () => {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 shrink-0"
+          className="px-4 py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Doctor</span>
@@ -120,12 +120,12 @@ export const HospitalDoctors: React.FC = () => {
                   referrerPolicy="no-referrer"
                 />
                 <div className="min-w-0 flex-1">
-                  <span className="text-xs font-semibold text-blue-600 block">
+                  <span className="text-xs font-semibold text-teal-700 block">
                     {doc.specialty}
                   </span>
                   <h3 className="text-base font-bold text-slate-900 truncate">{doc.name}</h3>
                   <div className="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
-                    <Award className="w-3.5 h-3.5 text-blue-600" />
+                    <Award className="w-3.5 h-3.5 text-teal-700" />
                     <span>{doc.experience} exp.</span>
                   </div>
                   <div className="flex items-center gap-1 text-xs font-bold text-slate-800 mt-1">
@@ -142,7 +142,7 @@ export const HospitalDoctors: React.FC = () => {
 
             <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
               <span>{doc.availableDays.length} Active Days</span>
-              <span className="font-semibold text-blue-600">{doc.availableSlots.length} Slots/Day</span>
+              <span className="font-semibold text-teal-700">{doc.availableSlots.length} Slots/Day</span>
             </div>
           </div>
         ))}
@@ -179,7 +179,7 @@ export const HospitalDoctors: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Dr. Hessa Al-Ketbi"
-                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-blue-600 focus:outline-none"
+                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-600 focus:outline-none"
                   />
                 </div>
 
@@ -190,7 +190,7 @@ export const HospitalDoctors: React.FC = () => {
                   <select
                     value={specialty}
                     onChange={(e) => setSpecialty(e.target.value)}
-                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-blue-600 focus:outline-none"
+                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-600 focus:outline-none"
                   >
                     {SPECIALTIES.map((s) => (
                       <option key={s} value={s}>
@@ -209,7 +209,7 @@ export const HospitalDoctors: React.FC = () => {
                     value={experience}
                     onChange={(e) => setExperience(e.target.value)}
                     placeholder="e.g. 10 years"
-                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-blue-600 focus:outline-none"
+                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-600 focus:outline-none"
                   />
                 </div>
 
@@ -221,7 +221,7 @@ export const HospitalDoctors: React.FC = () => {
                     type="text"
                     value={education}
                     onChange={(e) => setEducation(e.target.value)}
-                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-blue-600 focus:outline-none"
+                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-600 focus:outline-none"
                   />
                 </div>
 
@@ -233,7 +233,7 @@ export const HospitalDoctors: React.FC = () => {
                     type="text"
                     value={photo}
                     onChange={(e) => setPhoto(e.target.value)}
-                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-blue-600 focus:outline-none font-mono text-xs"
+                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-600 focus:outline-none font-mono text-xs"
                   />
                 </div>
 
@@ -246,7 +246,7 @@ export const HospitalDoctors: React.FC = () => {
                     value={about}
                     onChange={(e) => setAbout(e.target.value)}
                     placeholder="Brief background and clinical focus..."
-                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-blue-600 focus:outline-none resize-none"
+                    className="w-full p-2.5 border border-slate-200 rounded-xl text-sm focus:border-teal-600 focus:outline-none resize-none"
                   />
                 </div>
               </div>
@@ -261,7 +261,7 @@ export const HospitalDoctors: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+                  className="px-5 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
                 >
                   Save Doctor
                 </button>

@@ -76,7 +76,7 @@ export const DoctorSchedule: React.FC = () => {
         </div>
         <button
           onClick={handleSave}
-          className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2"
+          className="px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2"
         >
           <Save className="w-4 h-4" />
           <span>Save Changes</span>
@@ -85,7 +85,7 @@ export const DoctorSchedule: React.FC = () => {
 
       {/* Days configuration */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-xs text-blue-600">
+        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-xs text-teal-700">
           Practicing Days
         </h3>
         <p className="text-xs text-slate-500">
@@ -102,7 +102,7 @@ export const DoctorSchedule: React.FC = () => {
                 onClick={() => toggleDay(day)}
                 className={`p-3 rounded-xl border text-center text-xs font-semibold transition-all ${
                   isActive
-                    ? 'border-blue-600 bg-blue-50 text-blue-800'
+                    ? 'border-teal-600 bg-teal-50 text-teal-900'
                     : 'border-slate-200 text-slate-400 hover:bg-slate-50'
                 }`}
               >
@@ -118,7 +118,7 @@ export const DoctorSchedule: React.FC = () => {
 
       {/* 30-min Slots configuration */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-xs text-blue-600">
+        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider text-xs text-teal-700">
           Standard 30-Minute Consultation Slots
         </h3>
         <p className="text-xs text-slate-500">
@@ -135,12 +135,12 @@ export const DoctorSchedule: React.FC = () => {
                 onClick={() => toggleSlot(slot)}
                 className={`py-2 px-3 rounded-xl border text-xs font-mono font-medium transition-all flex items-center justify-between ${
                   isSelected
-                    ? 'border-blue-600 bg-blue-50 text-blue-900'
+                    ? 'border-teal-600 bg-teal-50 text-teal-900'
                     : 'border-slate-200 text-slate-400 hover:bg-slate-50'
                 }`}
               >
                 <span>{slot}</span>
-                {isSelected && <Check className="w-3.5 h-3.5 text-blue-600" />}
+                {isSelected && <Check className="w-3.5 h-3.5 text-teal-700" />}
               </button>
             );
           })}

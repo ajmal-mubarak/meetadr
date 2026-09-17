@@ -210,7 +210,7 @@ export const HospitalDashboard: React.FC = () => {
 
   // Status breakdown Donut
   const statusBreakdownData = useMemo(() => [
-    { name: isArabic ? 'مؤكد' : 'Confirmed', value: confirmedCount || 1, color: '#0d9488' },
+    { name: isArabic ? 'مؤكد' : 'Confirmed', value: confirmedCount || 1, color: '#2563EB' },
     { name: isArabic ? 'قيد الانتظار' : 'Pending', value: pendingCount || 1, color: '#f59e0b' },
     { name: isArabic ? 'مكتمل' : 'Completed', value: completedCount || 1, color: '#0284c7' },
     { name: isArabic ? 'ملغى' : 'Cancelled', value: cancelledCount || 1, color: '#f43f5e' },
@@ -270,8 +270,8 @@ export const HospitalDashboard: React.FC = () => {
       {/* ========================================================================= */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-xs font-bold text-teal-800 mb-1.5">
-            <Building2 className="w-3.5 h-3.5 text-teal-600" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-xs font-bold text-teal-900 mb-1.5">
+            <Building2 className="w-3.5 h-3.5 text-teal-700" />
             <span>{t('hospitalPortal.dashboardTitle')}</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900">
@@ -295,7 +295,7 @@ export const HospitalDashboard: React.FC = () => {
               <span className="font-mono text-slate-600 tracking-wider text-[11px] sm:text-xs">{hospitalPassword}</span>
             </div>
             <div className="hidden sm:block w-px h-6 bg-slate-200" />
-            <span className="px-2 py-0.5 rounded-md bg-teal-100 text-teal-800 font-bold text-[10px] shrink-0">
+            <span className="px-2 py-0.5 rounded-md bg-teal-100 text-teal-900 font-bold text-[10px] shrink-0">
               {t('hospitalPortal.activeSession')}
             </span>
           </div>
@@ -324,7 +324,7 @@ export const HospitalDashboard: React.FC = () => {
           onClick={() => setActiveTab('appointments')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'appointments'
-              ? 'bg-teal-600 text-white shadow-xs'
+              ? 'bg-teal-700 text-white shadow-xs'
               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
           }`}
         >
@@ -342,7 +342,7 @@ export const HospitalDashboard: React.FC = () => {
           onClick={() => setActiveTab('doctors')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'doctors'
-              ? 'bg-teal-600 text-white shadow-xs'
+              ? 'bg-teal-700 text-white shadow-xs'
               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
           }`}
         >
@@ -360,7 +360,7 @@ export const HospitalDashboard: React.FC = () => {
           onClick={() => setActiveTab('patients')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'patients'
-              ? 'bg-teal-600 text-white shadow-xs'
+              ? 'bg-teal-700 text-white shadow-xs'
               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
           }`}
         >
@@ -378,7 +378,7 @@ export const HospitalDashboard: React.FC = () => {
           onClick={() => setActiveTab('reports')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'reports'
-              ? 'bg-teal-600 text-white shadow-xs'
+              ? 'bg-teal-700 text-white shadow-xs'
               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
           }`}
         >
@@ -414,7 +414,7 @@ export const HospitalDashboard: React.FC = () => {
                 onClick={() => setAppointmentDateFilter('today')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   appointmentDateFilter === 'today'
-                    ? 'bg-teal-600 text-white shadow-2xs'
+                    ? 'bg-teal-700 text-white shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -426,7 +426,7 @@ export const HospitalDashboard: React.FC = () => {
                 onClick={() => setAppointmentDateFilter('tomorrow')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   appointmentDateFilter === 'tomorrow'
-                    ? 'bg-teal-600 text-white shadow-2xs'
+                    ? 'bg-teal-700 text-white shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -443,7 +443,7 @@ export const HospitalDashboard: React.FC = () => {
                   }}
                   className={`text-xs font-bold px-2 py-1 rounded-lg border transition-all cursor-pointer ${
                     appointmentDateFilter === 'custom'
-                      ? 'bg-teal-600 text-white border-teal-600'
+                      ? 'bg-teal-700 text-white border-teal-600'
                       : 'bg-white text-slate-700 border-slate-200'
                   }`}
                 />
@@ -478,7 +478,7 @@ export const HospitalDashboard: React.FC = () => {
                       <tr key={appt.id} className="hover:bg-slate-50 transition-colors">
                         {/* Time slot */}
                         <td className="py-3.5 px-4">
-                          <span className="font-mono font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
+                          <span className="font-mono font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
                             {appt.timeSlot}
                           </span>
                         </td>
@@ -506,11 +506,11 @@ export const HospitalDashboard: React.FC = () => {
                             onClick={() => toggleReachedOut(appt.id, appt.patientPhone)}
                             className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-colors flex items-center gap-1.5 cursor-pointer ${
                               isReachedOut
-                                ? 'bg-teal-50 text-teal-800 border-teal-300'
+                                ? 'bg-teal-50 text-teal-900 border-teal-300'
                                 : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                             }`}
                           >
-                            <Phone className="w-3 h-3 text-teal-600" />
+                            <Phone className="w-3 h-3 text-teal-700" />
                             <span dir="ltr">{isReachedOut ? t('hospitalPortal.contacted') : appt.patientPhone}</span>
                           </button>
                         </td>
@@ -520,7 +520,7 @@ export const HospitalDashboard: React.FC = () => {
                           {appt.status === 'pending' && (
                             <button
                               onClick={() => handleMarkConfirmed(appt.id)}
-                              className="px-2.5 py-1 bg-teal-600 text-white rounded-md text-[11px] font-bold hover:bg-teal-700 cursor-pointer"
+                              className="px-2.5 py-1 bg-teal-700 text-white rounded-md text-[11px] font-bold hover:bg-teal-800 cursor-pointer"
                             >
                               {t('hospitalPortal.confirmBtn')}
                             </button>
@@ -583,10 +583,10 @@ export const HospitalDashboard: React.FC = () => {
                     />
                     <div className="flex-1 truncate">
                       <h3 className="text-sm font-bold text-slate-900 truncate">{doc.name}</h3>
-                      <p className="text-xs font-semibold text-teal-700">{translateSpecialty(doc.specialty)}</p>
+                      <p className="text-xs font-semibold text-teal-800">{translateSpecialty(doc.specialty)}</p>
                       <span className="text-[11px] text-slate-500">{doc.experience} • {doc.rating} ★</span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-teal-100 text-teal-800 shrink-0">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-teal-100 text-teal-900 shrink-0">
                       {isArabic ? `${docAppts.length} حجوزات` : `${docAppts.length} Bookings`}
                     </span>
                   </div>
@@ -606,7 +606,7 @@ export const HospitalDashboard: React.FC = () => {
                             <span className="text-[11px] text-slate-500" dir="ltr">{a.date} • {a.patientPhone}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
+                            <span className="font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
                               {a.timeSlot}
                             </span>
                             <StatusBadge status={a.status} />
@@ -655,7 +655,7 @@ export const HospitalDashboard: React.FC = () => {
                       {pt.patientName}
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="font-mono font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
+                      <span className="font-mono font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
                         {pt.lastTime}
                       </span>
                     </td>
@@ -665,7 +665,7 @@ export const HospitalDashboard: React.FC = () => {
                     <td className="py-3.5 px-4 font-semibold text-slate-800">
                       {pt.doctorName}
                     </td>
-                    <td className="py-3.5 px-4 text-teal-700 font-medium" dir="ltr">
+                    <td className="py-3.5 px-4 text-teal-800 font-medium" dir="ltr">
                       {pt.patientPhone}
                     </td>
                     <td className="py-3.5 px-4 text-slate-500" dir="ltr">
@@ -709,7 +709,7 @@ export const HospitalDashboard: React.FC = () => {
                   onClick={() => setReportCriteria(crit.id)}
                   className={`px-4 py-1.5 rounded-lg text-xs font-bold capitalize transition-all cursor-pointer ${
                     reportCriteria === crit.id
-                      ? 'bg-teal-600 text-white shadow-2xs'
+                      ? 'bg-teal-700 text-white shadow-2xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
@@ -724,12 +724,12 @@ export const HospitalDashboard: React.FC = () => {
             <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5">
               <span className="text-[11px] font-bold uppercase text-slate-400 block">{t('hospitalPortal.totalAppointments')}</span>
               <span className="text-3xl font-black text-slate-900 mt-1 block">{appointments.length}</span>
-              <span className="text-[10px] text-teal-700 font-bold mt-1 block">{t('hospitalPortal.inPersonPercent')}</span>
+              <span className="text-[10px] text-teal-800 font-bold mt-1 block">{t('hospitalPortal.inPersonPercent')}</span>
             </div>
 
             <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5">
-              <span className="text-[11px] font-bold uppercase text-teal-700 block">{t('hospitalPortal.confirmed')}</span>
-              <span className="text-3xl font-black text-teal-700 mt-1 block">{confirmedCount}</span>
+              <span className="text-[11px] font-bold uppercase text-teal-800 block">{t('hospitalPortal.confirmed')}</span>
+              <span className="text-3xl font-black text-teal-800 mt-1 block">{confirmedCount}</span>
               <span className="text-[10px] text-slate-500 mt-1 block">{t('hospitalPortal.patientVerified')}</span>
             </div>
 
@@ -747,10 +747,10 @@ export const HospitalDashboard: React.FC = () => {
           </div>
 
           {/* ── Visual Analytics & Reports Section ── */}
-          <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 space-y-8">
+          <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 text-xs font-bold mb-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-600/20 border border-teal-400/30 text-teal-300 text-xs font-bold mb-2">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>{t('hospitalPortal.mvpSlotActive')}</span>
                 </div>
@@ -775,7 +775,7 @@ export const HospitalDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => showToast(isArabic ? 'جاري إنشاء تقرير المستشفى الرسمي بصيغة PDF...' : 'Generating official PDF hospital report...', 'info')}
-                  className="px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                  className="px-4 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5" />
                   <span>{t('hospitalPortal.generateReport')}</span>
@@ -798,7 +798,7 @@ export const HospitalDashboard: React.FC = () => {
                       : (isArabic ? 'معدل الحجوزات الأسبوعي لهذا الشهر' : 'Weekly volume distribution across current month')}
                   </p>
                 </div>
-                <span className="text-xs font-bold text-teal-300 bg-teal-500/20 border border-teal-400/30 px-3 py-1 rounded-full w-fit">
+                <span className="text-xs font-bold text-teal-300 bg-teal-600/20 border border-teal-400/30 px-3 py-1 rounded-full w-fit">
                   {reportCriteria === 'date' ? (isArabic ? 'عرض يومي' : 'Daily View') : reportCriteria === 'week' ? (isArabic ? 'عرض أسبوعي' : 'Weekly View') : (isArabic ? 'عرض شهري' : 'Monthly View')}
                 </span>
               </div>

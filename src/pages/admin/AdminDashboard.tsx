@@ -31,7 +31,7 @@ const BASE_TREND = [
 ];
 
 const SPECIALTY_COLORS: Record<string, string> = {
-  Cardiology: '#0d9488',
+  Cardiology: '#2563EB',
   Dermatology: '#6366f1',
   Orthopedics: '#f59e0b',
   Pediatrics: '#10b981',
@@ -123,7 +123,7 @@ export const AdminDashboard: React.FC = () => {
   const specialtyChartData = useMemo(() => {
     if (!analytics?.bySpecialty?.length) {
       return [
-        { name: 'Cardiology', value: 35, color: '#0d9488' },
+        { name: 'Cardiology', value: 35, color: '#2563EB' },
         { name: 'Dermatology', value: 25, color: '#6366f1' },
         { name: 'Orthopedics', value: 20, color: '#f59e0b' },
         { name: 'Pediatrics', value: 12, color: '#10b981' },
@@ -134,7 +134,7 @@ export const AdminDashboard: React.FC = () => {
       name: item.specialty,
       translatedName: translateSpecialty(item.specialty),
       value: item.count,
-      color: SPECIALTY_COLORS[item.specialty] || '#0d9488',
+      color: SPECIALTY_COLORS[item.specialty] || '#2563EB',
     }));
   }, [analytics, translateSpecialty]);
 
@@ -163,11 +163,11 @@ export const AdminDashboard: React.FC = () => {
     <div className="space-y-6 w-full max-w-full">
 
       {/* ── Header Banner ── */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-950 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
         <div className="absolute inset-0 opacity-15"
           style={{ backgroundImage: 'radial-gradient(circle at 80% 50%, #14b8a6 0%, transparent 60%)' }} />
         <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 text-xs font-bold mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-600/20 border border-teal-400/30 text-teal-300 text-xs font-bold mb-2">
             <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
             <span>{t('adminPortal.systemAdmin')}</span>
           </div>
@@ -178,7 +178,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="relative z-10 flex flex-wrap items-center gap-2.5">
           <Link
             to="/admin/reports"
-            className="px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-900 font-bold rounded-xl text-xs shadow-sm transition-all flex items-center gap-2"
+            className="px-4 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl text-xs shadow-sm transition-all flex items-center gap-2"
           >
             <FileBarChart className="w-4 h-4" />
             <span>{t('adminPortal.operationalReports')}</span>
@@ -205,7 +205,7 @@ export const AdminDashboard: React.FC = () => {
           value={stats?.totalDoctors ?? '—'}
           sub={t('adminPortal.verifiedActive')}
           icon={Stethoscope}
-          color="text-teal-600"
+          color="text-teal-700"
           bg="bg-teal-50"
           trend="+12%"
         />
@@ -269,8 +269,8 @@ export const AdminDashboard: React.FC = () => {
             <AreaChart data={trendData} margin={{ top: 10, right: 10, bottom: 0, left: -15 }}>
               <defs>
                 <linearGradient id="adminBookingGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0d9488" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#0d9488" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="adminConsultGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
@@ -285,10 +285,10 @@ export const AdminDashboard: React.FC = () => {
               <Area
                 type="monotone"
                 dataKey={isArabic ? 'الحجوزات' : 'Bookings'}
-                stroke="#0d9488"
+                stroke="#2563EB"
                 strokeWidth={3}
                 fill="url(#adminBookingGrad)"
-                dot={{ fill: '#0d9488', r: 3 }}
+                dot={{ fill: '#2563EB', r: 3 }}
                 activeDot={{ r: 6 }}
               />
               <Area
@@ -371,7 +371,7 @@ export const AdminDashboard: React.FC = () => {
                 <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="doctors" name={isArabic ? 'أطباء' : 'Doctors'} fill="#0d9488" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="doctors" name={isArabic ? 'أطباء' : 'Doctors'} fill="#2563EB" radius={[3, 3, 0, 0]} />
                 <Bar dataKey="hospitals" name={isArabic ? 'مستشفيات' : 'Hospitals'} fill="#6366f1" radius={[3, 3, 0, 0]} />
                 <Bar dataKey="clinics" name={isArabic ? 'عيادات' : 'Clinics'} fill="#f59e0b" radius={[3, 3, 0, 0]} />
               </BarChart>
@@ -380,7 +380,7 @@ export const AdminDashboard: React.FC = () => {
 
           <div className="flex gap-4 mt-3 text-xs font-semibold justify-center pt-3 border-t border-slate-100">
             {[
-              [isArabic ? 'الأطباء' : 'Doctors', '#0d9488'],
+              [isArabic ? 'الأطباء' : 'Doctors', '#2563EB'],
               [isArabic ? 'المستشفيات' : 'Hospitals', '#6366f1'],
               [isArabic ? 'العيادات' : 'Clinics', '#f59e0b'],
             ].map(([label, color]) => (
@@ -402,7 +402,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <Link
                 to="/admin/bookings"
-                className="text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-1 transition-colors"
+                className="text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1 transition-colors"
               >
                 <span>{t('adminPortal.viewAll')}</span>
                 <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -424,7 +424,7 @@ export const AdminDashboard: React.FC = () => {
                     <tr key={appt.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-teal-100 text-teal-900 flex items-center justify-center font-bold text-xs shrink-0">
                             {appt.patientName.charAt(0)}
                           </div>
                           <div>
@@ -480,7 +480,7 @@ export const AdminDashboard: React.FC = () => {
                   <span className="text-[11px] font-mono text-slate-600" dir="ltr">{req.contactNumber}</span>
                   <Link
                     to="/admin/requests"
-                    className="text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                    className="text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1"
                   >
                     <span>{t('adminPortal.manageApplications')}</span>
                     <ArrowRight className="w-3 h-3 rtl:rotate-180" />

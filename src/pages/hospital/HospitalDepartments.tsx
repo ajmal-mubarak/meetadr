@@ -61,7 +61,7 @@ export const HospitalDepartments: React.FC = () => {
             value={newDepName}
             onChange={(e) => setNewDepName(e.target.value)}
             placeholder="e.g. Ophthalmology & Eye Surgery"
-            className="w-full p-2 text-xs border border-slate-200 rounded-xl focus:border-blue-600 focus:outline-none"
+            className="w-full p-2 text-xs border border-slate-200 rounded-xl focus:border-teal-600 focus:outline-none"
           />
         </div>
 
@@ -72,14 +72,14 @@ export const HospitalDepartments: React.FC = () => {
             value={newDepHead}
             onChange={(e) => setNewDepHead(e.target.value)}
             placeholder="e.g. Dr. Hessa Al-Ketbi"
-            className="w-full p-2 text-xs border border-slate-200 rounded-xl focus:border-blue-600 focus:outline-none"
+            className="w-full p-2 text-xs border border-slate-200 rounded-xl focus:border-teal-600 focus:outline-none"
           />
         </div>
 
         <div className="sm:col-span-2">
           <button
             type="submit"
-            className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1"
+            className="w-full py-2 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Dept</span>

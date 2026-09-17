@@ -21,8 +21,8 @@ export const DemoBanner: React.FC = () => {
     <aside aria-label="Demo environment notification" className="bg-slate-900 text-slate-200 text-xs py-2 px-4 border-b border-slate-800">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 bg-blue-500/20 text-blue-300 font-semibold px-2 py-0.5 rounded-full border border-blue-400/30 text-[11px]">
-            <Sparkles className="w-3 h-3 text-blue-400" />
+          <span className="inline-flex items-center gap-1.5 bg-[#081217] text-slate-200 font-semibold px-2 py-0.5 rounded-full border border-slate-800 text-[11px]">
+            <Sparkles className="w-3 h-3 text-slate-400" />
             Demo Mode
           </span>
           <span className="text-slate-300">
