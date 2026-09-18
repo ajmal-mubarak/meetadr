@@ -9,12 +9,13 @@ import {
   Stethoscope,
   Filter,
   ArrowRight,
+  ChevronDown,
 } from 'lucide-react';
 import { doctorService } from '../../services/doctorService';
 import { hospitalService } from '../../services/hospitalService';
 import { clinicService } from '../../services/clinicService';
 import { Doctor, Hospital, Clinic } from '../../types';
-import { SPECIALTIES, LOCATIONS } from '../../data/mockSpecialties';
+import { SPECIALTIES, LOCATIONS, matchesLocation } from '../../data/mockSpecialties';
 import { useTranslation } from '../../i18n';
 
 export const SearchPage: React.FC = () => {
@@ -78,7 +79,7 @@ export const SearchPage: React.FC = () => {
       if (!match) return false;
     }
     if (specialty !== 'All' && d.specialty.toLowerCase() !== specialty.toLowerCase()) return false;
-    if (location !== 'All' && !d.location.toLowerCase().includes(location.toLowerCase())) return false;
+    if (!matchesLocation(d.location, location)) return false;
     return true;
   });
 
@@ -98,8 +99,7 @@ export const SearchPage: React.FC = () => {
       !h.specialties.some((s) => s.toLowerCase() === specialty.toLowerCase())
     )
       return false;
-    if (location !== 'All' && !h.location.toLowerCase().includes(location.toLowerCase()))
-      return false;
+    if (!matchesLocation(h.location, location)) return false;
     return true;
   });
 
@@ -115,8 +115,7 @@ export const SearchPage: React.FC = () => {
       if (!match) return false;
     }
     if (specialty !== 'All' && c.specialty.toLowerCase() !== specialty.toLowerCase()) return false;
-    if (location !== 'All' && !c.location.toLowerCase().includes(location.toLowerCase()))
-      return false;
+    if (!matchesLocation(c.location, location)) return false;
     return true;
   });
 
@@ -182,18 +181,22 @@ export const SearchPage: React.FC = () => {
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   {t('search.location')}
                 </label>
-                <select
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full py-2.5 px-3 border border-[#E2EBF0] rounded-xl text-xs sm:text-sm text-slate-800 focus:border-[#2DA7B5] focus:outline-hidden bg-[#F8FAFC] focus:bg-white transition-all cursor-pointer font-medium"
-                >
-                  <option value="All">{t('hospitals.allLocations')}</option>
-                  {LOCATIONS.map((loc) => (
-                    <option key={loc} value={loc}>
-                      {translateLocation(loc.split('-')[0].trim())}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <MapPin className="w-4 h-4 text-[#0D5C54] absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <select
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full pl-10 rtl:pl-4 rtl:pr-10 pr-9 py-2.5 px-3 border border-[#CBD5E1] hover:border-[#0D5C54] focus:border-[#0D5C54] rounded-2xl text-xs sm:text-sm text-slate-800 focus:outline-hidden bg-[#F8FAFC] focus:bg-white transition-all cursor-pointer font-semibold appearance-none shadow-2xs"
+                  >
+                    <option value="All">{t('hospitals.allLocations')}</option>
+                    {LOCATIONS.map((loc) => (
+                      <option key={loc} value={loc}>
+                        {translateLocation(loc)}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-700 absolute right-3.5 rtl:right-auto rtl:left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
               </div>
 
               <div className="sm:col-span-2 md:col-span-2 flex items-end">
@@ -278,23 +281,27 @@ export const SearchPage: React.FC = () => {
                       className="bg-white rounded-2xl sm:rounded-3xl border border-[#E2EBF0] hover:border-[#2DA7B5] hover:shadow-md p-4 sm:p-5 transition-all flex flex-col justify-between group shadow-xs"
                     >
                       <div className="flex items-start gap-3.5 sm:gap-4">
-                        <img
-                          src={doc.photo}
-                          alt={doc.name}
-                          onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).src =
-                              'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&auto=format&fit=crop&q=80';
-                          }}
-                          className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl object-cover bg-slate-100 shrink-0 border border-[#E2EBF0] group-hover:scale-105 transition-transform"
-                          referrerPolicy="no-referrer"
-                        />
+                        <Link to={`/doctors/${doc.id}`} className="shrink-0 cursor-pointer">
+                          <img
+                            src={doc.photo}
+                            alt={doc.name}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src =
+                                'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&auto=format&fit=crop&q=80';
+                            }}
+                            className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl object-cover bg-slate-100 border border-[#E2EBF0] group-hover:scale-105 transition-transform"
+                            referrerPolicy="no-referrer"
+                          />
+                        </Link>
                         <div className="min-w-0 flex-1">
                           <span className="text-[11px] sm:text-xs font-semibold text-[#0E7490] block mb-0.5 truncate">
                             {translateSpecialty(doc.specialty)}
                           </span>
-                          <h4 className="text-sm sm:text-base font-bold text-slate-900 leading-snug truncate group-hover:text-[#2DA7B5] transition-colors">
-                            {doc.name}
-                          </h4>
+                          <Link to={`/doctors/${doc.id}`} className="block">
+                            <h4 className="text-sm sm:text-base font-bold text-slate-900 leading-snug truncate group-hover:text-[#2DA7B5] transition-colors">
+                              {doc.name}
+                            </h4>
+                          </Link>
                           <p className="text-xs text-slate-600 truncate mt-0.5">
                             {doc.hospitalName || doc.clinicName || 'City Care Hospital'}
                           </p>
@@ -314,9 +321,9 @@ export const SearchPage: React.FC = () => {
                         <div className="flex items-center gap-1.5 sm:gap-2">
                           <Link
                             to={`/doctors/${doc.id}`}
-                            className="px-2.5 sm:px-3 py-1.5 font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl border border-[#E2EBF0] transition-colors cursor-pointer text-xs"
+                            className="px-2.5 sm:px-3 py-1.5 font-bold text-slate-700 hover:text-[#0E7490] hover:bg-[#E8F6F8] hover:border-[#2DA7B5] rounded-xl border border-[#CBD5E1] transition-all cursor-pointer text-xs shadow-2xs"
                           >
-                            {t('search.details')}
+                            {t('doctors.viewProfile')}
                           </Link>
                           <Link
                             to={`/book/doctor/${doc.id}`}

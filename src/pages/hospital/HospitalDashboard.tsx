@@ -80,7 +80,7 @@ export const HospitalDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   // Quick hospital credentials display state
-  const [hospitalEmail] = useState('administration@cmc-dubai.ae');
+  const [hospitalEmail] = useState('administration@ahdubai.com');
   const [hospitalPassword] = useState('••••••••••••');
 
   const loadData = async () => {
@@ -108,7 +108,7 @@ export const HospitalDashboard: React.FC = () => {
         cancellingAppt.id,
         reason,
         'hospital',
-        user?.name || (isArabic ? 'إدارة مستشفى كليمنصو' : 'CMC Hospital Administration')
+        user?.name || (isArabic ? 'إدارة المستشفى الأمريكي' : 'American Hospital Administration')
       );
       showToast(isArabic ? 'تم إلغاء الموعد.' : 'Appointment marked cancelled.', 'info');
       setCancellingAppt(null);

@@ -14,10 +14,12 @@ import {
   Sparkles,
   Filter,
   X,
+  ChevronDown,
+  User,
 } from 'lucide-react';
 import { doctorService } from '../../services/doctorService';
 import { Doctor } from '../../types';
-import { SPECIALTIES, LOCATIONS } from '../../data/mockSpecialties';
+import { SPECIALTIES, LOCATIONS, matchesLocation } from '../../data/mockSpecialties';
 import { useTranslation } from '../../i18n';
 
 export const DoctorList: React.FC = () => {
@@ -58,7 +60,7 @@ export const DoctorList: React.FC = () => {
       if (specialty !== 'All' && !doc.specialty.toLowerCase().includes(specialty.toLowerCase())) {
         return false;
       }
-      if (location !== 'All' && !doc.location.toLowerCase().includes(location.toLowerCase())) {
+      if (!matchesLocation(doc.location, location)) {
         return false;
       }
       if (search.trim()) {
@@ -133,19 +135,21 @@ export const DoctorList: React.FC = () => {
             </div>
 
             {/* Location Selector */}
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-3 relative">
+              <MapPin className="w-4 h-4 text-[#0D5C54] absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <select
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full py-2.5 px-3 text-xs font-bold border border-[#E2EBF0] rounded-xl text-slate-800 focus:outline-hidden focus:border-[#2DA7B5] bg-[#F8FAFC] focus:bg-white transition-colors cursor-pointer"
+                className="w-full pl-10 rtl:pl-4 rtl:pr-10 pr-9 py-2.5 px-3 text-xs font-semibold border border-[#CBD5E1] hover:border-[#0D5C54] focus:border-[#0D5C54] rounded-2xl text-slate-800 focus:outline-hidden bg-[#F8FAFC] focus:bg-white transition-all cursor-pointer appearance-none shadow-2xs"
               >
                 <option value="All">{t('doctors.allLocations')}</option>
                 {LOCATIONS.map((l) => (
-                  <option key={l} value={l.split('-')[0].trim()}>
+                  <option key={l} value={l}>
                     {translateLocation(l)}
                   </option>
                 ))}
               </select>
+              <ChevronDown className="w-4 h-4 text-slate-700 absolute right-3.5 rtl:right-auto rtl:left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
 
@@ -232,7 +236,7 @@ export const DoctorList: React.FC = () => {
               >
                 <div>
                   {/* Photo & Rating */}
-                  <div className="relative aspect-16/10 overflow-hidden bg-slate-100">
+                  <Link to={`/doctors/${doc.id}`} className="block relative aspect-16/10 overflow-hidden bg-slate-100 cursor-pointer">
                     <img
                       src={doc.photo}
                       alt={doc.name}
@@ -250,7 +254,7 @@ export const DoctorList: React.FC = () => {
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       <span>{t('doctors.nextSlotToday')}</span>
                     </div>
-                  </div>
+                  </Link>
 
                   {/* Details */}
                   <div className="p-5 space-y-2">
@@ -263,13 +267,15 @@ export const DoctorList: React.FC = () => {
                       </span>
                     </div>
 
-                    <h3 className="text-base font-black text-slate-900 leading-snug truncate group-hover:text-[#2DA7B5] transition-colors">
-                      {doc.name}
-                    </h3>
+                    <Link to={`/doctors/${doc.id}`} className="block">
+                      <h3 className="text-base font-black text-slate-900 leading-snug truncate group-hover:text-[#2DA7B5] transition-colors">
+                        {doc.name}
+                      </h3>
+                    </Link>
 
                     <p className="text-xs text-slate-600 truncate flex items-center gap-1.5">
                       <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">{doc.hospitalName || doc.clinicName || 'CMC Hospital Dubai'}</span>
+                      <span className="truncate">{doc.hospitalName || doc.clinicName || 'American Hospital Dubai'}</span>
                     </p>
 
                     <p className="text-xs text-slate-500 flex items-center gap-1.5">
@@ -283,28 +289,41 @@ export const DoctorList: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Card Footer with Price & Book CTA */}
-                <div className="p-5 pt-0">
-                  <div className="pt-3 border-t border-[#E2EBF0] flex items-center justify-between gap-3">
+                {/* Card Footer with Price & Actions */}
+                <div className="p-5 pt-0 space-y-3">
+                  <div className="pt-3 border-t border-[#E2EBF0] flex items-center justify-between gap-2">
                     <div>
                       <span className="text-[10px] text-slate-400 block font-medium">{t('doctors.fee')}</span>
-                      <span className="text-xs font-black text-slate-900">{t('common.aed')} {doc.consultationFee || 350}</span>
+                      <span className="text-sm font-black text-slate-900">{t('common.aed')} {doc.consultationFee || 350}</span>
                     </div>
+                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      Available Today
+                    </span>
+                  </div>
 
-                    {doc.status === 'Deactivated' ? (
-                      <span className="px-3 py-1.5 bg-slate-100 text-slate-400 rounded-xl text-xs font-semibold cursor-not-allowed">
-                        Unavailable
-                      </span>
-                    ) : (
+                  {doc.status === 'Deactivated' ? (
+                    <div className="w-full py-2 bg-slate-100 text-slate-400 text-center rounded-xl text-xs font-semibold cursor-not-allowed">
+                      Unavailable
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2">
+                      <Link
+                        to={`/doctors/${doc.id}`}
+                        className="py-2.5 px-2 bg-[#F8FAFC] hover:bg-[#E8F6F8] hover:border-[#2DA7B5] hover:text-[#0E7490] text-slate-700 border border-[#CBD5E1] font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs group/btn"
+                      >
+                        <User className="w-3.5 h-3.5 text-slate-500 group-hover/btn:text-[#0E7490] transition-colors" />
+                        <span>{t('doctors.viewProfile')}</span>
+                      </Link>
                       <Link
                         to={`/book/doctor/${doc.id}`}
-                        className="px-4 py-2 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                        className="py-2.5 px-2 bg-[#2DA7B5] hover:bg-[#23929F] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
                       >
                         <span>{t('doctors.bookAppointment')}</span>
                         <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
                       </Link>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}

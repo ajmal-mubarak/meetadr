@@ -558,7 +558,7 @@ const generateFullScheduleSlots = (doctorSlots: string[]): string[] => {
         doctorPhoto: doctor.photo,
         specialty: selectedSpecialty,
         hospitalId: doctor.hospitalId || 'hosp_cmc',
-        facilityName: doctor.hospitalName || 'CMC (Clemenceau Medical Center Hospital Dubai)',
+        facilityName: doctor.hospitalName || 'American Hospital Dubai',
         date: selectedDateObj.date,
         timeSlot: selectedSlot,
       });
@@ -732,7 +732,7 @@ const generateFullScheduleSlots = (doctorSlots: string[]): string[] => {
                   <p className="text-xs font-semibold text-[#2DA7B5]">{translateSpecialty(selectedSpecialty)}</p>
                   <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                     <Building2 className="w-3.5 h-3.5 text-[#2DA7B5] shrink-0" />
-                    <span>{doctor.hospitalName || 'CMC Hospital Dubai'}</span>
+                    <span>{doctor.hospitalName || 'American Hospital Dubai'}</span>
                   </p>
                 </div>
               </div>
@@ -959,7 +959,7 @@ const generateFullScheduleSlots = (doctorSlots: string[]): string[] => {
                         </p>
                         <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                           <Building2 className="w-3.5 h-3.5 text-[#2DA7B5] shrink-0" />
-                          <span>{doctor.hospitalName || 'CMC Hospital Dubai'}</span>
+                          <span>{doctor.hospitalName || 'American Hospital Dubai'}</span>
                         </p>
                       </div>
                     </div>
@@ -1283,7 +1283,7 @@ const generateFullScheduleSlots = (doctorSlots: string[]): string[] => {
                         <div>
                           <h4 className="text-sm font-bold text-slate-900">{doctor.name}</h4>
                           <p className="text-xs text-[#2DA7B5] font-semibold">{translateSpecialty(selectedSpecialty)}</p>
-                          <p className="text-[11px] text-slate-500">{doctor.hospitalName || 'CMC Hospital Dubai'}</p>
+                          <p className="text-[11px] text-slate-500">{doctor.hospitalName || 'American Hospital Dubai'}</p>
                         </div>
                       </div>
 
@@ -1514,15 +1514,15 @@ const generateFullScheduleSlots = (doctorSlots: string[]): string[] => {
 
             <div className="aspect-16/9 bg-slate-100 rounded-2xl overflow-hidden border border-[#E2EBF0] flex items-center justify-center relative">
               <iframe
-                title="CMC Hospital Map"
-                src="https://maps.google.com/maps?q=Clemenceau+Medical+Center+Hospital+Dubai&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                title="American Hospital Map"
+                src="https://maps.google.com/maps?q=American+Hospital+Dubai&t=&z=13&ie=UTF8&iwloc=&output=embed"
                 className="w-full h-full border-0"
                 loading="lazy"
               />
             </div>
 
             <p className="text-xs text-slate-300">
-              {t('booking.address')}: Dubai Healthcare City Phase 2 - Al Jaddaf - Dubai, UAE
+              {t('booking.address')}: 19th St, Oud Metha, Dubai, UAE
             </p>
 
             <button

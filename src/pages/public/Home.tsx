@@ -41,7 +41,7 @@ import { HospitalBrandLogo } from '../../components/common/HospitalLogos';
 // Helper for displaying hospital names in one single word
 const getOneWordHospitalName = (hosp: { id: string; name: string }): string => {
   const shortNames: Record<string, string> = {
-    hosp_cmc: 'CMC',
+    hosp_cmc: 'American Hospital',
     hosp_1: 'CityCare',
     hosp_2: 'Emirates',
     hosp_3: 'Al-Noor',
@@ -67,7 +67,7 @@ const SUGGESTED_SPECIALTIES = [
 
 // Suggested Locations for autocomplete
 const SUGGESTED_LOCATIONS = [
-  { name: 'Al Jaddaf', hub: 'Clemenceau Medical Center (CMC Dubai)', emirate: 'Dubai' },
+  { name: 'Al Jaddaf', hub: 'American Hospital Dubai Medical Hub', emirate: 'Dubai' },
   { name: 'Dubai Healthcare City', hub: 'DHCC Phase 1 & 2 Clinics', emirate: 'Dubai' },
   { name: 'Downtown Dubai', hub: 'Near Burj Khalifa & Financial Center', emirate: 'Dubai' },
   { name: 'Jumeirah', hub: 'Al Wasl Road Medical Centers', emirate: 'Dubai' },
@@ -1063,7 +1063,7 @@ export const Home: React.FC = () => {
 
                   <p className="text-xs text-slate-600 flex items-center gap-1.5 line-clamp-1">
                     <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span className="truncate">{doc.hospitalName || 'CMC Hospital Dubai'}</span>
+                    <span className="truncate">{doc.hospitalName || 'American Hospital Dubai'}</span>
                   </p>
 
                   <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed pt-1">
@@ -1121,7 +1121,7 @@ export const Home: React.FC = () => {
             <div className="flex flex-wrap items-center gap-1.5 bg-[#F8FAFC] p-1.5 rounded-2xl border border-[#E2EBF0]">
               {[
                 { id: 'All', label: t('home.allUae') },
-                { id: 'Al Jaddaf', label: t('home.alJaddafCmc') },
+                { id: 'Oud Metha', label: t('home.alJaddafCmc') },
                 { id: 'Downtown', label: t('home.downtown') },
                 { id: 'Healthcare City', label: t('home.dhcc') },
               ].map((loc) => (
@@ -1150,19 +1150,23 @@ export const Home: React.FC = () => {
               >
                 <div>
                   <div className="flex items-start gap-3">
-                    <img
-                      src={doc.photo}
-                      alt={doc.name}
-                      className="w-13 h-13 rounded-xl object-cover border border-[#E2EBF0] shrink-0"
-                      referrerPolicy="no-referrer"
-                    />
+                    <Link to={`/doctors/${doc.id}`} className="shrink-0">
+                      <img
+                        src={doc.photo}
+                        alt={doc.name}
+                        className="w-13 h-13 rounded-xl object-cover border border-[#E2EBF0] hover:scale-105 transition-transform"
+                        referrerPolicy="no-referrer"
+                      />
+                    </Link>
                     <div className="truncate">
                       <div className="flex items-center gap-1 text-[11px] font-bold text-amber-500">
                         <Star className="w-3 h-3 fill-amber-500" />
                         <span>{doc.rating}</span>
                         <span className="text-slate-400 font-normal">({doc.reviewCount})</span>
                       </div>
-                      <h4 className="text-sm font-black text-slate-900 truncate mt-0.5">{doc.name}</h4>
+                      <Link to={`/doctors/${doc.id}`}>
+                        <h4 className="text-sm font-black text-slate-900 truncate mt-0.5 hover:text-[#2DA7B5] transition-colors">{doc.name}</h4>
+                      </Link>
                       <p className="text-[11px] font-semibold text-[#0E7490] truncate">{translateSpecialty(doc.specialty)}</p>
                     </div>
                   </div>
@@ -1189,13 +1193,21 @@ export const Home: React.FC = () => {
                     <span className="text-[10px] text-slate-400 block font-medium">{t('home.consultation')}</span>
                     <span className="text-xs font-black text-slate-900">{t('common.aed')} {doc.consultationFee}</span>
                   </div>
-                  <Link
-                    to={`/book/doctor/${doc.id}`}
-                    className="px-3.5 py-1.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1"
-                  >
-                    <span>{t('home.book')}</span>
-                    <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
-                  </Link>
+                  <div className="flex items-center gap-1.5">
+                    <Link
+                      to={`/doctors/${doc.id}`}
+                      className="px-2.5 py-1.5 bg-white hover:bg-[#E8F6F8] hover:border-[#2DA7B5] hover:text-[#0E7490] text-slate-700 border border-[#CBD5E1] text-[11px] font-bold rounded-xl transition-all shadow-2xs cursor-pointer"
+                    >
+                      {t('doctors.viewProfile')}
+                    </Link>
+                    <Link
+                      to={`/book/doctor/${doc.id}`}
+                      className="px-3 py-1.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white text-[11px] font-bold rounded-xl transition-all shadow-xs flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>{t('home.book')}</span>
+                      <ArrowRight className="w-3 h-3 rtl:rotate-180" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}

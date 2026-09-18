@@ -19,13 +19,41 @@ export const SPECIALTIES = [
 ];
 
 export const LOCATIONS = [
-  'Dubai - Downtown',
-  'Dubai - Jumeirah',
-  'Dubai - Healthcare City',
-  'Dubai - Marina',
-  'Abu Dhabi - Al Maryah Island',
-  'Abu Dhabi - Corniche',
-  'Sharjah - Al Majaz',
-  'Sharjah - University City',
-  'Ajman - City Center',
+  'Downtown Dubai',
+  'Palm Jumeirah',
+  'DIFC Gate Village',
+  'Jumeirah Beach Road',
+  'Dubai Marina',
+  'Dubai Healthcare City',
+  'Oud Metha',
+  'Al Jaddaf',
+  'Al Maryah Island',
+  'Abu Dhabi Corniche',
+  'Al Majaz (Sharjah)',
+  'University City (Sharjah)',
 ];
+
+export const CITIES = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+];
+
+export const AREAS = LOCATIONS;
+
+export function matchesLocation(itemLocation?: string, selectedLocation?: string): boolean {
+  if (!selectedLocation || selectedLocation === 'All') return true;
+  if (!itemLocation) return false;
+
+  const itemNorm = itemLocation.toLowerCase().replace(/[-–—(),]/g, ' ').replace(/\s+/g, ' ').trim();
+  const selNorm = selectedLocation.toLowerCase().replace(/[-–—(),]/g, ' ').replace(/\s+/g, ' ').trim();
+
+  if (itemNorm.includes(selNorm) || selNorm.includes(itemNorm)) return true;
+
+  // Significant keywords matching
+  const keywords = selNorm.split(' ').filter((w) => w.length >= 4 || w === 'difc');
+  return keywords.some((kw) => itemNorm.includes(kw));
+}
+
+

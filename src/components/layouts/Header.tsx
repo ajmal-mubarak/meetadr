@@ -54,7 +54,7 @@ export const Header: React.FC = () => {
     {
       id: 'notif_1',
       title: 'Appointment Confirmed',
-      description: 'Dr. Sarah Chen at CMC Hospital Dubai • Today at 10:30 AM',
+      description: 'Dr. Sarah Chen at American Hospital Dubai • Today at 10:30 AM',
       time: '15m ago',
       unread: true,
       type: 'appointment',

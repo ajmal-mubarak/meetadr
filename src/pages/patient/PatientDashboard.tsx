@@ -421,7 +421,7 @@ export const PatientDashboard: React.FC = () => {
   }, [appointments, translateSpecialty]);
 
   const nearbyHospitals = [
-    { id: 'cmc_dubai', name: isArabic ? 'مستشفى كليمنصو الطبي دبي' : 'CMC (Clemenceau Medical Center Hospital Dubai)', location: isArabic ? 'مدينة دبي الطبية المرحلة 2 - الجداف' : 'Dubai Healthcare City Phase 2 - Al Jaddaf', distance: isArabic ? '1.8 كم' : '1.8 km', specialties: isArabic ? ['أمراض القلب', 'طب الأعصاب', 'جراحة العظام'] : ['Cardiology', 'Neurology', 'Orthopedics'] },
+    { id: 'ahd_dubai', name: isArabic ? 'المستشفى الأمريكي دبي' : 'American Hospital Dubai', location: isArabic ? 'شارع 19، عود ميثاء، دبي' : '19th St, Oud Metha, Dubai', distance: isArabic ? '2.1 كم' : '2.1 km', specialties: isArabic ? ['أمراض القلب', 'طب الأعصاب', 'جراحة العظام'] : ['Cardiology', 'Neurology', 'Orthopedics'] },
     { id: 'medcare_al_safa', name: isArabic ? 'مستشفى ميدكير الصفا' : 'Medcare Hospital Al Safa', location: isArabic ? 'بالقرب من حديقة الصفا، شارع الشيخ زايد' : 'Near Safa Park, Sheikh Zayed Road', distance: isArabic ? '4.2 كم' : '4.2 km', specialties: isArabic ? ['الجلدية', 'طب الأطفال', 'طب عام'] : ['Dermatology', 'Pediatrics', 'General Practice'] },
     { id: 'csh_dubai', name: isArabic ? 'المستشفى الكندي التخصصي' : 'Canadian Specialist Hospital', location: isArabic ? 'شارع أبو هيل، ديرة، دبي' : 'Abu Hail Road, Deira, Dubai', distance: isArabic ? '6.5 كم' : '6.5 km', specialties: isArabic ? ['أمراض القلب', 'الأمراض الباطنية', 'الجراحة العامة'] : ['Cardiology', 'Internal Medicine', 'Surgery'] },
     { id: 'aster_mankhool', name: isArabic ? 'مستشفى أستر المنخول' : 'Aster Hospital Mankhool', location: isArabic ? 'شارع الكويت، المنخول، بر دبي' : 'Kuwait Street, Al Mankhool, Bur Dubai', distance: isArabic ? '5.1 كم' : '5.1 km', specialties: isArabic ? ['طب عام', 'جراحة العظام', 'أنف وأذن وحنجرة'] : ['General Practice', 'Orthopedics', 'ENT'] },
@@ -616,7 +616,7 @@ export const PatientDashboard: React.FC = () => {
                 <h4 className="text-base sm:text-lg font-black text-slate-900">{nextAppt.doctorName}</h4>
                 <p className="text-xs text-slate-600 flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{nextAppt.facilityName || nextAppt.hospitalName || 'CMC Hospital Dubai'}</span>
+                  <span>{nextAppt.facilityName || nextAppt.hospitalName || 'American Hospital Dubai'}</span>
                 </p>
                 <p className="text-xs font-bold text-slate-800 flex items-center gap-2 pt-1 flex-wrap">
                   <span className="flex items-center gap-1">
@@ -639,7 +639,7 @@ export const PatientDashboard: React.FC = () => {
 
             <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
               <a
-                href="https://maps.google.com/maps?q=Clemenceau+Medical+Center+Hospital+Dubai"
+                href="https://maps.google.com/maps?q=American+Hospital+Dubai"
                 target="_blank"
                 rel="noreferrer"
                 className="px-3.5 py-2 rounded-xl border border-[#E2EBF0] text-xs font-bold text-slate-700 hover:bg-[#F8FAFC] flex items-center gap-1.5 transition-colors"
@@ -731,7 +731,7 @@ export const PatientDashboard: React.FC = () => {
                         <div className="truncate">
                           <h4 className="text-sm font-bold text-slate-900 truncate">{appt.doctorName}</h4>
                           <p className="text-xs font-semibold text-[#0E7490]">{translateSpecialty(appt.specialty)}</p>
-                          <p className="text-[11px] text-slate-500 truncate">{appt.facilityName || appt.hospitalName || 'CMC Hospital Dubai'}</p>
+                          <p className="text-[11px] text-slate-500 truncate">{appt.facilityName || appt.hospitalName || 'American Hospital Dubai'}</p>
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1 shrink-0">
@@ -754,7 +754,7 @@ export const PatientDashboard: React.FC = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="truncate">{appt.facilityName || appt.hospitalName || 'CMC Hospital Dubai'}</span>
+                        <span className="truncate">{appt.facilityName || appt.hospitalName || 'American Hospital Dubai'}</span>
                       </div>
                     </div>
                   </div>

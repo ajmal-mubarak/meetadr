@@ -178,7 +178,7 @@ export const PartnersPage: React.FC = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
           {[
-            isArabic ? 'مستشفى كليمنصو دبي' : 'CMC Dubai',
+            isArabic ? 'المستشفى الأمريكي دبي' : 'American Hospital Dubai',
             isArabic ? 'مستشفى ميدكير الصفا' : 'Medcare Al Safa',
             isArabic ? 'المستشفى الكندي التخصصي' : 'Canadian Specialist',
             isArabic ? 'مستشفى أستر المنخول' : 'Aster Mankhool',

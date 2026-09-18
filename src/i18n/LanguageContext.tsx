@@ -190,8 +190,20 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const translateLocation = useCallback(
     (location: string): string => {
       if (!location) return '';
-      const translated = getNestedValue(dictionaries[language], `locations.${location}`);
-      return translated || location;
+      const direct = getNestedValue(dictionaries[language], `locations.${location}`);
+      if (direct) return direct;
+
+      // If location contains hyphen separator (e.g. "Dubai - Downtown"), translate each part
+      if (location.includes(' - ')) {
+        const parts = location.split(' - ').map((part) => {
+          const trimmed = part.trim();
+          const translatedPart = getNestedValue(dictionaries[language], `locations.${trimmed}`);
+          return translatedPart || trimmed;
+        });
+        return parts.join(' - ');
+      }
+
+      return location;
     },
     [language]
   );

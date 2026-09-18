@@ -413,7 +413,7 @@ export const PatientBookings: React.FC = () => {
 
                         <p className="text-xs text-slate-500 flex items-center gap-1">
                           <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                          <span>{appt.facilityName || appt.hospitalName || 'CMC Hospital Dubai'}</span>
+                          <span>{appt.facilityName || appt.hospitalName || 'American Hospital Dubai'}</span>
                         </p>
 
                         {isCancelled && appt.cancelReason && (
@@ -430,7 +430,7 @@ export const PatientBookings: React.FC = () => {
                   <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-100 shrink-0">
                     {/* Google Maps Directions */}
                     <a
-                      href={`https://maps.google.com/maps?q=${encodeURIComponent(appt.facilityName || 'CMC Hospital Dubai')}`}
+                      href={`https://maps.google.com/maps?q=${encodeURIComponent(appt.facilityName || 'American Hospital Dubai')}`}
                       target="_blank"
                       rel="noreferrer"
                       className="px-3.5 py-2 rounded-xl border border-[#E2EBF0] text-xs font-bold text-slate-700 hover:bg-[#F8FAFC] flex items-center gap-1.5 transition-colors cursor-pointer"

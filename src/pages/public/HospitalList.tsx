@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Building2, MapPin, Star, Phone, Clock, Search, ShieldCheck, Activity, ArrowRight } from 'lucide-react';
+import { Building2, MapPin, Star, Phone, Clock, Search, ShieldCheck, Activity, ArrowRight, ChevronDown } from 'lucide-react';
 import { hospitalService } from '../../services/hospitalService';
 import { Hospital } from '../../types';
-import { LOCATIONS } from '../../data/mockSpecialties';
+import { LOCATIONS, matchesLocation } from '../../data/mockSpecialties';
 import { useTranslation } from '../../i18n';
 
 export const HospitalList: React.FC = () => {
@@ -28,7 +28,7 @@ export const HospitalList: React.FC = () => {
   }, []);
 
   const filtered = hospitals.filter((h) => {
-    if (location !== 'All' && !h.location.includes(location.split('-')[0].trim())) return false;
+    if (!matchesLocation(h.location, location)) return false;
     if (search.trim()) {
       const q = search.toLowerCase();
       return (
@@ -59,31 +59,33 @@ export const HospitalList: React.FC = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white p-4 rounded-3xl border border-[#E2EBF0] shadow-sm grid grid-cols-1 sm:grid-cols-12 gap-3">
+        <div className="bg-white p-4 rounded-3xl border border-[#E2EBF0] shadow-sm grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
           <div className="sm:col-span-8 relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-3.5" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('hospitals.searchPlaceholder')}
-              className="w-full pl-10 rtl:pl-3 rtl:pr-10 pr-3 py-2.5 text-xs font-medium border border-[#E2EBF0] rounded-xl text-slate-900 focus:outline-hidden focus:border-[#2DA7B5] bg-[#F8FAFC] focus:bg-white placeholder:text-slate-400 transition-colors"
+              className="w-full pl-10 rtl:pl-3 rtl:pr-10 pr-3 py-2.5 sm:py-3 text-xs sm:text-sm font-medium border border-[#CBD5E1] rounded-2xl text-slate-900 focus:outline-hidden focus:border-[#0D5C54] bg-[#F8FAFC] focus:bg-white placeholder:text-slate-400 transition-colors shadow-2xs"
             />
           </div>
 
-          <div className="sm:col-span-4">
+          <div className="sm:col-span-4 relative">
+            <MapPin className="w-4 h-4 text-[#0D5C54] absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <select
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full py-2.5 px-3 text-xs font-bold border border-[#E2EBF0] rounded-xl text-slate-800 focus:outline-hidden focus:border-[#2DA7B5] bg-[#F8FAFC] focus:bg-white transition-colors cursor-pointer"
+              className="w-full pl-10 rtl:pl-4 rtl:pr-10 pr-9 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold border border-[#CBD5E1] hover:border-[#0D5C54] focus:border-[#0D5C54] rounded-2xl text-slate-800 focus:outline-hidden bg-[#F8FAFC] focus:bg-white transition-all cursor-pointer appearance-none shadow-2xs"
             >
               <option value="All">{t('hospitals.allLocations')}</option>
               {LOCATIONS.map((l) => (
                 <option key={l} value={l}>
-                  {translateLocation(l.split('-')[0].trim())}
+                  {translateLocation(l)}
                 </option>
               ))}
             </select>
+            <ChevronDown className="w-4 h-4 text-slate-700 absolute right-3.5 rtl:right-auto rtl:left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
         </div>
 

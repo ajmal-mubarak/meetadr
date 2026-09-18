@@ -5,19 +5,20 @@ interface LogoProps {
   theme?: 'light' | 'dark';
 }
 
-export const CmcLogo: React.FC<LogoProps> = ({ className = 'h-9 w-auto', theme = 'light' }) => {
+export const AmericanHospitalLogo: React.FC<LogoProps> = ({ className = 'h-9 w-auto', theme = 'light' }) => {
   const isLight = theme === 'light';
   return (
-    <svg viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-label="CMC Hospital Dubai">
+    <svg viewBox="0 0 175 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-label="American Hospital Dubai">
       <rect x="2" y="2" width="36" height="36" rx="10" fill={isLight ? '#EBF7F9' : '#0C1A22'} stroke="#007B8A" strokeWidth="1.5" />
       <path d="M20 10v20M10 20h20" stroke="#00A3B4" strokeWidth="3" strokeLinecap="round" />
       <circle cx="20" cy="20" r="3.5" fill={isLight ? '#007B8A' : '#FFFFFF'} />
-      <text x="46" y="21" fontFamily="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" fontWeight="900" fontSize="15" fill={isLight ? '#0F172A' : '#FFFFFF'} letterSpacing="0.5">CMC</text>
-      <text x="84" y="21" fontFamily="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" fontWeight="700" fontSize="12" fill="#00A3B4" letterSpacing="1">DUBAI</text>
-      <text x="46" y="32" fontFamily="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" fontWeight="600" fontSize="7.5" fill={isLight ? '#64748B' : '#94A3B8'} letterSpacing="1.2">CLEMENCEAU MEDICAL</text>
+      <text x="46" y="21" fontFamily="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" fontWeight="900" fontSize="13" fill={isLight ? '#0F172A' : '#FFFFFF'} letterSpacing="0.5">AMERICAN</text>
+      <text x="122" y="21" fontFamily="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" fontWeight="700" fontSize="12" fill="#00A3B4" letterSpacing="1">DUBAI</text>
+      <text x="46" y="32" fontFamily="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" fontWeight="600" fontSize="7.5" fill={isLight ? '#64748B' : '#94A3B8'} letterSpacing="1.2">HOSPITAL DUBAI</text>
     </svg>
   );
 };
+export const CmcLogo = AmericanHospitalLogo;
 
 export const AlZahraLogo: React.FC<LogoProps> = ({ className = 'h-9 w-auto', theme = 'light' }) => {
   const isLight = theme === 'light';
@@ -132,8 +133,9 @@ export const HospitalBrandLogo: React.FC<{ hospitalId: string; className?: strin
   theme = 'light',
 }) => {
   switch (hospitalId) {
+    case 'hosp_ahd':
     case 'hosp_cmc':
-      return <CmcLogo className={className} theme={theme} />;
+      return <AmericanHospitalLogo className={className} theme={theme} />;
     case 'hosp_1':
       return <CityCareLogo className={className} theme={theme} />;
     case 'hosp_2':

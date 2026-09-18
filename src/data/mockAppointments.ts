@@ -197,7 +197,7 @@ export const INITIAL_APPOINTMENTS: Appointment[] = [
     createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
   },
 
-  // 3. Additional appointments at City Care Hospital and CMC with other doctors
+  // 3. Additional appointments at City Care Hospital and American Hospital with other doctors
   {
     id: 'apt_110_okafor',
     patientId: 'usr_pat_8',
@@ -208,7 +208,7 @@ export const INITIAL_APPOINTMENTS: Appointment[] = [
     doctorName: 'Dr. James Okafor',
     doctorPhoto: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&auto=format&fit=crop&q=80',
     hospitalId: 'hosp_cmc',
-    providerName: 'CMC (Clemenceau Medical Center Hospital Dubai)',
+    providerName: 'American Hospital Dubai',
     specialty: 'General Practitioner',
     location: 'Dubai - Downtown',
     date: today,
@@ -227,7 +227,7 @@ export const INITIAL_APPOINTMENTS: Appointment[] = [
     doctorName: 'Dr. Sarah Chen',
     doctorPhoto: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&auto=format&fit=crop&q=80',
     hospitalId: 'hosp_cmc',
-    providerName: 'CMC (Clemenceau Medical Center Hospital Dubai)',
+    providerName: 'American Hospital Dubai',
     specialty: 'Cardiologist',
     location: 'Dubai - Al Jaddaf',
     date: today,
