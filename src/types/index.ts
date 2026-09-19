@@ -17,6 +17,7 @@ export interface Doctor {
   name: string;
   photo: string;
   specialty: string;
+  specialInterest?: string[];
   experience: string;
   rating: number;
   reviewCount: number;

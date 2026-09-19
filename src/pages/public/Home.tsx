@@ -11,6 +11,7 @@ import {
   ArrowRight,
   HeartPulse,
   Sparkles,
+  ChevronLeft,
   ChevronRight,
   Stethoscope,
   Building2,
@@ -35,6 +36,7 @@ import {
 import { INITIAL_DOCTORS } from '../../data/mockDoctors';
 import { INITIAL_HOSPITALS } from '../../data/mockHospitals';
 import { HEALTH_CONDITIONS, CONDITION_LETTERS, ALPHABET_LETTERS } from '../../data/mockConditions';
+import { SPECIALTIES } from '../../data/mockSpecialties';
 import { useToast } from '../../context/ToastContext';
 import { HospitalBrandLogo } from '../../components/common/HospitalLogos';
 
@@ -62,6 +64,7 @@ const SUGGESTED_SPECIALTIES = [
   { name: 'Orthopedics', icon: Bone, desc: 'Joints, bones, spine & sports injuries' },
   { name: 'Pediatrics', icon: Baby, desc: 'Child health, vaccinations & wellness' },
   { name: 'General Practice', icon: Stethoscope, desc: 'Primary care, checkups & routine sickness' },
+  { name: 'Home Care', icon: HeartPulse, desc: 'Doctor & nurse home visits, elderly & post-op care' },
   { name: 'Neurology', icon: Activity, desc: 'Headaches, migraines, nerves & brain' },
 ];
 
@@ -85,18 +88,14 @@ export const Home: React.FC = () => {
   const [selectedCondition, setSelectedCondition] = useState('');
   const [selectedEmirate, setSelectedEmirate] = useState('Dxb');
 
-  // Autocomplete dropdown visibility
-  const [showSpecialtyDropdown, setShowSpecialtyDropdown] = useState(false);
+  // Autocomplete dropdown visibilities
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [showConditionDropdown, setShowConditionDropdown] = useState(false);
-
-  // Recommendation location filter for the recommended section
-  const [recommendedFilter, setRecommendedFilter] = useState('All');
-
 
   // Category filter state for doctors
   const [doctorCategory, setDoctorCategory] = useState('All');
 
-  const specialtyRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
   const conditionRef = useRef<HTMLDivElement>(null);
 
   const getSpecialtyName = (spec: { name: string; specialtyQuery: string }) => {
@@ -106,6 +105,7 @@ export const Home: React.FC = () => {
       'Orthopedics': 'جراحة العظام والمفاصل',
       'Pediatrics': 'طب الأطفال وحديثي الولادة',
       'General Practice': 'الطب العام وطب الأسرة',
+      'Home Care': 'الرعاية الصحية المنزلية',
       'Neurology': 'المخ والأعصاب',
       'Ophthalmology': 'طب وجراحة العيون',
       'Skin Care': 'الأمراض الجلدية والتجميل',
@@ -131,6 +131,7 @@ export const Home: React.FC = () => {
       'Orthopedics': 'المفاصل والعمود الفقري والعظام',
       'Pediatrics': 'رعاية الأطفال وحديثي الولادة',
       'General Practice': 'طب الأسرة والفحوصات الشاملة',
+      'Home Care': 'زيارات الأطباء والتمريض والرعاية المنزلية',
       'Neurology': 'الدماغ والأعصاب والعمود الفقري',
       'Ophthalmology': 'رعاية العيون وجراحة الليزك',
       'Skin Care': 'علاج الأمراض الجلدية والعناية التجميلية',
@@ -147,8 +148,8 @@ export const Home: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
-      if (specialtyRef.current && !specialtyRef.current.contains(target)) {
-        setShowSpecialtyDropdown(false);
+      if (searchRef.current && !searchRef.current.contains(target)) {
+        setShowSearchDropdown(false);
       }
       if (conditionRef.current && !conditionRef.current.contains(target)) {
         setShowConditionDropdown(false);
@@ -179,12 +180,122 @@ export const Home: React.FC = () => {
       }
     }
     if (selectedEmirate) params.append('emirate', selectedEmirate);
+    setShowSearchDropdown(false);
+    setShowConditionDropdown(false);
     navigate(`/search?${params.toString()}`);
   };
 
   // Quick specialty select
   const handleQuickSpecialty = (specialty: string) => {
     navigate(`/doctors?specialty=${encodeURIComponent(specialty)}`);
+  };
+
+  // 18 specialties for smooth step sliding (5 visible at a time, shifting by 3 items)
+  const ALL_SPECIALTIES = [
+    'Cardiology',
+    'Dermatology',
+    'Orthopedics',
+    'Pediatrics',
+    'Neurology',
+    'General Practice',
+    'Home Care',
+    'ENT',
+    'Gynecology',
+    'Ophthalmology',
+    'Pulmonology',
+    'Gastroenterology',
+    'Endocrinology',
+    'Skin Care',
+    'Dental',
+    'Physiotherapy',
+    'Radiology',
+    'Laboratory',
+  ];
+
+  // Tripled list for infinite wrapping without visual jumps
+  const SLIDER_SPECIALTIES = [...ALL_SPECIALTIES, ...ALL_SPECIALTIES, ...ALL_SPECIALTIES];
+  const TOTAL_STEPS = 6; // 18 items / 3 items per shift = 6 steps
+  const [specialtyStep, setSpecialtyStep] = useState(0);
+  const [isSliderTransitioning, setIsSliderTransitioning] = useState(true);
+  const [isSpecialtyHovered, setIsSpecialtyHovered] = useState(false);
+  const specialtyViewportRef = useRef<HTMLDivElement>(null);
+  const [viewportWidth, setViewportWidth] = useState(800);
+  const specialtyTouchStartX = useRef<number | null>(null);
+
+  // Measure viewport width dynamically
+  useEffect(() => {
+    const updateWidth = () => {
+      if (specialtyViewportRef.current) {
+        setViewportWidth(specialtyViewportRef.current.clientWidth);
+      }
+    };
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    const timer = setTimeout(updateWidth, 100);
+    return () => {
+      window.removeEventListener('resize', updateWidth);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  // Distance of shifting 3 items:
+  // On desktop (>= 640px): 5 visible items + 4 gaps (8px each). 3 items + 3 gaps = (viewportWidth * 0.6) + 4.8
+  // On mobile (< 640px): 3 visible items + 2 gaps. 3 items + 3 gaps = viewportWidth + 8
+  const isDesktop = viewportWidth >= 640;
+  const stepDistance = isDesktop ? (viewportWidth * 0.6) + 4.8 : viewportWidth + 8;
+  const currentOffset = specialtyStep * stepDistance;
+
+  // Handle seamless infinite loop when specialtyStep reaches TOTAL_STEPS (6)
+  useEffect(() => {
+    if (specialtyStep >= TOTAL_STEPS) {
+      const timer = setTimeout(() => {
+        setIsSliderTransitioning(false);
+        setSpecialtyStep(0);
+      }, 500); // 500ms matches transition duration
+      return () => clearTimeout(timer);
+    }
+  }, [specialtyStep, TOTAL_STEPS]);
+
+  // Automated step-sliding with 2.8s pause gap (3 items shift, paused on hover)
+  useEffect(() => {
+    if (isSpecialtyHovered) return;
+    const timer = setInterval(() => {
+      setIsSliderTransitioning(true);
+      setSpecialtyStep((prev) => prev + 1);
+    }, 2800);
+    return () => clearInterval(timer);
+  }, [isSpecialtyHovered]);
+
+  const handleDotClick = (stepIndex: number) => {
+    setIsSliderTransitioning(true);
+    setSpecialtyStep(stepIndex);
+  };
+
+  const getSpecialtyDisplayName = (specName: string) => {
+    if (!isArabic) return specName;
+    const arNames: Record<string, string> = {
+      'Cardiology': 'أمراض وجراحة القلب',
+      'Dermatology': 'الأمراض الجلدية',
+      'General Medicine': 'الطب العام والأسرة',
+      'General Practice': 'الطب العام والأسرة',
+      'Home Care': 'الرعاية المنزلية',
+      'Orthopedics': 'جراحة العظام والمفاصل',
+      'Pediatrics': 'طب الأطفال',
+      'ENT': 'الأنف والأذن والحنجرة',
+      'Neurology': 'المخ والأعصاب',
+      'Gynecology': 'النساء والتوليد',
+      'Ophthalmology': 'طب وجراحة العيون',
+      'Pulmonology': 'أمراض الصدر والتنفس',
+      'Gastroenterology': 'الجهاز الهضمي والمناظير',
+      'Endocrinology': 'الغدد الصماء والسكري',
+      'Skin Care': 'العناية بالبشرة والليزر',
+      'Dental': 'طب وجراحة الأسنان',
+      'Physiotherapy': 'العلاج الطبيعي والتأهيل',
+      'Radiology': 'الأشعة التشخيصية',
+      'Laboratory': 'المختبرات والتحاليل',
+      'Urology': 'المسالك البولية والتناسلية',
+    };
+    return arNames[specName] || translateSpecialty(specName) || specName;
   };
 
   // Popular specialties list
@@ -209,40 +320,74 @@ export const Home: React.FC = () => {
         doc.specialty.toLowerCase().includes('internal')
       );
     }
+    if (doctorCategory === 'Home Care') {
+      return (
+        doc.specialty.toLowerCase().includes('home') ||
+        doc.about.toLowerCase().includes('home') ||
+        (doc.specialInterest && doc.specialInterest.some((si) => si.toLowerCase().includes('home')))
+      );
+    }
     return true;
-  }).slice(0, 6);
+  }).slice(0, 9);
 
-  // Filtered hospitals for hero search input
-  const filteredHospitals = INITIAL_HOSPITALS.filter((h) => {
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      h.name.toLowerCase().includes(q) ||
-      h.location.toLowerCase().includes(q) ||
-      h.address.toLowerCase().includes(q) ||
-      (h.specialties && h.specialties.some((sp) => sp.toLowerCase().includes(q)))
-    );
-  }).slice(0, 5);
+  // Global search autocomplete filtering - ONLY suggest based on letters entered (never before)
+  const trimmedQuery = searchQuery.trim();
+  const queryLower = trimmedQuery.toLowerCase();
+  const isTyping = queryLower.length > 0;
 
-  // Filtered doctors for hero search input (active when user types)
-  const matchingSearchDoctors = searchQuery.trim()
-    ? INITIAL_DOCTORS.filter((d) => {
-        const q = searchQuery.toLowerCase();
-        return (
-          d.name.toLowerCase().includes(q) ||
-          (d.hospitalName && d.hospitalName.toLowerCase().includes(q))
-        );
-      }).slice(0, 3)
+  // Matching Hospitals & Clinics (High priority - only when typed)
+  const filteredHospitals = isTyping
+    ? INITIAL_HOSPITALS.filter((h) =>
+        h.name.toLowerCase().includes(queryLower) ||
+        h.location.toLowerCase().includes(queryLower) ||
+        h.address.toLowerCase().includes(queryLower) ||
+        (h.specialties && h.specialties.some((sp) => sp.toLowerCase().includes(queryLower)))
+      ).slice(0, 3)
     : [];
 
-  // Recommended doctors filtered by location
-  const recommendedDoctors = INITIAL_DOCTORS.filter((doc) => {
-    if (recommendedFilter === 'All') return true;
-    return doc.location.toLowerCase().includes(recommendedFilter.toLowerCase());
-  }).slice(0, 4);
+  // Matching Doctors (High priority - only when typed)
+  const matchingSearchDoctors = isTyping
+    ? INITIAL_DOCTORS.filter((d) =>
+        d.name.toLowerCase().includes(queryLower) ||
+        d.specialty.toLowerCase().includes(queryLower) ||
+        (d.hospitalName && d.hospitalName.toLowerCase().includes(queryLower)) ||
+        (d.specialInterest && d.specialInterest.some((si) => si.toLowerCase().includes(queryLower)))
+      ).slice(0, 4)
+    : [];
 
-  // Top hospital partners
-  const partnerHospitals = INITIAL_HOSPITALS.slice(0, 4);
+  // Matching Specialties (Lower priority - matches specialty name only, compact)
+  const matchingSpecialties = isTyping
+    ? [
+        ...SUGGESTED_SPECIALTIES,
+        { name: 'Ophthalmology', icon: Eye, desc: 'Vision care & LASIK surgery' },
+        { name: 'ENT', icon: Stethoscope, desc: 'Ear, nose, throat & hearing' },
+        { name: 'Dental', icon: Sparkles, desc: 'Dental care, teeth & oral health' },
+        { name: 'Gynecology', icon: HeartPulse, desc: 'Women’s health & maternity care' },
+        { name: 'Gastroenterology', icon: Activity, desc: 'Digestive & endoscopy care' },
+        { name: 'Endocrinology', icon: Activity, desc: 'Hormones, thyroid & diabetes' },
+        { name: 'Pulmonology', icon: Activity, desc: 'Lungs & respiratory medicine' },
+      ].filter((s) =>
+        s.name.toLowerCase().includes(queryLower)
+      ).slice(0, 2)
+    : [];
+
+  // Health Condition suggestions for Field 2 (like old)
+  const conditionQuery = selectedCondition.trim().toLowerCase();
+  const matchingConditions = HEALTH_CONDITIONS.filter((c) =>
+    !conditionQuery ||
+    c.name.toLowerCase().includes(conditionQuery) ||
+    c.specialist.toLowerCase().includes(conditionQuery) ||
+    c.description.toLowerCase().includes(conditionQuery)
+  ).slice(0, 6);
+
+  const hasAnySearchSuggestions =
+    isTyping &&
+    (matchingSpecialties.length > 0 ||
+      matchingSearchDoctors.length > 0 ||
+      filteredHospitals.length > 0);
+
+  // Top hospital partners (8 hospitals across 2 lines)
+  const partnerHospitals = INITIAL_HOSPITALS.slice(0, 8);
 
   return (
     <div className="bg-[#F4F7F9] text-slate-900 min-h-screen selection:bg-teal-100 selection:text-teal-950">
@@ -264,73 +409,38 @@ export const Home: React.FC = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left: Text Content */}
-            <div className="text-center lg:text-left rtl:lg:text-right">
-              {/* Trust Pill */}
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white border border-[#E2EBF0] text-[11px] sm:text-xs font-semibold text-slate-700 mb-6 max-w-full shadow-2xs"
-              >
-                <span className="w-2 h-2 rounded-full bg-[#2DA7B5] shrink-0" />
-                <span className="truncate sm:whitespace-normal">{t('home.trustPill')}</span>
-              </motion.div>
-
-              {/* Master Heading */}
-              <motion.h1
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15] sm:leading-[1.12]"
-              >
-                {t('home.heroAccreditedTitle')}
-              </motion.h1>
-
-              {/* Subtitle */}
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-                className="text-sm sm:text-base lg:text-lg text-slate-600 mt-4 max-w-xl leading-relaxed"
-              >
-                {t('home.heroAccreditedSubtitle')}
-              </motion.p>
-            </div>
-
-            {/* Right: Hero Doctor Image */}
+          {/* Centered Hero Header without side doctor image */}
+          <div className="max-w-3xl mx-auto text-center">
+            {/* Trust Pill */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="hidden lg:flex justify-center lg:justify-end relative"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white border border-[#E2EBF0] text-[11px] sm:text-xs font-semibold text-slate-700 mb-5 sm:mb-6 shadow-2xs"
             >
-              <div className="relative">
-                <div className="w-[380px] h-[440px] rounded-3xl overflow-hidden border border-[#E2EBF0] shadow-md">
-                  <img
-                    src="/images/hero-doctor.jpg"
-                    alt="Professional doctor"
-                    className="w-full h-full object-cover object-top"
-                  />
-                </div>
-                {/* Floating trust badge */}
-                <div className="absolute -bottom-4 -left-6 rtl:-left-auto rtl:-right-6 bg-white rounded-2xl border border-[#E2EBF0] px-4 py-3 flex items-center gap-3 shadow-sm">
-                  <div className="w-10 h-10 rounded-xl bg-[#E8F6F8] text-[#0E7490] flex items-center justify-center border border-[#CDEBF0]">
-                    <ShieldCheck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-900">500+ Verified</p>
-                    <p className="text-[10px] text-slate-500">Licensed Specialists</p>
-                  </div>
-                </div>
-                {/* Floating availability badge */}
-                <div className="absolute -top-3 -right-4 rtl:-right-auto rtl:-left-4 bg-white rounded-xl border border-[#E2EBF0] px-3 py-2 flex items-center gap-2 shadow-sm">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span className="text-[11px] font-bold text-slate-800">Available Today</span>
-                </div>
-              </div>
+              <span className="w-2 h-2 rounded-full bg-[#2DA7B5] shrink-0" />
+              <span>{t('home.trustPill')}</span>
             </motion.div>
+
+            {/* Master Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15] sm:leading-[1.12]"
+            >
+              {t('home.heroAccreditedTitle')}
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="text-sm sm:text-base lg:text-lg text-slate-600 mt-4 max-w-2xl mx-auto leading-relaxed"
+            >
+              {t('home.heroAccreditedSubtitle')}
+            </motion.p>
           </div>
 
           {/* Unified Search Console with Smart Suggestions */}
@@ -344,17 +454,21 @@ export const Home: React.FC = () => {
               onSubmit={handleSearchSubmit}
               className="bg-white rounded-2xl sm:rounded-full border border-[#E2EBF0] hover:border-[#CBD5E1] p-2 sm:p-2.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 transition-all relative w-full shadow-xs"
             >
-              {/* Field 1: Doctor / Specialty with Autocomplete */}
-              <div className="flex-1 relative min-w-0" ref={specialtyRef}>
+              {/* Field 1: Doctor / Specialty / Hospital Search (Suggests only when user types letters) */}
+              <div className="flex-1 relative min-w-0" ref={searchRef}>
                 <div className="flex items-center px-4 py-3 sm:py-2.5 bg-[#F8FAFC] sm:bg-transparent rounded-xl sm:rounded-none">
                   <Search className="w-4 h-4 text-slate-400 mr-3 rtl:mr-0 rtl:ml-3 shrink-0" />
                   <input
                     type="text"
                     value={searchQuery}
-                    onFocus={() => setShowSpecialtyDropdown(true)}
+                    onFocus={() => {
+                      if (searchQuery.trim().length > 0) {
+                        setShowSearchDropdown(true);
+                      }
+                    }}
                     onChange={(e) => {
                       setSearchQuery(e.target.value);
-                      setShowSpecialtyDropdown(true);
+                      setShowSearchDropdown(e.target.value.trim().length > 0);
                     }}
                     placeholder={t('home.searchPlaceholder')}
                     className="w-full min-w-0 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden font-medium"
@@ -362,17 +476,20 @@ export const Home: React.FC = () => {
                   {searchQuery && (
                     <button
                       type="button"
-                      onClick={() => setSearchQuery('')}
-                      className="text-slate-400 hover:text-white p-0.5 cursor-pointer ml-1 rtl:ml-0 rtl:mr-1"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setShowSearchDropdown(false);
+                      }}
+                      className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer ml-1 rtl:ml-0 rtl:mr-1"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   )}
                 </div>
 
-                {/* Doctor & Hospital Dropdown Suggestions */}
+                {/* Autocomplete Dropdown - ONLY appears when user enters letters (does not suggest hospitals first) */}
                 <AnimatePresence>
-                  {showSpecialtyDropdown && (
+                  {showSearchDropdown && isTyping && (
                     <motion.div
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -380,59 +497,17 @@ export const Home: React.FC = () => {
                       transition={{ duration: 0.15 }}
                       className="absolute left-0 right-0 sm:right-auto rtl:sm:right-0 rtl:sm:left-auto sm:w-96 mt-2 bg-white rounded-2xl shadow-2xl border border-[#E2EBF0] p-3 z-50 text-left rtl:text-right divide-y divide-slate-100 max-w-[calc(100vw-32px)] max-h-96 overflow-y-auto backdrop-blur-xl text-slate-900"
                     >
-                      {/* Section: Matching Doctors (active when user types) */}
-                      {matchingSearchDoctors.length > 0 && (
-                        <div className="pb-2.5">
-                          <p className="text-[10px] font-bold text-[#0E7490] uppercase tracking-wider px-2 mb-2 flex items-center gap-1.5">
-                            <Stethoscope className="w-3 h-3 text-[#2DA7B5]" />
-                            {t('common.doctors')}
-                          </p>
-                          <div className="space-y-1">
-                            {matchingSearchDoctors.map((doc) => (
-                              <button
-                                key={doc.id}
-                                type="button"
-                                onClick={() => {
-                                  setSearchQuery(doc.name);
-                                  setShowSpecialtyDropdown(false);
-                                }}
-                                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 text-left rtl:text-right transition-colors cursor-pointer group"
-                              >
-                                <img
-                                  src={doc.photo}
-                                  alt={doc.name}
-                                  className="w-8 h-8 rounded-full object-cover shrink-0 border border-[#E2EBF0]"
-                                />
-                                <div className="truncate flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-1.5">
-                                    <span className="text-xs font-bold text-slate-900 group-hover:text-[#0E7490] block truncate">
-                                      {doc.name}
-                                    </span>
-                                    <span className="text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full shrink-0">
-                                      ★ {doc.rating}
-                                    </span>
-                                  </div>
-                                  <span className="text-[10px] text-slate-500 block truncate">
-                                    {doc.hospitalName || doc.location}
-                                  </span>
-                                </div>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Section: Suggested / Matching Hospitals */}
+                      {/* Section 1: Matching Hospitals & Clinics (Top Priority) */}
                       {filteredHospitals.length > 0 && (
-                        <div className={matchingSearchDoctors.length > 0 ? "pt-2.5" : ""}>
+                        <div className="pb-2.5">
                           <div className="flex items-center justify-between px-2 mb-2">
                             <p className="text-[10px] font-bold text-[#0E7490] uppercase tracking-wider flex items-center gap-1.5">
                               <Building2 className="w-3 h-3 text-[#2DA7B5]" />
-                              {t('home.suggestedHospitalsTitle')}
+                              {t('home.matchingHospitalsTitle')}
                             </p>
                             <Link
                               to="/hospitals"
-                              onClick={() => setShowSpecialtyDropdown(false)}
+                              onClick={() => setShowSearchDropdown(false)}
                               className="text-[10px] font-bold text-[#0E7490] hover:text-[#08596F] transition-colors"
                             >
                               {t('common.viewAll')} →
@@ -445,7 +520,7 @@ export const Home: React.FC = () => {
                                 type="button"
                                 onClick={() => {
                                   setSearchQuery(hosp.name);
-                                  setShowSpecialtyDropdown(false);
+                                  setShowSearchDropdown(false);
                                 }}
                                 className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 text-left rtl:text-right transition-colors cursor-pointer group"
                               >
@@ -479,11 +554,83 @@ export const Home: React.FC = () => {
                         </div>
                       )}
 
-                      {/* Empty state if neither doctors nor hospitals match */}
-                      {matchingSearchDoctors.length === 0 && filteredHospitals.length === 0 && (
+                      {/* Section 2: Matching Doctors */}
+                      {matchingSearchDoctors.length > 0 && (
+                        <div className={filteredHospitals.length > 0 ? "py-2.5" : "pb-2.5"}>
+                          <p className="text-[10px] font-bold text-[#0E7490] uppercase tracking-wider px-2 mb-2 flex items-center gap-1.5">
+                            <Stethoscope className="w-3 h-3 text-[#2DA7B5]" />
+                            {t('home.matchingDoctorsTitle')}
+                          </p>
+                          <div className="space-y-1">
+                            {matchingSearchDoctors.map((doc) => (
+                              <button
+                                key={doc.id}
+                                type="button"
+                                onClick={() => {
+                                  setSearchQuery(doc.name);
+                                  setShowSearchDropdown(false);
+                                }}
+                                className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 text-left rtl:text-right transition-colors cursor-pointer group"
+                              >
+                                <img
+                                  src={doc.photo}
+                                  alt={doc.name}
+                                  className="w-8 h-8 rounded-full object-cover shrink-0 border border-[#E2EBF0]"
+                                />
+                                <div className="truncate flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-1.5">
+                                    <span className="text-xs font-bold text-slate-900 group-hover:text-[#0E7490] block truncate">
+                                      {doc.name}
+                                    </span>
+                                    <span className="text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full shrink-0">
+                                      ★ {doc.rating}
+                                    </span>
+                                  </div>
+                                  <span className="text-[10px] text-slate-500 block truncate">
+                                    {translateSpecialty(doc.specialty)} • {doc.hospitalName || doc.location}
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Section 3: Matching Specialties (Lower Priority - Compact Pills) */}
+                      {matchingSpecialties.length > 0 && (
+                        <div className="pt-2.5">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1 mb-1.5 flex items-center gap-1.5">
+                            <HeartPulse className="w-3 h-3 text-slate-400" />
+                            <span>{t('home.matchingSpecialtiesTitle')}</span>
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 px-1">
+                            {matchingSpecialties.map((spec) => (
+                              <button
+                                key={spec.name}
+                                type="button"
+                                onClick={() => {
+                                  setSearchQuery(spec.name);
+                                  setShowSearchDropdown(false);
+                                }}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-[#E8F6F8] hover:text-[#0E7490] text-slate-600 text-xs font-semibold border border-[#E2EBF0] transition-colors cursor-pointer"
+                              >
+                                <span>{translateSpecialty(spec.name)}</span>
+                                <ChevronRight className="w-3 h-3 text-slate-400 rtl:rotate-180" />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Empty state if nothing matches */}
+                      {!hasAnySearchSuggestions && (
                         <div className="p-4 text-center">
-                          <p className="text-xs font-bold text-slate-800">No doctors or hospitals found</p>
-                          <p className="text-[10px] text-slate-500 mt-0.5">Try searching with another doctor or hospital name</p>
+                          <p className="text-xs font-bold text-slate-800">
+                            {t('home.noResultsFound')} "{searchQuery}"
+                          </p>
+                          <p className="text-[10px] text-slate-500 mt-0.5">
+                            {t('home.noResultsHint')}
+                          </p>
                         </div>
                       )}
                     </motion.div>
@@ -493,7 +640,7 @@ export const Home: React.FC = () => {
 
               <div className="hidden sm:block w-px h-8 bg-[#E2EBF0]" />
 
-              {/* Field 2: Health Condition with Autocomplete */}
+              {/* Field 2: Health Condition with Autocomplete (Like Old) */}
               <div className="flex-1 relative min-w-0" ref={conditionRef}>
                 <div className="flex items-center px-4 py-3 sm:py-2.5 bg-[#F8FAFC] sm:bg-transparent rounded-xl sm:rounded-none">
                   <Activity className="w-4 h-4 text-[#2DA7B5] mr-3 rtl:mr-0 rtl:ml-3 shrink-0" />
@@ -533,11 +680,7 @@ export const Home: React.FC = () => {
                         {t('home.suggestedConditionsTitle')}
                       </p>
                       <div className="space-y-1">
-                        {HEALTH_CONDITIONS.filter((c) =>
-                          c.name.toLowerCase().includes(selectedCondition.toLowerCase()) ||
-                          c.specialist.toLowerCase().includes(selectedCondition.toLowerCase()) ||
-                          c.description.toLowerCase().includes(selectedCondition.toLowerCase())
-                        ).map((cond) => (
+                        {matchingConditions.map((cond) => (
                           <button
                             key={cond.name}
                             type="button"
@@ -573,18 +716,20 @@ export const Home: React.FC = () => {
 
               <div className="hidden sm:block w-px h-8 bg-[#E2EBF0]" />
 
-              {/* Field 3: Emirate */}
-              <div className="flex items-center px-3 py-3 sm:py-2.5 bg-[#F8FAFC] sm:bg-transparent rounded-xl sm:rounded-none sm:w-36 min-w-0">
+              {/* Field 3: Emirate - Precious / Precise Options */}
+              <div className="flex items-center px-3 py-3 sm:py-2.5 bg-[#F8FAFC] sm:bg-transparent rounded-xl sm:rounded-none sm:w-44 min-w-0">
                 <select
                   value={selectedEmirate}
                   onChange={(e) => setSelectedEmirate(e.target.value)}
                   className="w-full bg-transparent text-xs font-bold text-slate-900 focus:outline-hidden cursor-pointer [&>option]:bg-white [&>option]:text-slate-900"
                 >
-                  <option value="Dxb">{t('emirates.dubai')} (Dxb)</option>
-                  <option value="Abu Dhabi">{t('emirates.abuDhabi')}</option>
-                  <option value="Sharjah">{t('emirates.sharjah')}</option>
-                  <option value="Ajman">{t('emirates.ajman')}</option>
-                  <option value="Ras Al Khaimah">{t('emirates.rasAlKhaimah')}</option>
+                  <option value="Dxb">{t('emirates.dubai')} (DXB)</option>
+                  <option value="Abu Dhabi">{t('emirates.abuDhabi')} (AUH)</option>
+                  <option value="Sharjah">{t('emirates.sharjah')} (SHJ)</option>
+                  <option value="Ajman">{t('emirates.ajman')} (AJM)</option>
+                  <option value="Ras Al Khaimah">{t('emirates.rasAlKhaimah')} (RAK)</option>
+                  <option value="Fujairah">{t('emirates.fujairah')} (FUJ)</option>
+                  <option value="Umm Al Quwain">{t('emirates.ummAlQuwain')} (UAQ)</option>
                 </select>
               </div>
 
@@ -598,21 +743,89 @@ export const Home: React.FC = () => {
               </button>
             </form>
 
-            {/* Quick Specialty Shortcut Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs">
-              <span className="text-slate-500 font-semibold uppercase tracking-wider text-[10px] mr-1 rtl:mr-0 rtl:ml-1">
-                {t('home.suggestedLabel')}
-              </span>
-              {['Cardiology', 'Dermatology', 'Orthopedics', 'Pediatrics', 'Neurology', 'General Practice'].map((spec) => (
-                <button
-                  key={spec}
-                  type="button"
-                  onClick={() => handleQuickSpecialty(spec)}
-                  className="px-3 py-1 rounded-full bg-white border border-[#E2EBF0] text-slate-700 font-medium hover:border-[#2DA7B5] hover:text-[#0E7490] hover:bg-[#E8F6F8] transition-all cursor-pointer shadow-2xs"
+            {/* Step-Sliding Specialties: 5 visible, smooth 3-shift, dots under (RTL & LTR aware) */}
+            <div
+              className="relative max-w-3xl mx-auto mt-6 sm:mt-8 select-none"
+              onMouseEnter={() => setIsSpecialtyHovered(true)}
+              onMouseLeave={() => setIsSpecialtyHovered(false)}
+            >
+              {/* Sliding Track Viewport */}
+              <div
+                ref={specialtyViewportRef}
+                className="overflow-hidden"
+                dir={isRTL ? 'rtl' : 'ltr'}
+                onTouchStart={(e) => {
+                  setIsSpecialtyHovered(true);
+                  specialtyTouchStartX.current = e.touches[0].clientX;
+                }}
+                onTouchEnd={(e) => {
+                  if (specialtyTouchStartX.current !== null) {
+                    const deltaX = specialtyTouchStartX.current - e.changedTouches[0].clientX;
+                    const advance = isRTL ? deltaX < -35 : deltaX > 35;
+                    const retreat = isRTL ? deltaX > 35 : deltaX < -35;
+                    if (advance) {
+                      setIsSliderTransitioning(true);
+                      setSpecialtyStep((prev) => prev + 1);
+                    } else if (retreat) {
+                      setIsSliderTransitioning(true);
+                      setSpecialtyStep((prev) => Math.max(0, prev - 1));
+                    }
+                    specialtyTouchStartX.current = null;
+                  }
+                  setIsSpecialtyHovered(false);
+                }}
+              >
+                <div
+                  className="flex gap-2 py-1"
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                  style={{
+                    transform: isRTL
+                      ? `translateX(${currentOffset}px)`
+                      : `translateX(-${currentOffset}px)`,
+                    transition: isSliderTransitioning
+                      ? 'transform 500ms cubic-bezier(0.25, 1, 0.5, 1)'
+                      : 'none',
+                    willChange: 'transform',
+                  }}
                 >
-                  {translateSpecialty(spec)}
-                </button>
-              ))}
+                  {SLIDER_SPECIALTIES.map((spec, idx) => (
+                    <div
+                      key={`${spec}-${idx}`}
+                      className="shrink-0 w-[calc((100%-16px)/3)] sm:w-[calc((100%-32px)/5)]"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleQuickSpecialty(spec)}
+                        title={getSpecialtyDisplayName(spec)}
+                        className="w-full px-2.5 sm:px-3 py-1.5 rounded-full bg-white border border-[#E2EBF0] text-slate-700 font-semibold text-[11px] sm:text-xs hover:border-[#2DA7B5] hover:text-[#0E7490] hover:bg-[#E8F6F8] transition-all cursor-pointer shadow-2xs truncate text-center block active:scale-95"
+                        dir={isArabic ? 'rtl' : 'ltr'}
+                      >
+                        {getSpecialtyDisplayName(spec)}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 6 Pagination Dots Underneath */}
+              <div className="flex items-center justify-center gap-1.5 mt-2.5" dir={isRTL ? 'rtl' : 'ltr'}>
+                {Array.from({ length: TOTAL_STEPS }).map((_, dotIdx) => {
+                  const isActive = (specialtyStep % TOTAL_STEPS) === dotIdx;
+                  return (
+                    <button
+                      key={dotIdx}
+                      type="button"
+                      onClick={() => handleDotClick(dotIdx)}
+                      aria-label={`Go to slide step ${dotIdx + 1}`}
+                      className={`transition-all duration-300 rounded-full cursor-pointer p-0.5 ${
+                        isActive
+                          ? 'w-5 h-1.5 bg-[#2DA7B5]'
+                          : 'w-1.5 h-1.5 bg-slate-300 hover:bg-slate-400'
+                      }`}
+                    />
+                  );
+                })}
+              </div>
             </div>
           </motion.div>
 
@@ -985,265 +1198,28 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ========================================================================= */}
-      {/* 3. MEET OUR DOCTORS: Doctor Cards with Direct Booking (PDF Page 2)        */}
-      {/* ========================================================================= */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0] bg-[#F4F7F9]">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
-          <div>
-            <div className="inline-block px-3 py-1 bg-white border border-[#E2EBF0] text-slate-700 text-xs font-semibold rounded-full mb-2 shadow-2xs">
-              {t('home.verifiedPhysicians')}
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              {t('home.featuredSpecialistsTitle')}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl">
-              {t('home.featuredSpecialistsDesc')}
-            </p>
-          </div>
-
-          {/* Specialty Filter Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5 bg-white p-1.5 rounded-xl border border-[#E2EBF0] shadow-2xs">
-            {['All', 'Cardiology', 'Dermatology', 'Orthopedics', 'General Practice'].map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setDoctorCategory(cat)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  doctorCategory === cat
-                    ? 'bg-[#2DA7B5] text-white shadow-xs'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                }`}
-              >
-                {cat === 'All' ? t('common.all') : translateSpecialty(cat)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Doctor Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredDoctors.map((doc) => (
-            <div
-              key={doc.id}
-              className="bg-white rounded-3xl border border-[#E2EBF0] overflow-hidden hover:border-[#2DA7B5] transition-all flex flex-col justify-between group shadow-xs"
-            >
-              <div>
-                {/* Doctor Photo & Rating */}
-                <div className="relative aspect-16/10 overflow-hidden bg-slate-100">
-                  <img
-                    src={doc.photo}
-                    alt={doc.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute top-3 right-3 rtl:right-auto rtl:left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-slate-900 flex items-center gap-1 border border-[#E2EBF0] shadow-xs">
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    <span>{doc.rating}</span>
-                  </div>
-                  <div className="absolute bottom-3 left-3 rtl:left-auto rtl:right-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-semibold text-slate-700 flex items-center gap-1 border border-[#E2EBF0] shadow-xs">
-                    <Clock className="w-3 h-3 text-slate-500" />
-                    <span>{t('home.availableThisWeek')}</span>
-                  </div>
-                </div>
-
-                {/* Details */}
-                <div className="p-5 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-2.5 py-0.5 rounded-full">
-                      {translateSpecialty(doc.specialty)}
-                    </span>
-                    <span className="text-xs text-slate-500 font-medium">
-                      {doc.experience}
-                    </span>
-                  </div>
-
-                  <h3 className="text-base font-black text-slate-900 group-hover:text-[#0E7490] transition-colors leading-snug">
-                    {doc.name}
-                  </h3>
-
-                  <p className="text-xs text-slate-600 flex items-center gap-1.5 line-clamp-1">
-                    <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span className="truncate">{doc.hospitalName || 'American Hospital Dubai'}</span>
-                  </p>
-
-                  <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed pt-1">
-                    {doc.about}
-                  </p>
-                </div>
-              </div>
-
-              {/* Action Button */}
-              <div className="p-5 pt-0">
-                <Link
-                  to={`/book/doctor/${doc.id}`}
-                  className="w-full py-2.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-                >
-                  <span>{t('home.book30MinVisit')}</span>
-                  <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 text-center">
-          <Link
-            to="/doctors"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-[#E2EBF0] text-slate-700 text-xs font-semibold hover:bg-slate-50 hover:text-slate-900 transition-all shadow-xs"
-          >
-            <span>{t('home.exploreAllSpecialists')}</span>
-            <ArrowRight className="w-4 h-4 text-slate-400 rtl:rotate-180" />
-          </Link>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 4. RECOMMENDED DOCTORS BY LOCATION & NEED                                */}
-      {/* ========================================================================= */}
-      <section className="py-18 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0]">
-        <div className="bg-white border border-[#E2EBF0] rounded-3xl p-6 sm:p-10 text-slate-900 shadow-sm relative overflow-hidden">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8F6F8] border border-[#CDEBF0] text-xs font-semibold text-[#0E7490] mb-2">
-                <Compass className="w-3.5 h-3.5 text-[#2DA7B5]" />
-                <span>{t('home.smartMatcher')}</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                {t('home.recommendedNearYou')}
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
-                {t('home.recommendedDesc')}
-              </p>
-            </div>
-
-            {/* Location Filter Pills */}
-            <div className="flex flex-wrap items-center gap-1.5 bg-[#F8FAFC] p-1.5 rounded-2xl border border-[#E2EBF0]">
-              {[
-                { id: 'All', label: t('home.allUae') },
-                { id: 'Oud Metha', label: t('home.alJaddafCmc') },
-                { id: 'Downtown', label: t('home.downtown') },
-                { id: 'Healthcare City', label: t('home.dhcc') },
-              ].map((loc) => (
-                <button
-                  key={loc.id}
-                  type="button"
-                  onClick={() => setRecommendedFilter(loc.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    recommendedFilter === loc.id
-                      ? 'bg-[#2DA7B5] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  {loc.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Recommended Doctors Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {recommendedDoctors.map((doc) => (
-              <div
-                key={doc.id}
-                className="bg-[#F8FAFC] rounded-2xl p-4 text-slate-900 border border-[#E2EBF0] flex flex-col justify-between hover:scale-[1.02] hover:border-[#2DA7B5] hover:bg-white hover:shadow-md transition-all"
-              >
-                <div>
-                  <div className="flex items-start gap-3">
-                    <Link to={`/doctors/${doc.id}`} className="shrink-0">
-                      <img
-                        src={doc.photo}
-                        alt={doc.name}
-                        className="w-13 h-13 rounded-xl object-cover border border-[#E2EBF0] hover:scale-105 transition-transform"
-                        referrerPolicy="no-referrer"
-                      />
-                    </Link>
-                    <div className="truncate">
-                      <div className="flex items-center gap-1 text-[11px] font-bold text-amber-500">
-                        <Star className="w-3 h-3 fill-amber-500" />
-                        <span>{doc.rating}</span>
-                        <span className="text-slate-400 font-normal">({doc.reviewCount})</span>
-                      </div>
-                      <Link to={`/doctors/${doc.id}`}>
-                        <h4 className="text-sm font-black text-slate-900 truncate mt-0.5 hover:text-[#2DA7B5] transition-colors">{doc.name}</h4>
-                      </Link>
-                      <p className="text-[11px] font-semibold text-[#0E7490] truncate">{translateSpecialty(doc.specialty)}</p>
-                    </div>
-                  </div>
-
-                  <p className="text-[11px] text-slate-500 mt-3 flex items-center gap-1 truncate">
-                    <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
-                    <span className="truncate">{translateLocation(doc.location)}</span>
-                  </p>
-
-                  {/* Real-time next available slot */}
-                  <div className="mt-3 bg-white border border-[#E2EBF0] rounded-xl p-2 flex items-center justify-between text-xs">
-                    <span className="text-[10px] font-semibold text-slate-600 flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                      {t('home.nextSlotToday')}
-                    </span>
-                    <span className="font-mono font-bold text-[11px] text-slate-900">
-                      10:30 AM
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-[#E2EBF0] flex items-center justify-between gap-2">
-                  <div>
-                    <span className="text-[10px] text-slate-400 block font-medium">{t('home.consultation')}</span>
-                    <span className="text-xs font-black text-slate-900">{t('common.aed')} {doc.consultationFee}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Link
-                      to={`/doctors/${doc.id}`}
-                      className="px-2.5 py-1.5 bg-white hover:bg-[#E8F6F8] hover:border-[#2DA7B5] hover:text-[#0E7490] text-slate-700 border border-[#CBD5E1] text-[11px] font-bold rounded-xl transition-all shadow-2xs cursor-pointer"
-                    >
-                      {t('doctors.viewProfile')}
-                    </Link>
-                    <Link
-                      to={`/book/doctor/${doc.id}`}
-                      className="px-3 py-1.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white text-[11px] font-bold rounded-xl transition-all shadow-xs flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>{t('home.book')}</span>
-                      <ArrowRight className="w-3 h-3 rtl:rotate-180" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Concierge Help bar */}
-          <div className="mt-8 pt-6 border-t border-[#E2EBF0] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-            <div className="flex items-center gap-2.5 text-slate-600">
-              <ShieldCheck className="w-5 h-5 text-[#2DA7B5] shrink-0" />
-              <span>{t('home.facilityNotice')}</span>
-            </div>
-            <Link
-              to="/doctors"
-              className="text-[#2DA7B5] hover:text-[#23929F] font-bold flex items-center gap-1 shrink-0"
-            >
-              <span>{t('home.exploreByLocation')}</span>
-              <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 5. ACCREDITED PARTNER HOSPITALS (PDF Page 7 Showcase)                     */}
+      {/* 3. ACCREDITED PARTNER HOSPITALS: Hospital Facilities Showcase First        */}
       {/* ========================================================================= */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0]">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-block px-3 py-1 bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-xs font-semibold rounded-full mb-2">
-            {t('common.hospitalNetwork')}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+          <div>
+            <div className="inline-block px-3 py-1 bg-[#E8F6F8] border border-[#CDEBF0] text-[#0E7490] text-xs font-semibold rounded-full mb-2 shadow-2xs">
+              {t('common.hospitalNetwork')}
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              {t('home.partnerFacilitiesTitle')}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
+              {t('home.partnerFacilitiesDesc')}
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            {t('home.partnerFacilitiesTitle')}
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1.5">
-            {t('home.partnerFacilitiesDesc')}
-          </p>
+          <Link
+            to="/hospitals"
+            className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-900 flex items-center gap-1.5 shrink-0 bg-white hover:bg-slate-50 px-3.5 py-2 rounded-xl transition-all border border-[#E2EBF0] shadow-xs"
+          >
+            <span>{t('home.viewAllHospitals')}</span>
+            <ChevronRight className="w-4 h-4 rtl:rotate-180" />
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -1295,7 +1271,135 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ========================================================================= */}
-      {/* 6. HOW IT WORKS (PDF Page 4)                                              */}
+      {/* 4. MEET OUR DOCTORS: List of Doctors with Small Images (Without Fee)        */}
+      {/* ========================================================================= */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0] bg-[#F4F7F9]">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+          <div>
+            <div className="inline-block px-3 py-1 bg-white border border-[#E2EBF0] text-slate-700 text-xs font-semibold rounded-full mb-2 shadow-2xs">
+              {t('home.verifiedPhysicians')}
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              {t('home.featuredSpecialistsTitle')}
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl">
+              {t('home.featuredSpecialistsDesc')}
+            </p>
+          </div>
+
+          {/* Specialty Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-1.5 bg-white p-1.5 rounded-xl border border-[#E2EBF0] shadow-2xs">
+            {['All', 'Cardiology', 'Dermatology', 'Orthopedics', 'General Practice', 'Home Care'].map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setDoctorCategory(cat)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  doctorCategory === cat
+                    ? 'bg-[#2DA7B5] text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                }`}
+              >
+                {cat === 'All' ? t('common.all') : translateSpecialty(cat)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Doctor Grid - Compact Cards with Small Images & No Consultation Fee */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredDoctors.map((doc) => (
+            <div
+              key={doc.id}
+              className="bg-white rounded-2xl border border-[#E2EBF0] p-5 hover:border-[#2DA7B5] hover:shadow-md transition-all flex flex-col justify-between group shadow-2xs"
+            >
+              <div>
+                {/* Header: Small Doctor Avatar & Rating */}
+                <div className="flex items-start gap-3.5">
+                  <Link to={`/doctors/${doc.id}`} className="shrink-0">
+                    <img
+                      src={doc.photo}
+                      alt={doc.name}
+                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border border-[#E2EBF0] group-hover:scale-105 transition-transform"
+                      referrerPolicy="no-referrer"
+                    />
+                  </Link>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <span className="text-[10px] font-bold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-2 py-0.5 rounded-full truncate">
+                        {translateSpecialty(doc.specialty)}
+                      </span>
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-amber-500 shrink-0">
+                        <Star className="w-3 h-3 fill-amber-500" />
+                        <span>{doc.rating}</span>
+                      </div>
+                    </div>
+
+                    <Link to={`/doctors/${doc.id}`}>
+                      <h3 className="text-sm sm:text-base font-black text-slate-900 group-hover:text-[#0E7490] transition-colors truncate">
+                        {doc.name}
+                      </h3>
+                    </Link>
+
+                    <p className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5 truncate">
+                      <Building2 className="w-3 h-3 text-slate-400 shrink-0" />
+                      <span className="truncate">{doc.hospitalName || 'American Hospital Dubai'}</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Experience & Availability Pill */}
+                <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500 bg-[#F8FAFC] px-3 py-1.5 rounded-xl border border-[#E2EBF0]">
+                  <span className="flex items-center gap-1 font-medium">
+                    <Award className="w-3.5 h-3.5 text-[#2DA7B5]" />
+                    <span>{doc.experience}</span>
+                  </span>
+                  <span className="flex items-center gap-1 font-semibold text-emerald-600">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>{t('home.availableThisWeek')}</span>
+                  </span>
+                </div>
+
+                {/* About Snippet */}
+                <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mt-2.5">
+                  {doc.about}
+                </p>
+              </div>
+
+              {/* Action Buttons (Without Fee) */}
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
+                <Link
+                  to={`/doctors/${doc.id}`}
+                  className="flex-1 py-2 bg-[#F8FAFC] hover:bg-[#E8F6F8] text-slate-700 hover:text-[#0E7490] text-xs font-bold rounded-xl transition-all text-center border border-[#E2EBF0] cursor-pointer"
+                >
+                  {t('doctors.viewProfile')}
+                </Link>
+                <Link
+                  to={`/book/doctor/${doc.id}`}
+                  className="flex-1 py-2 bg-[#2DA7B5] hover:bg-[#23929F] text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                  <span>{t('home.book')}</span>
+                  <ArrowRight className="w-3 h-3 rtl:rotate-180" />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <Link
+            to="/doctors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-[#E2EBF0] text-slate-700 text-xs sm:text-sm font-semibold hover:bg-slate-50 hover:text-slate-900 transition-all shadow-xs"
+          >
+            <span>{t('home.exploreAllSpecialists')}</span>
+            <ArrowRight className="w-4 h-4 text-slate-400 rtl:rotate-180" />
+          </Link>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5. HOW IT WORKS (PDF Page 4)                                              */}
       {/* ========================================================================= */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#E2EBF0]">
         <div className="text-center max-w-2xl mx-auto mb-12">

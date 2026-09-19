@@ -61,6 +61,7 @@ export const doctorService = {
       id: `doc_${Date.now()}`,
       name: input.name,
       specialty: input.specialty,
+      specialInterest: input.specialInterest || [],
       photo:
         input.photo ||
         'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400',

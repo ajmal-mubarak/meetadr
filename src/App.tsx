@@ -169,13 +169,14 @@ export default function App() {
               <Route path="/book" element={<BookingPage />} />
               <Route path="/book/doctor/:doctorId" element={<BookingPage />} />
 
-              {/* Auth Routes */}
+              {/* Auth Routes - With Header Navbar & Footer */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/patient/login" element={<LoginPage forcedRole="patient" />} />
               <Route path="/doctor/login" element={<LoginPage forcedRole="doctor" />} />
               <Route path="/hospital/login" element={<LoginPage forcedRole="hospital" />} />
               <Route path="/admin/login" element={<LoginPage forcedRole="admin" />} />
             </Route>
+
 
             {/* PATIENT PORTAL */}
             <Route

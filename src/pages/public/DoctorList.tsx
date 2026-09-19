@@ -52,13 +52,36 @@ export const DoctorList: React.FC = () => {
     'Pediatrics',
     'General Practice',
     'Neurology',
+    'Home Care',
   ];
 
 
   const filtered = useMemo(() => {
     return doctors.filter((doc) => {
-      if (specialty !== 'All' && !doc.specialty.toLowerCase().includes(specialty.toLowerCase())) {
-        return false;
+      if (specialty !== 'All') {
+        const specLower = specialty.toLowerCase().trim();
+        const docSpecLower = doc.specialty.toLowerCase().trim();
+        const isMatch =
+          docSpecLower.includes(specLower) ||
+          specLower.includes(docSpecLower) ||
+          (specLower.includes('home') && (
+            docSpecLower.includes('home') ||
+            doc.about.toLowerCase().includes('home') ||
+            (doc.specialInterest && doc.specialInterest.some((si) => si.toLowerCase().includes('home')))
+          )) ||
+          (specLower.includes('general') && docSpecLower.includes('general')) ||
+          (specLower.includes('cardio') && docSpecLower.includes('cardio')) ||
+          (specLower.includes('ortho') && docSpecLower.includes('ortho')) ||
+          (specLower.includes('derma') && docSpecLower.includes('derma')) ||
+          (specLower.includes('pediatr') && docSpecLower.includes('pediatr')) ||
+          (specLower.includes('neuro') && docSpecLower.includes('neuro')) ||
+          (specLower.includes('gynec') && docSpecLower.includes('gynec')) ||
+          (specLower.includes('ent') && (docSpecLower.includes('ent') || docSpecLower.includes('ear'))) ||
+          (specLower.includes('dent') && docSpecLower.includes('dent')) ||
+          (specLower.includes('ophthal') && (docSpecLower.includes('ophthal') || docSpecLower.includes('eye')));
+        if (!isMatch) {
+          return false;
+        }
       }
       if (!matchesLocation(doc.location, location)) {
         return false;

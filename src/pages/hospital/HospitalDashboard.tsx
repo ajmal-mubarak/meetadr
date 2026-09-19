@@ -262,6 +262,131 @@ export const HospitalDashboard: React.FC = () => {
     }));
   }, [reportCriteria, isArabic]);
 
+  // Real Excel / CSV Report Download
+  const handleExportExecutiveExcel = () => {
+    const headers = ['Appointment ID', 'Date', 'Time Slot', 'Patient Name', 'Patient Phone', 'Doctor', 'Specialty', 'Status'];
+    const rows = appointments.map((appt) => [
+      `"${appt.id}"`,
+      `"${appt.date}"`,
+      `"${appt.timeSlot}"`,
+      `"${appt.patientName}"`,
+      `"${appt.patientPhone}"`,
+      `"${appt.doctorName}"`,
+      `"${appt.specialty}"`,
+      `"${appt.status}"`,
+    ]);
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Hospital_Appointments_Report_${reportCriteria}_${todayStr}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast(isArabic ? 'تم تحميل تقرير المستشفى بصيغة Excel بنجاح.' : 'Hospital Excel/CSV report downloaded successfully.', 'success');
+  };
+
+  // Real Printable / Downloadable PDF Report
+  const handleExportExecutivePdf = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      showToast(isArabic ? 'يرجى السماح بالنوافذ المنبثقة لطباعة التقرير' : 'Please allow popups to generate PDF report', 'error');
+      return;
+    }
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Executive Hospital Report - meetAdr</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 28px; color: #0f172a; }
+            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #0891b2; padding-bottom: 12px; margin-bottom: 20px; }
+            h1 { font-size: 18px; margin: 0; color: #0891b2; font-weight: 800; }
+            .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+            .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
+            .card-title { font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 700; margin-bottom: 4px; }
+            .card-val { font-size: 20px; font-weight: 900; color: #0f172a; }
+            table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+            th { background: #f1f5f9; text-align: left; padding: 7px 10px; border-bottom: 2px solid #cbd5e1; color: #334155; }
+            td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; }
+            .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px; }
+            .confirmed { background: #ecfdf5; color: #047857; }
+            .pending { background: #fffbeb; color: #b45309; }
+            @media print { button { display: none; } }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <h1>meetAdr • Executive Hospital Report</h1>
+              <p style="font-size: 11px; color: #64748b; margin: 4px 0 0 0;">Facility: American Hospital Dubai • Scope: ${reportCriteria.toUpperCase()} • Generated: ${new Date().toLocaleString()}</p>
+            </div>
+            <div style="text-align: right; font-size: 11px; color: #64748b;">
+              <strong>Confidential</strong><br/>Outpatient Consultation Network
+            </div>
+          </div>
+
+          <div class="metrics">
+            <div class="card">
+              <div class="card-title">Total Consultations</div>
+              <div class="card-val">${appointments.length}</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Confirmed Visits</div>
+              <div class="card-val" style="color: #0891b2;">${confirmedCount}</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Pending Intake</div>
+              <div class="card-val" style="color: #d97706;">${pendingCount}</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Completed Consultations</div>
+              <div class="card-val">${completedCount}</div>
+            </div>
+          </div>
+
+          <h3 style="font-size: 13px; font-weight: 800; margin: 16px 0 6px 0;">Consultation Appointment Records</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Date & Slot</th>
+                <th>Patient Name</th>
+                <th>Contact</th>
+                <th>Assigned Doctor</th>
+                <th>Department / Specialty</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${appointments.slice(0, 30).map((a) => `
+                <tr>
+                  <td><strong>${a.date}</strong><br/>${a.timeSlot}</td>
+                  <td><strong>${a.patientName}</strong></td>
+                  <td>${a.patientPhone}</td>
+                  <td>${a.doctorName}</td>
+                  <td>${a.specialty}</td>
+                  <td><span class="badge ${a.status === 'confirmed' ? 'confirmed' : 'pending'}">${a.status.toUpperCase()}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <script>
+            window.onload = function() { window.print(); }
+          </script>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    showToast(isArabic ? 'تم فتح تقرير المستشفى للطباعة أو الحفظ كـ PDF.' : 'Hospital PDF report opened for printing/saving.', 'info');
+  };
+
   return (
     <div className="bg-[#F4F7F9] min-h-screen py-8 px-4 sm:px-6 lg:px-8 space-y-6">
       
@@ -583,8 +708,31 @@ export const HospitalDashboard: React.FC = () => {
                     />
                     <div className="flex-1 truncate">
                       <h3 className="text-sm font-bold text-slate-900 truncate">{doc.name}</h3>
-                      <p className="text-xs font-semibold text-[#0E7490]">{translateSpecialty(doc.specialty)}</p>
+                      <Link
+                        to="/specialties"
+                        className="text-xs font-bold text-[#0E7490] hover:underline block"
+                        title="View Department"
+                      >
+                        {translateSpecialty(doc.specialty)}
+                      </Link>
                       <span className="text-[11px] text-slate-500">{doc.experience} • {doc.rating} ★</span>
+
+                      {/* Special Interest (Linked to Health Issues / Search Criteria) */}
+                      <div className="flex flex-wrap items-center gap-1 mt-2">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1">
+                          {isArabic ? 'الاهتمام السريري:' : 'Special Interest:'}
+                        </span>
+                        {(doc.specialInterest || ['General Healthcare', 'Preventive Care']).map((interest, i) => (
+                          <Link
+                            key={i}
+                            to="/conditions"
+                            className="text-[10px] font-semibold bg-white border border-[#E2EBF0] text-[#0E7490] px-2 py-0.5 rounded-md hover:bg-[#E8F6F8] transition-colors"
+                            title={`Health Condition: ${interest}`}
+                          >
+                            {interest}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                     <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-[#E8F6F8] text-[#0E7490] border border-[#CDEBF0] shrink-0">
                       {isArabic ? `${docAppts.length} حجوزات` : `${docAppts.length} Bookings`}
@@ -765,8 +913,9 @@ export const HospitalDashboard: React.FC = () => {
               <div className="flex flex-wrap items-center gap-2.5">
                 <button
                   type="button"
-                  onClick={() => showToast(isArabic ? 'جاري تصدير التقرير بتنسيق CSV...' : 'Exporting CSV summary report...', 'info')}
+                  onClick={handleExportExecutiveExcel}
                   className="px-4 py-2.5 bg-white hover:bg-[#F8FAFC] border border-[#E2EBF0] text-slate-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                  title="Download Excel / CSV Report"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>{t('hospitalPortal.downloadCsv')}</span>
@@ -774,8 +923,9 @@ export const HospitalDashboard: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => showToast(isArabic ? 'جاري إنشاء تقرير المستشفى الرسمي بصيغة PDF...' : 'Generating official PDF hospital report...', 'info')}
+                  onClick={handleExportExecutivePdf}
                   className="px-4 py-2.5 bg-[#2DA7B5] hover:bg-[#23929F] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  title="Download Official PDF Report"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5" />
                   <span>{t('hospitalPortal.generateReport')}</span>

@@ -23,10 +23,6 @@ import {
   Heart,
   ShieldCheck,
 } from 'lucide-react';
-import {
-  AreaChart, Area, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
-} from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useTranslation } from '../../i18n';
@@ -34,25 +30,6 @@ import { bookingService } from '../../services/bookingService';
 import { Appointment } from '../../types';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { CancelModal } from '../../components/common/CancelModal';
-
-// ── Patient Chart Tooltip ───────────────────────────────────────────────────
-const PatientChartTooltip = ({ active, payload, label }: any) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-slate-900/95 backdrop-blur-md text-white rounded-xl px-4 py-3 shadow-2xl text-xs space-y-1.5 border border-slate-700">
-      <p className="font-bold text-slate-300 pb-1 border-b border-slate-800">{label}</p>
-      {payload.map((p: any) => (
-        <div key={p.name} className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full" style={{ background: p.color || p.fill }} />
-            <span className="text-slate-400 capitalize">{p.name}:</span>
-          </div>
-          <span className="font-black text-white">{p.value}</span>
-        </div>
-      ))}
-    </div>
-  );
-};
 
 // ─── Rate & Review Modal ────────────────────────────────────────────────────
 interface ReviewModalProps {
@@ -389,36 +366,7 @@ export const PatientDashboard: React.FC = () => {
     return future || confirmed[0];
   }, [confirmed, now]);
 
-  // Chart data: Monthly Health Consultations & Reviews
-  const healthActivityData = useMemo(() => {
-    const monthsEn = ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
-    const monthsAr = ['مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر'];
-    return monthsEn.map((m, i) => ({
-      month: isArabic ? monthsAr[i] : m,
-      [isArabic ? 'الاستشارات' : 'Consultations']: [1, 2, 1, 3, 2, appointments.length || 2][i],
-      [isArabic ? 'المتابعات' : 'Follow-ups']: [1, 1, 2, 1, 2, 2][i],
-    }));
-  }, [appointments.length, isArabic]);
 
-  // Chart data: Specialty Distribution
-  const specialtyDistribution = useMemo(() => {
-    const map: Record<string, number> = {};
-    appointments.forEach((a) => {
-      const spec = a.specialty || 'General Practice';
-      map[spec] = (map[spec] || 0) + 1;
-    });
-    if (Object.keys(map).length === 0) {
-      map['Cardiology'] = 2;
-      map['Dermatology'] = 1;
-    }
-    const colors = ['#2563EB', '#6366f1', '#f59e0b', '#10b981', '#ef4444'];
-    return Object.entries(map).map(([name, val], i) => ({
-      name,
-      translatedName: translateSpecialty(name),
-      value: val,
-      color: colors[i % colors.length],
-    }));
-  }, [appointments, translateSpecialty]);
 
   const nearbyHospitals = [
     { id: 'ahd_dubai', name: isArabic ? 'المستشفى الأمريكي دبي' : 'American Hospital Dubai', location: isArabic ? 'شارع 19، عود ميثاء، دبي' : '19th St, Oud Metha, Dubai', distance: isArabic ? '2.1 كم' : '2.1 km', specialties: isArabic ? ['أمراض القلب', 'طب الأعصاب', 'جراحة العظام'] : ['Cardiology', 'Neurology', 'Orthopedics'] },
@@ -473,107 +421,7 @@ export const PatientDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Health Analytics & Outpatient Visits Section (Recharts) ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* Health Consultations Activity Area Chart */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
-            <div>
-              <h3 className="text-base font-bold text-slate-900">
-                {isArabic ? 'سجل النشاط الصحي والاستشارات' : 'Consultation History & Care Cadence'}
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                {isArabic ? 'تتبع زيارات العيادات والفحوصات الدورية خلال الـ 6 أشهر الماضية' : 'Outpatient consultations and medical reviews across past 6 months'}
-              </p>
-            </div>
-            <span className="text-xs font-bold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-3 py-1 rounded-full flex items-center gap-1 w-fit">
-              <TrendingUp className="w-3.5 h-3.5 text-[#2DA7B5]" />
-              {isArabic ? 'سجل الرعاية منتظم' : 'Care on Schedule'}
-            </span>
-          </div>
-
-          <ResponsiveContainer width="100%" height={230}>
-            <AreaChart data={healthActivityData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
-              <defs>
-                <linearGradient id="patConsultGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2DA7B5" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#2DA7B5" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="patFollowGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
-              <Tooltip content={<PatientChartTooltip />} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
-              <Area
-                type="monotone"
-                dataKey={isArabic ? 'الاستشارات' : 'Consultations'}
-                stroke="#2DA7B5"
-                strokeWidth={2.5}
-                fill="url(#patConsultGrad)"
-                dot={{ fill: '#2DA7B5', r: 3 }}
-              />
-              <Area
-                type="monotone"
-                dataKey={isArabic ? 'المتابعات' : 'Follow-ups'}
-                stroke="#6366f1"
-                strokeWidth={2}
-                fill="url(#patFollowGrad)"
-                dot={{ fill: '#6366f1', r: 3 }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Specialty Care Breakdown Donut Chart */}
-        <div className="bg-white rounded-3xl border border-[#E2EBF0] p-6 shadow-xs flex flex-col justify-between">
-          <div>
-            <h3 className="text-base font-bold text-slate-900 mb-1">
-              {isArabic ? 'توزيع الرعاية التخصصية' : 'Specialty Care Distribution'}
-            </h3>
-            <p className="text-xs text-slate-500 mb-4">
-              {isArabic ? 'العيادات الطبية التي قمت بزيارتها' : 'Specialized clinics attended for treatment'}
-            </p>
-
-            <ResponsiveContainer width="100%" height={160}>
-              <PieChart>
-                <Pie
-                  data={specialtyDistribution}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={46}
-                  outerRadius={68}
-                  paddingAngle={4}
-                  dataKey="value"
-                  strokeWidth={0}
-                >
-                  {specialtyDistribution.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip content={<PatientChartTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="space-y-2 mt-3 pt-3 border-t border-slate-100">
-            {specialtyDistribution.map((s) => (
-              <div key={s.name} className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: s.color }} />
-                  <span className="text-slate-700 font-semibold">{s.translatedName || s.name}</span>
-                </div>
-                <span className="font-mono font-bold text-slate-900">{s.value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* ── NEXT UPCOMING APPOINTMENT (In order with side countdown) ── */}
       {nextAppt && (

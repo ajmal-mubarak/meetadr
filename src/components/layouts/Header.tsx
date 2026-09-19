@@ -119,7 +119,6 @@ export const Header: React.FC = () => {
     { name: t('navigation.home'), path: '/', icon: HomeIcon },
     { name: t('navigation.findDoctor'), path: '/doctors', icon: Stethoscope },
     { name: t('navigation.hospitals'), path: '/hospitals', icon: Hospital },
-    { name: t('navigation.clinics'), path: '/clinics', icon: Building2 },
   ];
 
   // Company dropdown links

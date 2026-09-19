@@ -16,6 +16,8 @@ export const SPECIALTIES = [
   'Physiotherapy',
   'Radiology',
   'Laboratory',
+  'Urology',
+  'Home Care',
 ];
 
 export const LOCATIONS = [
