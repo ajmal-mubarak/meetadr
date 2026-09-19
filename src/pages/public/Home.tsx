@@ -32,12 +32,15 @@ import {
   X,
   Brain,
   Eye,
+  LocateFixed,
+  Loader2,
 } from 'lucide-react';
 import { INITIAL_DOCTORS } from '../../data/mockDoctors';
 import { INITIAL_HOSPITALS } from '../../data/mockHospitals';
 import { HEALTH_CONDITIONS, CONDITION_LETTERS, ALPHABET_LETTERS } from '../../data/mockConditions';
 import { SPECIALTIES } from '../../data/mockSpecialties';
 import { useToast } from '../../context/ToastContext';
+import { useUserLocation } from '../../context/LocationContext';
 import { HospitalBrandLogo } from '../../components/common/HospitalLogos';
 
 // Helper for displaying hospital names in one single word
@@ -86,7 +89,37 @@ export const Home: React.FC = () => {
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCondition, setSelectedCondition] = useState('');
-  const [selectedEmirate, setSelectedEmirate] = useState('Dxb');
+  const [selectedEmirate, setSelectedEmirate] = useState('auto');
+
+  // Auto-detected location
+  const {
+    location: detectedLoc,
+    status: locationStatus,
+    detectLocation,
+    setManualLocation,
+  } = useUserLocation();
+
+  // Sync with detected location if available on mount/detection
+  useEffect(() => {
+    if (detectedLoc?.emirateCode) {
+      setSelectedEmirate(detectedLoc.emirateCode);
+    }
+  }, [detectedLoc?.emirateCode]);
+
+  const handleAutoDetect = async () => {
+    const res = await detectLocation(true);
+    if (res) {
+      setSelectedEmirate(res.emirateCode);
+      showToast(
+        isArabic
+          ? `تم تحديد موقعك: ${res.emirateNameAr} (${res.emirateCode})`
+          : `Location detected: ${res.emirateName} (${res.emirateCode})`,
+        'success'
+      );
+    } else {
+      showToast(t('location.permissionDenied'), 'info');
+    }
+  };
 
   // Autocomplete dropdown visibilities
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
@@ -179,7 +212,11 @@ export const Home: React.FC = () => {
         }
       }
     }
-    if (selectedEmirate) params.append('emirate', selectedEmirate);
+    const emirateParam =
+      selectedEmirate === 'auto'
+        ? detectedLoc?.emirateCode || 'Dxb'
+        : selectedEmirate;
+    if (emirateParam) params.append('emirate', emirateParam);
     setShowSearchDropdown(false);
     setShowConditionDropdown(false);
     navigate(`/search?${params.toString()}`);
@@ -716,13 +753,43 @@ export const Home: React.FC = () => {
 
               <div className="hidden sm:block w-px h-8 bg-[#E2EBF0]" />
 
-              {/* Field 3: Emirate - Precious / Precise Options */}
-              <div className="flex items-center px-3 py-3 sm:py-2.5 bg-[#F8FAFC] sm:bg-transparent rounded-xl sm:rounded-none sm:w-44 min-w-0">
+              {/* Field 3: Emirate - Precise Options with Auto-Detect */}
+              <div className="flex items-center px-3 py-3 sm:py-2.5 bg-[#F8FAFC] sm:bg-transparent rounded-xl sm:rounded-none sm:w-56 min-w-0 gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleAutoDetect}
+                  disabled={locationStatus === 'detecting'}
+                  title={t('location.detectLocationTooltip')}
+                  className="w-8 h-8 rounded-xl bg-[#2DA7B5] hover:bg-[#23929F] active:scale-95 text-white transition-all cursor-pointer shrink-0 disabled:opacity-50 flex items-center justify-center shadow-2xs"
+                >
+                  {locationStatus === 'detecting' ? (
+                    <Loader2 className="w-4 h-4 text-white animate-spin" />
+                  ) : (
+                    <LocateFixed className="w-4 h-4 text-white stroke-[2.5]" />
+                  )}
+                </button>
+
                 <select
                   value={selectedEmirate}
-                  onChange={(e) => setSelectedEmirate(e.target.value)}
-                  className="w-full bg-transparent text-xs font-bold text-slate-900 focus:outline-hidden cursor-pointer [&>option]:bg-white [&>option]:text-slate-900"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedEmirate(val);
+                    if (val === 'auto') {
+                      handleAutoDetect();
+                    } else {
+                      setManualLocation(val);
+                    }
+                  }}
+                  className="w-full bg-transparent text-xs font-bold text-slate-900 focus:outline-hidden cursor-pointer [&>option]:bg-white [&>option]:text-slate-900 truncate"
                 >
+                  <option value="auto" className="font-bold text-[#0E7490]">
+                    {locationStatus === 'detecting'
+                      ? (isArabic ? 'جارٍ تحديد موقعك...' : 'Detecting location...')
+                      : detectedLoc
+                      ? (isArabic ? `${t('location.currentLocation')}: ${detectedLoc.emirateNameAr}` : `${t('location.currentLocation')}: ${detectedLoc.emirateName}`)
+                      : (isArabic ? `${t('location.useCurrentLocation')}` : `${t('location.useCurrentLocation')}`)}
+                  </option>
+                  <option disabled className="text-slate-300">──────────</option>
                   <option value="Dxb">{t('emirates.dubai')} (DXB)</option>
                   <option value="Abu Dhabi">{t('emirates.abuDhabi')} (AUH)</option>
                   <option value="Sharjah">{t('emirates.sharjah')} (SHJ)</option>

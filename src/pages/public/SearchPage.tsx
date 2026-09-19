@@ -10,6 +10,8 @@ import {
   Filter,
   ArrowRight,
   ChevronDown,
+  LocateFixed,
+  Loader2,
 } from 'lucide-react';
 import { doctorService } from '../../services/doctorService';
 import { hospitalService } from '../../services/hospitalService';
@@ -17,9 +19,13 @@ import { clinicService } from '../../services/clinicService';
 import { Doctor, Hospital, Clinic } from '../../types';
 import { SPECIALTIES, LOCATIONS, matchesLocation } from '../../data/mockSpecialties';
 import { useTranslation } from '../../i18n';
+import { useUserLocation } from '../../context/LocationContext';
+import { useToast } from '../../context/ToastContext';
 
 export const SearchPage: React.FC = () => {
   const { t, translateSpecialty, translateLocation } = useTranslation();
+  const { showToast } = useToast();
+  const { location: detectedLoc, status: locationStatus, detectLocation } = useUserLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const initialQuery = searchParams.get('q') || '';
@@ -31,6 +37,19 @@ export const SearchPage: React.FC = () => {
   const [specialty, setSpecialty] = useState(initialSpecialty);
   const [location, setLocation] = useState(initialLocation);
   const [providerType, setProviderType] = useState(initialType);
+
+  const handleAutoDetectLocation = async () => {
+    const res = await detectLocation(true);
+    if (res) {
+      const matched = LOCATIONS.find((l) => l.toLowerCase().includes(res.emirateName.toLowerCase()));
+      if (matched) {
+        setLocation(matched);
+      }
+      showToast(`Location detected: ${res.emirateName} (${res.emirateCode})`, 'success');
+    } else {
+      showToast(t('location.permissionDenied'), 'info');
+    }
+  };
 
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -181,21 +200,51 @@ export const SearchPage: React.FC = () => {
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   {t('search.location')}
                 </label>
-                <div className="relative">
-                  <MapPin className="w-4 h-4 text-[#0D5C54] absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <select
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="w-full pl-10 rtl:pl-4 rtl:pr-10 pr-9 py-2.5 px-3 border border-[#CBD5E1] hover:border-[#0D5C54] focus:border-[#0D5C54] rounded-2xl text-xs sm:text-sm text-slate-800 focus:outline-hidden bg-[#F8FAFC] focus:bg-white transition-all cursor-pointer font-semibold appearance-none shadow-2xs"
-                  >
-                    <option value="All">{t('hospitals.allLocations')}</option>
-                    {LOCATIONS.map((loc) => (
-                      <option key={loc} value={loc}>
-                        {translateLocation(loc)}
+                <div className="flex items-center gap-1.5">
+                  <div className="relative flex-1">
+                    <MapPin className="w-4 h-4 text-[#0D5C54] absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <select
+                      value={location}
+                      onChange={(e) => {
+                        if (e.target.value === 'current') {
+                          handleAutoDetectLocation();
+                        } else {
+                          setLocation(e.target.value);
+                        }
+                      }}
+                      className="w-full pl-10 rtl:pl-4 rtl:pr-10 pr-9 py-2.5 px-3 border border-[#CBD5E1] hover:border-[#0D5C54] focus:border-[#0D5C54] rounded-2xl text-xs sm:text-sm text-slate-800 focus:outline-hidden bg-[#F8FAFC] focus:bg-white transition-all cursor-pointer font-semibold appearance-none shadow-2xs"
+                    >
+                      <option value="current" className="font-bold text-[#0E7490]">
+                        {locationStatus === 'detecting'
+                          ? (translateLocation('Detecting...') || 'Detecting...')
+                          : detectedLoc
+                          ? `${t('location.currentLocation')}: ${detectedLoc.emirateName}`
+                          : `${t('location.useCurrentLocation')}`}
                       </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-slate-700 absolute right-3.5 rtl:right-auto rtl:left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <option disabled className="text-slate-300">──────────</option>
+                      <option value="All">{t('hospitals.allLocations')}</option>
+                      {LOCATIONS.map((loc) => (
+                        <option key={loc} value={loc}>
+                          {translateLocation(loc)}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-slate-700 absolute right-3.5 rtl:right-auto rtl:left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAutoDetectLocation}
+                    disabled={locationStatus === 'detecting'}
+                    title={t('location.detectLocationTooltip')}
+                    className="w-10 h-10 rounded-2xl bg-[#2DA7B5] hover:bg-[#23929F] active:scale-95 text-white transition-all cursor-pointer shrink-0 disabled:opacity-50 flex items-center justify-center shadow-xs"
+                  >
+                    {locationStatus === 'detecting' ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                    ) : (
+                      <LocateFixed className="w-4 h-4 text-white stroke-[2.5]" />
+                    )}
+                  </button>
                 </div>
               </div>
 

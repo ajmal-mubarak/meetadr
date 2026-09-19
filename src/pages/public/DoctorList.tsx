@@ -16,19 +16,26 @@ import {
   X,
   ChevronDown,
   User,
+  LocateFixed,
+  Loader2,
 } from 'lucide-react';
 import { doctorService } from '../../services/doctorService';
 import { Doctor } from '../../types';
 import { SPECIALTIES, LOCATIONS, matchesLocation } from '../../data/mockSpecialties';
 import { useTranslation } from '../../i18n';
+import { useUserLocation } from '../../context/LocationContext';
+import { useToast } from '../../context/ToastContext';
 
 export const DoctorList: React.FC = () => {
-  const { t, translateSpecialty, translateLocation } = useTranslation();
+  const { t, translateSpecialty, translateLocation, isArabic } = useTranslation();
+  const { showToast } = useToast();
+  const { location: detectedLoc, status: locationStatus, detectLocation } = useUserLocation();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [specialty, setSpecialty] = useState('All');
   const [location, setLocation] = useState('All');
   const [search, setSearch] = useState('');
+  const [nearMeOnly, setNearMeOnly] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -43,6 +50,36 @@ export const DoctorList: React.FC = () => {
     load();
   }, []);
 
+  const handleNearMeToggle = async () => {
+    if (nearMeOnly) {
+      setNearMeOnly(false);
+      return;
+    }
+
+    if (!detectedLoc) {
+      const res = await detectLocation(true);
+      if (res) {
+        setNearMeOnly(true);
+        showToast(
+          isArabic
+            ? `تم التصفية حسب موقعك: ${res.emirateNameAr}`
+            : `Filtered near you: ${res.emirateName}`,
+          'success'
+        );
+      } else {
+        showToast(t('location.permissionDenied'), 'info');
+      }
+    } else {
+      setNearMeOnly(true);
+      showToast(
+        isArabic
+          ? `عرض الأطباء بالقرب من ${detectedLoc.emirateNameAr}`
+          : `Showing doctors near ${detectedLoc.emirateName}`,
+        'info'
+      );
+    }
+  };
+
   // Quick suggested filters
   const popularSpecialtySuggestions = [
     'All',
@@ -55,9 +92,8 @@ export const DoctorList: React.FC = () => {
     'Home Care',
   ];
 
-
   const filtered = useMemo(() => {
-    return doctors.filter((doc) => {
+    let result = doctors.filter((doc) => {
       if (specialty !== 'All') {
         const specLower = specialty.toLowerCase().trim();
         const docSpecLower = doc.specialty.toLowerCase().trim();
@@ -97,7 +133,22 @@ export const DoctorList: React.FC = () => {
       }
       return true;
     });
-  }, [doctors, specialty, location, search]);
+
+    if (nearMeOnly && detectedLoc) {
+      const userEmirate = detectedLoc.emirateName.toLowerCase();
+      const nearList = result.filter(
+        (doc) =>
+          doc.location.toLowerCase().includes(userEmirate) ||
+          (doc.hospitalName && doc.hospitalName.toLowerCase().includes(userEmirate)) ||
+          matchesLocation(doc.location, detectedLoc.emirateName)
+      );
+      if (nearList.length > 0) {
+        result = nearList;
+      }
+    }
+
+    return result;
+  }, [doctors, specialty, location, search, nearMeOnly, detectedLoc]);
 
   return (
     <div className="bg-[#F4F7F9] min-h-screen py-10 selection:bg-teal-100 selection:text-slate-800 text-slate-900">
@@ -158,31 +209,81 @@ export const DoctorList: React.FC = () => {
             </div>
 
             {/* Location Selector */}
-            <div className="sm:col-span-3 relative">
-              <MapPin className="w-4 h-4 text-[#0D5C54] absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <select
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-full pl-10 rtl:pl-4 rtl:pr-10 pr-9 py-2.5 px-3 text-xs font-semibold border border-[#CBD5E1] hover:border-[#0D5C54] focus:border-[#0D5C54] rounded-2xl text-slate-800 focus:outline-hidden bg-[#F8FAFC] focus:bg-white transition-all cursor-pointer appearance-none shadow-2xs"
-              >
-                <option value="All">{t('doctors.allLocations')}</option>
-                {LOCATIONS.map((l) => (
-                  <option key={l} value={l}>
-                    {translateLocation(l)}
+            <div className="sm:col-span-3 flex items-center gap-1.5">
+              <div className="relative flex-1">
+                <MapPin className="w-4 h-4 text-[#0D5C54] absolute left-3.5 rtl:left-auto rtl:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <select
+                  value={nearMeOnly ? 'current' : location}
+                  onChange={(e) => {
+                    if (e.target.value === 'current') {
+                      handleNearMeToggle();
+                    } else {
+                      setLocation(e.target.value);
+                      if (nearMeOnly) setNearMeOnly(false);
+                    }
+                  }}
+                  className="w-full pl-10 rtl:pl-4 rtl:pr-10 pr-9 py-2.5 px-3 text-xs font-semibold border border-[#CBD5E1] hover:border-[#0D5C54] focus:border-[#0D5C54] rounded-2xl text-slate-800 focus:outline-hidden bg-[#F8FAFC] focus:bg-white transition-all cursor-pointer appearance-none shadow-2xs"
+                >
+                  <option value="current" className="font-bold text-[#0E7490]">
+                    {locationStatus === 'detecting'
+                      ? (isArabic ? 'جارٍ تحديد موقعك...' : 'Detecting location...')
+                      : detectedLoc
+                      ? (isArabic ? `${t('location.currentLocation')}: ${detectedLoc.emirateNameAr}` : `${t('location.currentLocation')}: ${detectedLoc.emirateName}`)
+                      : (isArabic ? `${t('location.useCurrentLocation')}` : `${t('location.useCurrentLocation')}`)}
                   </option>
-                ))}
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-700 absolute right-3.5 rtl:right-auto rtl:left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <option disabled className="text-slate-300">──────────</option>
+                  <option value="All">{t('doctors.allLocations')}</option>
+                  {LOCATIONS.map((l) => (
+                    <option key={l} value={l}>
+                      {translateLocation(l)}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-4 h-4 text-slate-700 absolute right-3.5 rtl:right-auto rtl:left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+
+              {/* Auto-detect Near Me button */}
+              <button
+                type="button"
+                onClick={handleNearMeToggle}
+                disabled={locationStatus === 'detecting'}
+                title={t('location.detectLocationTooltip')}
+                className="w-10 h-10 rounded-2xl bg-[#2DA7B5] hover:bg-[#23929F] active:scale-95 text-white transition-all cursor-pointer shrink-0 disabled:opacity-50 flex items-center justify-center shadow-xs"
+              >
+                {locationStatus === 'detecting' ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                ) : (
+                  <LocateFixed className="w-4 h-4 text-white stroke-[2.5]" />
+                )}
+              </button>
             </div>
           </div>
 
           {/* Quick Suggested Filter Badges */}
           <div className="pt-2 border-t border-[#E2EBF0]">
-            {/* Suggested Specialties */}
+            {/* Suggested Specialties & Near Me */}
             <div className="flex items-center gap-1.5 flex-wrap text-xs">
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1 rtl:mr-0 rtl:ml-1">
                 {t('doctors.specialtyFilterLabel')}
               </span>
+
+              {/* Near Me Quick Filter Badge */}
+              <button
+                type="button"
+                onClick={handleNearMeToggle}
+                className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 ${
+                  nearMeOnly
+                    ? 'bg-[#2DA7B5] text-white shadow-xs'
+                    : 'bg-[#F8FAFC] text-slate-700 hover:bg-[#E8F6F8] hover:text-[#0E7490] hover:border-[#CDEBF0] border border-[#E2EBF0]'
+                }`}
+              >
+                <LocateFixed className="w-3.5 h-3.5" />
+                <span>
+                  {t('location.nearMe')}
+                  {detectedLoc ? ` (${isArabic ? detectedLoc.emirateNameAr : detectedLoc.emirateName})` : ''}
+                </span>
+              </button>
+
               {popularSpecialtySuggestions.map((spec) => (
                 <button
                   key={spec}

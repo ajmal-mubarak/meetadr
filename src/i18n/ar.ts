@@ -1142,6 +1142,16 @@ export const ar: typeof en = {
     "fujairah": "الفجيرة",
     "ummAlQuwain": "أم القيوين"
   },
+  "location": {
+    "autoDetect": "تحديد الموقع تلقائياً",
+    "useCurrentLocation": "موقعي الحالي (تحديد تلقائي)",
+    "currentLocation": "موقعي الحالي",
+    "detecting": "جارٍ تحديد موقعك...",
+    "detected": "تم تحديد الموقع",
+    "nearMe": "بالقرب مني",
+    "permissionDenied": "تم رفض إذن تحديد الموقع. يرجى اختيار الإمارة يدوياً.",
+    "detectLocationTooltip": "تحديد أقرب إمارة لك عبر نظام تحديد المواقع"
+  },
   "doctorList": {
     "allSpecialties": "جميع التخصصات"
   },

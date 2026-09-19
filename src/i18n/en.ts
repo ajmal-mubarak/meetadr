@@ -1140,6 +1140,16 @@ export const en = {
     "fujairah": "Fujairah",
     "ummAlQuwain": "Umm Al Quwain"
   },
+  "location": {
+    "autoDetect": "Auto-detect location",
+    "useCurrentLocation": "Current Location (Auto-detect)",
+    "currentLocation": "Current Location",
+    "detecting": "Detecting your location...",
+    "detected": "Location detected",
+    "nearMe": "Near Me",
+    "permissionDenied": "Location permission was denied. Please select your Emirate manually.",
+    "detectLocationTooltip": "Auto-detect your nearest UAE Emirate via GPS"
+  },
   "doctorList": {
     "allSpecialties": "All Specialties"
   },
