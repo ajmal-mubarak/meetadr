@@ -16,6 +16,11 @@ export interface LanguageContextType {
   translateStatus: (status: string) => string;
   translateSpecialty: (specialty: string) => string;
   translateLocation: (location: string) => string;
+  translateHospitalName: (name: string, id?: string) => string;
+  translateHospitalAbout: (about: string, id?: string) => string;
+  translateDoctorName: (name: string, id?: string) => string;
+  translateDoctorAbout: (about: string, id?: string) => string;
+  translateExperience: (exp: string) => string;
 }
 
 const STORAGE_KEY = 'meetadr_language';
@@ -208,6 +213,187 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     [language]
   );
 
+  // Translate hospital name
+  const translateHospitalName = useCallback(
+    (name: string, id?: string): string => {
+      if (!name) return '';
+      if (language !== 'ar') return name;
+
+      const idMap: Record<string, string> = {
+        hosp_cmc: 'المستشفى الأمريكي دبي',
+        hosp_1: 'مستشفى سيتي كير التخصصي',
+        hosp_2: 'مركز الإمارات أبكس الطبي',
+        hosp_3: 'مستشفى النور الملكي',
+        hosp_4: 'مستشفى الخليج المركزي التخصصي',
+        hosp_5: 'مستشفى مارينا جيت واي',
+        hosp_6: 'مستشفى كابيتال هيلث العام',
+        hosp_7: 'مستشفى الزهراء هيريتيج',
+        hosp_8: 'مستشفى جامعة الشارقة التعليمي',
+        hosp_palm: 'جناح نخلة جميرا الطبي والجراحي',
+        hosp_difc: 'مستشفى مركز دبي المالي التخصصي',
+      };
+
+      if (id && idMap[id]) return idMap[id];
+
+      const nameMap: Record<string, string> = {
+        'American Hospital Dubai': 'المستشفى الأمريكي دبي',
+        'City Care Hospital': 'مستشفى سيتي كير التخصصي',
+        'Emirates Apex Medical Center': 'مركز الإمارات أبكس الطبي',
+        'Al Noor Royal Hospital': 'مستشفى النور الملكي',
+        'Gulf Central Specialty Hospital': 'مستشفى الخليج المركزي التخصصي',
+        'Marina Gateway Hospital': 'مستشفى مارينا جيت واي',
+        'Capital Health General Hospital': 'مستشفى كابيتال هيلث العام',
+        'Al Zahra Heritage Hospital': 'مستشفى الزهراء هيريتيج',
+        'Sharjah University Teaching Hospital': 'مستشفى جامعة الشارقة التعليمي',
+        'Palm Jumeirah Medical & Surgical Pavilion': 'جناح نخلة جميرا الطبي والجراحي',
+        'DIFC Gate Precinct Specialty Hospital': 'مستشفى مركز دبي المالي التخصصي',
+        'CityCare': 'سيتي كير',
+        'Emirates': 'الإمارات',
+        'Al-Noor': 'النور',
+        'Gulf': 'الخليج',
+        'Marina': 'المارينا',
+        'Capital': 'كابيتال',
+        'Al-Zahra': 'الزهراء',
+        'Sharjah': 'الشارقة',
+        'American Hospital': 'المستشفى الأمريكي',
+      };
+
+      return nameMap[name] || name;
+    },
+    [language]
+  );
+
+  // Translate hospital about text
+  const translateHospitalAbout = useCallback(
+    (about: string, id?: string): string => {
+      if (!about) return '';
+      if (language !== 'ar') return about;
+
+      const aboutMap: Record<string, string> = {
+        hosp_cmc: 'المستشفى الأمريكي دبي صرح طبي متقدم يوفر رعاية تخصصية عالمية المستوى، ومختبرات متطورة لقسطرة القلب، وجراحة الروبوت، وعيادات خارجية شاملة.',
+        hosp_1: 'مستشفى تخصصي رائد يضم أحدث أجهزة التصوير التشخيصي، ومختبرات دقيقة لقسطرة القلب، ومراكز معتمدة لعلاج الحوادث والطوارئ.',
+        hosp_2: 'مستشفى معتمد دولياً مشهود له بالريادة في جراحات المنظار طفيفة التوغل، وتأهيل القلب والأوعية الدموية، والفحوصات الطبية التنفيذية.',
+        hosp_3: 'ملتزمون بتقديم رعاية سريرية تركز على المريض، مع وحدات متخصصة للعناية المركزة للأطفال وأحدث غرف عمليات جراحة المخ والأعصاب.',
+        hosp_4: 'نخدم مجتمع الإمارات الشمالية بأحدث أجنحة الولادة، وعيادات متكاملة لعلاج السكري، وخدمات طوارئ شاملة على مدار الساعة.',
+        hosp_5: 'مستشفى جراحي راقٍ ومتطور متخصص في الطب الرياضي، وجراحة وتنظير المفاصل، والأمراض الجلدية التجميلية، وجراحات اليوم الواحد.',
+        hosp_6: 'مستشفى تعليمي متكامل يقدم فحوصات وقائية شاملة، وعلاجات متقدمة لأمراض الجهاز التنفسي، ورعاية طبية مخصصة لكبار السن.',
+        hosp_7: 'رواد في رعاية الأمومة والجنين، والعناية المركزة لحديثي الولادة، وبرامج الصحة المتكاملة للأسرة والطفل.',
+        hosp_8: 'مؤسسة طبية أكاديمية متقدمة تقود الأبحاث السريرية، وجراحات الأوعية الدموية الدقيقة، والتأهيل العصبي الشامل.',
+        hosp_palm: 'صرح طبي متطور على الواجهة البحرية يقدم فحوصات صحية تنفيذية، وعيادات قلب متقدمة، وطب الجلدية والتجميل.',
+        hosp_difc: 'مستشفى متميز في قلب المركز المالي يقدم رعاية طبية سريعة، واستشارات لكبار الشخصيات، وأحدث تقنيات التشخيص.',
+      };
+
+      if (id && aboutMap[id]) return aboutMap[id];
+
+      // Match by keyword in about text if id not provided
+      const lower = about.toLowerCase();
+      if (lower.includes('marina')) return aboutMap['hosp_5'];
+      if (lower.includes('american hospital')) return aboutMap['hosp_cmc'];
+      if (lower.includes('city care') || lower.includes('high-acuity cardiac cath')) return aboutMap['hosp_1'];
+      if (lower.includes('emirates apex') || lower.includes('laparoscopic surgeries')) return aboutMap['hosp_2'];
+      if (lower.includes('al noor') || lower.includes('pediatric intensive care')) return aboutMap['hosp_3'];
+      if (lower.includes('gulf central') || lower.includes('northern emirates')) return aboutMap['hosp_4'];
+      if (lower.includes('capital health') || lower.includes('teaching hospital offering preventative')) return aboutMap['hosp_6'];
+      if (lower.includes('al zahra') || lower.includes('maternal-fetal')) return aboutMap['hosp_7'];
+      if (lower.includes('sharjah university') || lower.includes('clinical research trials')) return aboutMap['hosp_8'];
+      if (lower.includes('palm jumeirah') || lower.includes('waterfront medical')) return aboutMap['hosp_palm'];
+      if (lower.includes('difc') || lower.includes('financial district')) return aboutMap['hosp_difc'];
+
+      return about;
+    },
+    [language]
+  );
+
+  // Translate doctor name
+  const translateDoctorName = useCallback(
+    (name: string, id?: string): string => {
+      if (!name) return '';
+      if (language !== 'ar') return name;
+
+      const docIdMap: Record<string, string> = {
+        doc_sarah_chen: 'د. سارة تشن',
+        doc_james_okafor: 'د. جيمس أوكافور',
+        doc_priya_sharma: 'د. بريا شارما',
+        doc_michael_torres: 'د. مايكل توريس',
+        doc_aisha_rahman: 'د. عائشة رحمن',
+        doc_david_kim: 'د. ديفيد كيم',
+        doc_1: 'د. ألكسندر رايت',
+        doc_2: 'د. فاطمة المنصور',
+        doc_3: 'د. ماركوس فانس',
+        doc_4: 'د. ليلى محمود',
+        doc_5: 'د. طارق الهاشمي',
+        doc_6: 'د. إيلينا روستوفا',
+        doc_7: 'د. عمر الزعابي',
+        doc_8: 'د. سارة جنكينز',
+        doc_9: 'د. خالد بن علي',
+        doc_10: 'د. أميرة سعيد',
+        doc_11: 'د. فيكرام باتيل',
+        doc_12: 'د. نور الحسن',
+      };
+
+      if (id && docIdMap[id]) return docIdMap[id];
+
+      const docNameMap: Record<string, string> = {
+        'Dr. Sarah Chen': 'د. سارة تشن',
+        'Dr. James Okafor': 'د. جيمس أوكافور',
+        'Dr. Priya Sharma': 'د. بريا شارما',
+        'Dr. Michael Torres': 'د. مايكل توريس',
+        'Dr. Aisha Rahman': 'د. عائشة رحمن',
+        'Dr. David Kim': 'د. ديفيد كيم',
+        'Dr. Alexander Wright': 'د. ألكسندر رايت',
+        'Dr. Fatima Al-Mansoor': 'د. فاطمة المنصور',
+        'Dr. Marcus Vance': 'د. ماركوس فانس',
+        'Dr. Layla Mahmoud': 'د. ليلى محمود',
+        'Dr. Tariq Al-Hashimi': 'د. طارق الهاشمي',
+        'Dr. Elena Rostova': 'د. إيلينا روستوفا',
+        'Dr. Omar Al-Zaabi': 'د. عمر الزعابي',
+        'Dr. Sarah Jenkins': 'د. سارة جنكينز',
+        'Dr. Khaled Benali': 'د. خالد بن علي',
+        'Dr. Amira Saeed': 'د. أميرة سعيد',
+        'Dr. Vikram Patel': 'د. فيكرام باتيل',
+        'Dr. Nour Al-Hassan': 'د. نور الحسن',
+      };
+
+      return docNameMap[name] || name;
+    },
+    [language]
+  );
+
+  // Translate doctor about
+  const translateDoctorAbout = useCallback(
+    (about: string, id?: string): string => {
+      if (!about) return '';
+      if (language !== 'ar') return about;
+
+      const docAboutMap: Record<string, string> = {
+        doc_sarah_chen: 'استشارية أمراض قلب ذات خبرة واسعة في طب القلب السريري والوقاية من أمراض القلب وتخطيط صدى القلب وإدارة ارتفاع ضغط الدم بالمستشفى الأمريكي دبي.',
+        doc_james_okafor: 'رعاية صحية أولية شاملة، واستشارات وزيارات منزلية، وفحوصات وقائية وإدارة الحالات الأيضية والمزمنة.',
+        doc_priya_sharma: 'أخصائية أمراض جلدية تركز على الإكزيما وعلاجات حب الشباب والصدفية وأمراض جلدية الأطفال والتجميل.',
+        doc_michael_torres: 'استشاري أول مخ وأعصاب متخصص في علاج الصداع والصداع النصفي والتعافي من السكتات والتشخيص العصبي.',
+        doc_aisha_rahman: 'أخصائية طب أطفال تركز على متابعة نمو الرضع وحديثي الولادة وتطعيمات الأطفال وعلاج الحساسية والربو.',
+        doc_david_kim: 'جراح عظام وطب رياضي متخصص في استبدال المفاصل بالمنظار وعلاج إصابات الملاعب وتأهيل الرياضيين.',
+      };
+
+      if (id && docAboutMap[id]) return docAboutMap[id];
+      return about;
+    },
+    [language]
+  );
+
+  // Translate experience text (e.g. "12 years experience" -> "خبرة 12 عاماً")
+  const translateExperience = useCallback(
+    (exp: string): string => {
+      if (!exp) return '';
+      if (language !== 'ar') return exp;
+      const numMatch = exp.match(/(\d+)/);
+      if (numMatch) {
+        return `خبرة ${numMatch[1]} عاماً`;
+      }
+      return exp;
+    },
+    [language]
+  );
+
   const value = useMemo(
     () => ({
       language,
@@ -221,6 +407,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       translateStatus,
       translateSpecialty,
       translateLocation,
+      translateHospitalName,
+      translateHospitalAbout,
+      translateDoctorName,
+      translateDoctorAbout,
+      translateExperience,
     }),
     [
       language,
@@ -234,6 +425,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       translateStatus,
       translateSpecialty,
       translateLocation,
+      translateHospitalName,
+      translateHospitalAbout,
+      translateDoctorName,
+      translateDoctorAbout,
+      translateExperience,
     ]
   );
 

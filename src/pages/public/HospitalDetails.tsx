@@ -31,7 +31,17 @@ import { HospitalBrandLogo } from '../../components/common/HospitalLogos';
 export const HospitalDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t, translateSpecialty, translateLocation } = useTranslation();
+  const {
+    t,
+    translateSpecialty,
+    translateLocation,
+    isArabic,
+    translateHospitalName,
+    translateHospitalAbout,
+    translateDoctorName,
+    translateDoctorAbout,
+    translateExperience,
+  } = useTranslation();
   const [hospital, setHospital] = useState<Hospital | null>(null);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -210,11 +220,11 @@ export const HospitalDetails: React.FC = () => {
                   </div>
                   <div>
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900">
-                      {hospital.name}
+                      {isArabic ? hospital.nameAr || translateHospitalName(hospital.name, hospital.id) : hospital.name}
                     </h1>
                     <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-600 mt-1">
                       <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-                      <span>{hospital.address}</span>
+                      <span>{isArabic ? hospital.addressAr || hospital.address : hospital.address}</span>
                     </div>
                   </div>
                 </div>
@@ -306,7 +316,7 @@ export const HospitalDetails: React.FC = () => {
                 </h2>
               </div>
               <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
-                {hospital.about}
+                {isArabic ? hospital.aboutAr || translateHospitalAbout(hospital.about, hospital.id) : hospital.about}
               </p>
 
               {/* Key Clinical Amenities & Standards */}
@@ -457,10 +467,10 @@ export const HospitalDetails: React.FC = () => {
                               </span>
                             </div>
                             <h3 className="text-base font-bold text-slate-900 truncate group-hover:text-[#0E7490] transition-colors">
-                              {doc.name}
+                              {isArabic ? doc.nameAr || translateDoctorName(doc.name, doc.id) : doc.name}
                             </h3>
                             <p className="text-xs text-slate-500 truncate">
-                              {doc.experience} {t('doctorDetails.experience')}
+                              {isArabic ? doc.experienceAr || translateExperience(doc.experience) : doc.experience}
                             </p>
                             <div className="flex items-center gap-1 text-xs font-semibold text-slate-800 mt-1">
                               <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
@@ -471,7 +481,7 @@ export const HospitalDetails: React.FC = () => {
                         </div>
 
                         <p className="mt-3 text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                          {doc.about}
+                          {isArabic ? doc.aboutAr || translateDoctorAbout(doc.about, doc.id) : doc.about}
                         </p>
                       </div>
 
@@ -536,19 +546,19 @@ export const HospitalDetails: React.FC = () => {
                 </div>
 
                 <div>
-                  <span className="text-slate-500 block mb-1">Operating Hours</span>
+                  <span className="text-slate-500 block mb-1">{t('hospitals.operatingHours')}</span>
                   <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#F8FAFC] border border-[#E2EBF0] text-slate-800">
                     <Clock className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>{hospital.operatingHours}</span>
+                    <span>{isArabic ? hospital.operatingHoursAr || hospital.operatingHours : hospital.operatingHours}</span>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-slate-500 block mb-1">Physical Location</span>
+                  <span className="text-slate-500 block mb-1">{t('hospitals.physicalLocation')}</span>
                   <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2EBF0] space-y-2">
                     <div className="flex items-start gap-2 text-slate-700">
                       <MapPin className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                      <span className="leading-relaxed">{hospital.address}</span>
+                      <span className="leading-relaxed">{isArabic ? hospital.addressAr || hospital.address : hospital.address}</span>
                     </div>
                     <a
                       href={googleMapsUrl}

@@ -27,7 +27,16 @@ import { useUserLocation } from '../../context/LocationContext';
 import { useToast } from '../../context/ToastContext';
 
 export const DoctorList: React.FC = () => {
-  const { t, translateSpecialty, translateLocation, isArabic } = useTranslation();
+  const {
+    t,
+    translateSpecialty,
+    translateLocation,
+    isArabic,
+    translateDoctorName,
+    translateDoctorAbout,
+    translateHospitalName,
+    translateExperience,
+  } = useTranslation();
   const { showToast } = useToast();
   const { location: detectedLoc, status: locationStatus, detectLocation } = useUserLocation();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
@@ -387,19 +396,19 @@ export const DoctorList: React.FC = () => {
                         {translateSpecialty(doc.specialty)}
                       </span>
                       <span className="text-xs text-slate-500 font-medium">
-                        {doc.experience}
+                        {isArabic ? doc.experienceAr || translateExperience(doc.experience) : doc.experience}
                       </span>
                     </div>
 
                     <Link to={`/doctors/${doc.id}`} className="block">
                       <h3 className="text-base font-black text-slate-900 leading-snug truncate group-hover:text-[#2DA7B5] transition-colors">
-                        {doc.name}
+                        {isArabic ? doc.nameAr || translateDoctorName(doc.name, doc.id) : doc.name}
                       </h3>
                     </Link>
 
                     <p className="text-xs text-slate-600 truncate flex items-center gap-1.5">
                       <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">{doc.hospitalName || doc.clinicName || 'American Hospital Dubai'}</span>
+                      <span className="truncate">{translateHospitalName(doc.hospitalName || doc.clinicName || 'American Hospital Dubai')}</span>
                     </p>
 
                     <p className="text-xs text-slate-500 flex items-center gap-1.5">
@@ -408,7 +417,7 @@ export const DoctorList: React.FC = () => {
                     </p>
 
                     <p className="text-[11px] text-slate-600 line-clamp-2 leading-relaxed pt-1">
-                      {doc.about}
+                      {isArabic ? doc.aboutAr || translateDoctorAbout(doc.about, doc.id) : doc.about}
                     </p>
                   </div>
                 </div>

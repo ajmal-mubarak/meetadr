@@ -20,7 +20,16 @@ import { useTranslation } from '../../i18n';
 export const DoctorDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t, translateSpecialty, translateLocation } = useTranslation();
+  const {
+    t,
+    translateSpecialty,
+    translateLocation,
+    isArabic,
+    translateDoctorName,
+    translateDoctorAbout,
+    translateHospitalName,
+    translateExperience,
+  } = useTranslation();
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -97,10 +106,10 @@ export const DoctorDetails: React.FC = () => {
                     </span>
                   </div>
                   <h1 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
-                    {doctor.name}
+                    {isArabic ? doctor.nameAr || translateDoctorName(doctor.name, doctor.id) : doctor.name}
                   </h1>
                   <p className="text-sm text-slate-600 mt-1 font-medium">
-                    {doctor.hospitalName || doctor.clinicName || 'City Care Hospital'}
+                    {translateHospitalName(doctor.hospitalName || doctor.clinicName || 'City Care Hospital')}
                   </p>
                   <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-2">
                     <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
@@ -115,7 +124,7 @@ export const DoctorDetails: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-1 text-slate-600 font-medium">
                       <Award className="w-4 h-4 text-[#2DA7B5]" />
-                      <span>{doctor.experience} {t('doctorDetails.experience')}</span>
+                      <span>{isArabic ? doctor.experienceAr || translateExperience(doctor.experience) : doctor.experience}</span>
                     </div>
                   </div>
                 </div>
@@ -125,7 +134,9 @@ export const DoctorDetails: React.FC = () => {
             {/* About Doctor */}
             <div className="bg-white rounded-3xl border border-[#E2EBF0] p-6 space-y-3 shadow-sm">
               <h3 className="text-base font-bold text-slate-900">{t('doctorDetails.aboutDoctor')}</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">{doctor.about}</p>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                {isArabic ? doctor.aboutAr || translateDoctorAbout(doctor.about, doctor.id) : doctor.about}
+              </p>
             </div>
 
             {/* Education & Credentials */}
@@ -148,7 +159,7 @@ export const DoctorDetails: React.FC = () => {
               <div className="p-4 rounded-xl border border-[#E2EBF0] bg-[#F8FAFC] flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-bold text-slate-900">
-                    {doctor.hospitalName || doctor.clinicName || 'City Care Hospital'}
+                    {translateHospitalName(doctor.hospitalName || doctor.clinicName || 'City Care Hospital')}
                   </h4>
                   <p className="text-xs text-slate-500 mt-0.5">{translateLocation(doctor.location)}</p>
                 </div>

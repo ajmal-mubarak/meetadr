@@ -15,18 +15,22 @@ export interface User {
 export interface Doctor {
   id: string;
   name: string;
+  nameAr?: string;
   photo: string;
   specialty: string;
   specialInterest?: string[];
   experience: string;
+  experienceAr?: string;
   rating: number;
   reviewCount: number;
   location: string;
   hospitalId?: string;
   clinicId?: string;
   hospitalName?: string;
+  hospitalNameAr?: string;
   clinicName?: string;
   about: string;
+  aboutAr?: string;
   education: string;
   availableDays: string[];
   availableSlots: string[];
@@ -37,9 +41,11 @@ export interface Doctor {
 export interface Hospital {
   id: string;
   name: string;
+  nameAr?: string;
   photo: string;
   location: string;
   address: string;
+  addressAr?: string;
   specialties: string[];
   doctorIds: string[];
   doctorCount: number;
@@ -47,7 +53,9 @@ export interface Hospital {
   emergencyAvailable: boolean;
   phone: string;
   operatingHours: string;
+  operatingHoursAr?: string;
   about: string;
+  aboutAr?: string;
   status?: 'Active' | 'Deactivated';
 }
 

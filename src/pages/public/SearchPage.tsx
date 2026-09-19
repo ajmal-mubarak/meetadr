@@ -23,7 +23,14 @@ import { useUserLocation } from '../../context/LocationContext';
 import { useToast } from '../../context/ToastContext';
 
 export const SearchPage: React.FC = () => {
-  const { t, translateSpecialty, translateLocation } = useTranslation();
+  const {
+    t,
+    translateSpecialty,
+    translateLocation,
+    isArabic,
+    translateDoctorName,
+    translateHospitalName,
+  } = useTranslation();
   const { showToast } = useToast();
   const { location: detectedLoc, status: locationStatus, detectLocation } = useUserLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -348,11 +355,11 @@ export const SearchPage: React.FC = () => {
                           </span>
                           <Link to={`/doctors/${doc.id}`} className="block">
                             <h4 className="text-sm sm:text-base font-bold text-slate-900 leading-snug truncate group-hover:text-[#2DA7B5] transition-colors">
-                              {doc.name}
+                              {isArabic ? doc.nameAr || translateDoctorName(doc.name, doc.id) : doc.name}
                             </h4>
                           </Link>
                           <p className="text-xs text-slate-600 truncate mt-0.5">
-                            {doc.hospitalName || doc.clinicName || 'City Care Hospital'}
+                            {translateHospitalName(doc.hospitalName || doc.clinicName || 'City Care Hospital')}
                           </p>
                           <div className="flex items-center gap-1 text-[11px] sm:text-xs text-slate-500 mt-1">
                             <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -426,7 +433,9 @@ export const SearchPage: React.FC = () => {
                         </div>
 
                         <div className="p-4 sm:p-5">
-                          <h4 className="text-sm sm:text-base font-bold text-slate-900 mb-1 group-hover:text-[#2DA7B5] transition-colors">{hosp.name}</h4>
+                          <h4 className="text-sm sm:text-base font-bold text-slate-900 mb-1 group-hover:text-[#2DA7B5] transition-colors">
+                            {isArabic ? hosp.nameAr || translateHospitalName(hosp.name, hosp.id) : hosp.name}
+                          </h4>
                           <p className="text-xs text-slate-500 mb-2.5">{translateLocation(hosp.location)}</p>
                           <div className="flex flex-wrap gap-1.5">
                             {hosp.specialties.slice(0, 3).map((spec) => (

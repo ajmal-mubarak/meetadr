@@ -84,7 +84,18 @@ const SUGGESTED_LOCATIONS = [
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { t, isRTL, isArabic, translateSpecialty, translateLocation } = useTranslation();
+  const {
+    t,
+    isRTL,
+    isArabic,
+    translateSpecialty,
+    translateLocation,
+    translateHospitalName,
+    translateHospitalAbout,
+    translateDoctorName,
+    translateDoctorAbout,
+    translateExperience,
+  } = useTranslation();
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -575,7 +586,7 @@ export const Home: React.FC = () => {
                                 <div className="truncate flex-1 min-w-0">
                                   <div className="flex items-center justify-between gap-1.5">
                                     <span className="text-xs font-bold text-slate-900 group-hover:text-[#0E7490] block truncate">
-                                      {hosp.name}
+                                      {isArabic ? hosp.nameAr || translateHospitalName(hosp.name, hosp.id) : hosp.name}
                                     </span>
                                     <span className="text-[9px] font-bold text-[#0E7490] bg-[#E8F6F8] border border-[#CDEBF0] px-1.5 py-0.5 rounded-full shrink-0">
                                       {hosp.doctorCount} {t('common.doctors')}
@@ -604,27 +615,27 @@ export const Home: React.FC = () => {
                                 key={doc.id}
                                 type="button"
                                 onClick={() => {
-                                  setSearchQuery(doc.name);
+                                  setSearchQuery(isArabic ? doc.nameAr || translateDoctorName(doc.name, doc.id) : doc.name);
                                   setShowSearchDropdown(false);
                                 }}
                                 className="w-full flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 text-left rtl:text-right transition-colors cursor-pointer group"
                               >
                                 <img
                                   src={doc.photo}
-                                  alt={doc.name}
+                                  alt={isArabic ? doc.nameAr || translateDoctorName(doc.name, doc.id) : doc.name}
                                   className="w-8 h-8 rounded-full object-cover shrink-0 border border-[#E2EBF0]"
                                 />
                                 <div className="truncate flex-1 min-w-0">
                                   <div className="flex items-center justify-between gap-1.5">
                                     <span className="text-xs font-bold text-slate-900 group-hover:text-[#0E7490] block truncate">
-                                      {doc.name}
+                                      {isArabic ? doc.nameAr || translateDoctorName(doc.name, doc.id) : doc.name}
                                     </span>
                                     <span className="text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full shrink-0">
                                       ★ {doc.rating}
                                     </span>
                                   </div>
                                   <span className="text-[10px] text-slate-500 block truncate">
-                                    {translateSpecialty(doc.specialty)} • {doc.hospitalName || doc.location}
+                                    {translateSpecialty(doc.specialty)} • {isArabic ? translateHospitalName(doc.hospitalName || doc.location) : (doc.hospitalName || doc.location)}
                                   </span>
                                 </div>
                               </button>
@@ -1299,7 +1310,7 @@ export const Home: React.FC = () => {
                 <div className="relative aspect-16/10 bg-slate-100 overflow-hidden">
                   <img
                     src={hosp.photo}
-                    alt={hosp.name}
+                    alt={isArabic ? hosp.nameAr || translateHospitalName(hosp.name, hosp.id) : hosp.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
@@ -1311,14 +1322,14 @@ export const Home: React.FC = () => {
 
                 <div className="p-4 space-y-2">
                   <h4 className="text-sm font-bold text-slate-900 group-hover:text-[#2DA7B5] transition-colors leading-snug line-clamp-1">
-                    {hosp.name}
+                    {isArabic ? hosp.nameAr || translateHospitalName(hosp.name, hosp.id) : hosp.name}
                   </h4>
                   <p className="text-[11px] text-slate-500 flex items-center gap-1 truncate">
                     <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
                     <span className="truncate">{translateLocation(hosp.location)}</span>
                   </p>
                   <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                    {hosp.about}
+                    {isArabic ? hosp.aboutAr || translateHospitalAbout(hosp.about, hosp.id) : hosp.about}
                   </p>
                 </div>
               </div>
@@ -1405,13 +1416,13 @@ export const Home: React.FC = () => {
 
                     <Link to={`/doctors/${doc.id}`}>
                       <h3 className="text-sm sm:text-base font-black text-slate-900 group-hover:text-[#0E7490] transition-colors truncate">
-                        {doc.name}
+                        {isArabic ? doc.nameAr || translateDoctorName(doc.name, doc.id) : doc.name}
                       </h3>
                     </Link>
 
                     <p className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5 truncate">
                       <Building2 className="w-3 h-3 text-slate-400 shrink-0" />
-                      <span className="truncate">{doc.hospitalName || 'American Hospital Dubai'}</span>
+                      <span className="truncate">{translateHospitalName(doc.hospitalName || 'American Hospital Dubai')}</span>
                     </p>
                   </div>
                 </div>
@@ -1420,7 +1431,7 @@ export const Home: React.FC = () => {
                 <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500 bg-[#F8FAFC] px-3 py-1.5 rounded-xl border border-[#E2EBF0]">
                   <span className="flex items-center gap-1 font-medium">
                     <Award className="w-3.5 h-3.5 text-[#2DA7B5]" />
-                    <span>{doc.experience}</span>
+                    <span>{isArabic ? doc.experienceAr || translateExperience(doc.experience) : doc.experience}</span>
                   </span>
                   <span className="flex items-center gap-1 font-semibold text-emerald-600">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -1430,7 +1441,7 @@ export const Home: React.FC = () => {
 
                 {/* About Snippet */}
                 <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mt-2.5">
-                  {doc.about}
+                  {isArabic ? doc.aboutAr || translateDoctorAbout(doc.about, doc.id) : doc.about}
                 </p>
               </div>
 

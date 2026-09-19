@@ -8,7 +8,7 @@ import { LOCATIONS, matchesLocation } from '../../data/mockSpecialties';
 import { useTranslation } from '../../i18n';
 
 export const HospitalList: React.FC = () => {
-  const { t, translateSpecialty, translateLocation } = useTranslation();
+  const { t, translateSpecialty, translateLocation, isArabic, translateHospitalName, translateHospitalAbout } = useTranslation();
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -31,8 +31,10 @@ export const HospitalList: React.FC = () => {
     if (!matchesLocation(h.location, location)) return false;
     if (search.trim()) {
       const q = search.toLowerCase();
+      const localizedName = isArabic ? (h.nameAr || translateHospitalName(h.name, h.id)).toLowerCase() : '';
       return (
         h.name.toLowerCase().includes(q) ||
+        localizedName.includes(q) ||
         h.location.toLowerCase().includes(q) ||
         h.specialties.some((s) => s.toLowerCase().includes(q))
       );
@@ -141,14 +143,16 @@ export const HospitalList: React.FC = () => {
                   </div>
 
                   <div className="p-5 space-y-2.5">
-                    <h3 className="text-base font-bold text-slate-900 leading-snug group-hover:text-[#2DA7B5] transition-colors">{hosp.name}</h3>
+                    <h3 className="text-base font-bold text-slate-900 leading-snug group-hover:text-[#2DA7B5] transition-colors">
+                      {isArabic ? hosp.nameAr || translateHospitalName(hosp.name, hosp.id) : hosp.name}
+                    </h3>
                     <div className="flex items-center gap-1.5 text-xs text-slate-500">
                       <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <span>{translateLocation(hosp.location)}</span>
                     </div>
 
                     <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                      {hosp.about}
+                      {isArabic ? hosp.aboutAr || translateHospitalAbout(hosp.about, hosp.id) : hosp.about}
                     </p>
 
                     <div className="flex flex-wrap gap-1.5 pt-1">
